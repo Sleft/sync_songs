@@ -32,13 +32,12 @@ module SyncFavSongs
     end
 
     ##
-    # Returns songs that are in this list but not the given list.
-    #--
-    # TODO: Reducera till array och fråga varför clone och dup-tjafset
-    # inte fungerar
-    def exclusive(compared_list)
-      @songs ^ compared_list
+    # Returns songs that are in this list but not in the given list.
+    def -(compared_list)
+      @songs - compared_list
     end
+
+    alias_method :difference, :-
   end
 
   # Gör riktigt test av detta! Se pickaxe
@@ -58,5 +57,5 @@ module SyncFavSongs
   list2 = SongList.new
   list2.add(song1).add(song2).add(song3).add(song4).add(song6)
 
-  puts list2.exclusive(list1).to_a
+  puts list2.difference(list1).to_a
 end
