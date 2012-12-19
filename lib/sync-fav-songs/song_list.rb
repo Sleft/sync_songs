@@ -37,12 +37,6 @@ module SyncFavSongs
     # TODO: Reducera till array och fråga varför clone och dup-tjafset
     # inte fungerar
     def exclusive(compared_list)
-      # # Select those songs that
-      # @songs.select do |song|
-      #   # are such that they are not in the compared list
-      #   compared_list.none? { |compared_song| song.eql?(compared_song) }
-      # end
-
       @songs ^ compared_list
     end
   end
