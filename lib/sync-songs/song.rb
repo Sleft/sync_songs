@@ -1,4 +1,8 @@
-module SyncFavSongs
+# -*- coding: utf-8 -*-
+
+require 'set'
+
+module SyncSongs
   ##
   # Stores a song
   class Song

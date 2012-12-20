@@ -4,7 +4,7 @@ require 'set'
 # require_relative 'song'
 require './song'
 
-module SyncFavSongs
+module SyncSongs
   ##
   # Stores a list of songs.
   class SongList
