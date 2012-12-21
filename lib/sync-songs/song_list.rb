@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
 require 'set'
-# require_relative 'song'
-require './song'
+require_relative './song'
 
 module SyncSongs
   ##
   # Stores a list of songs.
   class SongList
-    include Enumerable          # For +include?+
+    include Enumerable          # For +difference+
 
     ##
     # Constructs a new song list.
@@ -39,23 +38,4 @@ module SyncSongs
 
     alias_method :difference, :-
   end
-
-  # Gör riktigt test av detta! Se pickaxe
-  song1 = Song.new("1", "")
-  song2 = Song.new("2", "")
-  song3 = Song.new("3", "")
-  song4 = Song.new("4", "")
-  song5 = Song.new("5", "")
-  song6 = Song.new("6", "")
-
-  # puts song1.eql?(song2)
-  # puts song1.eql?(song3)
-  # puts song2.eql?(song3)
-
-  list1 = SongList.new
-  list1.add(song1).add(song3).add(song5).add(song1)
-  list2 = SongList.new
-  list2.add(song1).add(song2).add(song3).add(song4).add(song6)
-
-  puts list2.difference(list1).to_a
 end
