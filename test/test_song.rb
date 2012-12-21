@@ -1,13 +1,17 @@
+# -*- coding: utf-8 -*-
+
 require 'test/unit'
 require '../lib/sync-songs/song'
 
+# Public: Classes for syncing lists of songs
 module SyncSongs
+  # Private: Unit test for the class Song
   class TestSong < Test::Unit::TestCase
     # Run before each test
     def setup
-      @song1 = Song.new("Artist1", "Title1")      
+      @song1 = Song.new("Artist1", "Title1")
       @song2 = Song.new("Artist2", "Title2")
-      @song3 = Song.new("Artist1", "Title2")      
+      @song3 = Song.new("Artist1", "Title2")
       @song4 = Song.new("Artist2", "Title1")
       @song5 = Song.new("Artist1", "Title1")
       @song6 = Song.new("Artist2", "Title2")

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+# Public: Classes for syncing favorite lists of songs
 module SyncFavSongs
   # Get favorites
   # groove_favs = GrooveSharkFavoriteList.new.getFavorites

@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
+
 require 'test/unit'
 require_relative '../lib/sync-songs/song_list.rb'
 
+# Public: Classes for syncing lists of songs
 module SyncSongs
+  # Private: Unit test for the class SongList
   class TestSongList < Test::Unit::TestCase
 
     # Run before each test
