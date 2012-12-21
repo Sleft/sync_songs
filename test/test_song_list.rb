@@ -54,8 +54,6 @@ module SyncSongs
 
       list3.add(song7)
       list4.add(song8)
-      puts list3.to_a
-      puts list4.to_a
       assert(list3.difference(list4).empty?, "Case should not matter for the difference")
     end
   end
