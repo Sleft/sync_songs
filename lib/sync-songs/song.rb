@@ -17,8 +17,13 @@ module SyncSongs
     # Two songs are equal if they have the same title and are by the
     # same independently of the case of either.
     def eql?(song)
-      title.casecmp(song.title) == 0 and
-        artist.casecmp(song.artist) == 0
+      @title.casecmp(song.title) == 0 and
+        @artist.casecmp(song.artist) == 0
+    end
+
+    # Make a hash value for this object.
+    def hash
+      (@artist + @title).downcase.hash
     end
 
     ##
