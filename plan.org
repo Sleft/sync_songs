@@ -1,0 +1,21 @@
+* Guidelines
+- Structure: As Ruby gems http://stackoverflow.com/questions/614309/ideal-ruby-project-structure
+- Style https://github.com/styleguide/ruby , also TomDoc forcomments.
+* TODO Plan
+- Is it unecessary to make =difference= an alias of =-=?
+- A class to get song list size if there is none already.
+- =squeeze= när Song-fälten skapas (generellare än =trim=?)
+- Use hash style parameters for initializer, see PickAxe p. 84.
+  #+begin_src ruby
+    def hash_parameters(params)
+      # Raise error if either is not given
+      unless artist = params[:artist] or puts title = params[:title]
+        raise Error                 # Change to some appropriate error
+      end
+    end
+    
+    hash_parameters(:artist => "Artist", :title => "Title")
+    hash_parameters(:artist => "Artist")
+    hash_parameters(:title => "Title")
+  #+end_src
+- Make =<<= alias for =add= in =SongList= if it does not already exist.
