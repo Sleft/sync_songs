@@ -8,15 +8,16 @@ module SyncSongs
     # the song respectively.
     attr_reader :artist, :title
 
-    # Public: Constructs a song of the given artist and title.
+    # Public: Constructs a song of the given artist and title. Leading
+    # and trailing whitespace is removed as it has no semantic
+    # significance in songs.
     #
     # artist - The artist performing the song
     # title  - The title of the song
     def initialize(artist, title)
-      @artist = artist
-      @title  = title
+      @artist = artist.strip
+      @title  = title.strip
     end
-
 
     # Public: Compares this song to another song and returns true if
     # they are equal. Two songs are equal if they have the same title

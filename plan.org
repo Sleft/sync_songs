@@ -2,7 +2,6 @@
 - Structure: As Ruby gems http://stackoverflow.com/questions/614309/ideal-ruby-project-structure
 - Style https://github.com/styleguide/ruby , also TomDoc forcomments.
 * TODO Plan
-- =squeeze= när Song-fälten skapas (generellare än =trim=?)
 - Use hash style parameters for initializer, see PickAxe p. 84.
   #+begin_src ruby
     def hash_parameters(params)

@@ -23,8 +23,11 @@ module SyncSongs
     def test_add
       add_msg = "A song list should not manipulate its content"
       song1 = Song.new("Artist1", "Title1")
-      song2 = Song.new("Artist2", "Title2")
-      song3 = Song.new("Artist1", "Title2")
+      song2 = Song.new(" Artist2", "Title2  ")
+      song3 = Song.new("Artist1   ", "      Title2")
+      puts song1
+      puts song2
+      puts song3
       @list1.add(song1)
       assert_equal(song1, @list1.first, add_msg)
       @list2 << song2 << song3  # Test alias too

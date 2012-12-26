@@ -9,20 +9,29 @@ module SyncSongs
   class TestSong < Test::Unit::TestCase
     # Run before each test
     def setup
-      @song1 = Song.new("Artist1", "Title1")
-      @song2 = Song.new("Artist2", "Title2")
-      @song3 = Song.new("Artist1", "Title2")
+      @song1 = Song.new("  Artist1", "Title1  ")
+      @song2 = Song.new(" Artist2 ", " Title2 ")
+      @song3 = Song.new("   Artist1 ", "  Title2    ")
       @song4 = Song.new("Artist2", "Title1")
-      @song5 = Song.new("Artist1", "Title1")
-      @song6 = Song.new("Artist2", "Title2")
-      @song7 = Song.new("artist", "Title")
-      @song8 = Song.new("Artist", "title")
+      @song5 = Song.new("Artist1", " Title1   ")
+      @song6 = Song.new("Artist2", "  Title2 ")
+      @song7 = Song.new("     artist", "Title")
+      @song8 = Song.new("Artist     ", "      title ")
     end
 
     def test_simple
       init_msg = "Song should initialize"
       assert_not_nil(@song1, init_msg)
       assert_not_nil(@song2, init_msg)
+    end
+
+    def test_strip
+      lead_trail_ws = /(^\s+)|(\s+$)/
+      strip_msg = "Songs should be stripped from leading and trailing whitespace"
+      assert_nil(lead_trail_ws.match(@song1.artist), strip_msg)
+      assert_nil(lead_trail_ws.match(@song1.title), strip_msg)
+      assert_nil(lead_trail_ws.match(@song2.artist), strip_msg)
+      assert_nil(lead_trail_ws.match(@song2.title), strip_msg)
     end
 
     def test_getters
