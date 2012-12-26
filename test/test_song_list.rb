@@ -27,8 +27,10 @@ module SyncSongs
       song3 = Song.new("Artist1", "Title2")
       @list1.add(song1)
       assert_equal(song1, @list1.first, add_msg)
-      @list2.add(song2).add(song3)
+      @list2 << song2 << song3  # Test alias too
       assert_equal(song2, @list2.first, add_msg)
+      assert(@list1.member?(song1))
+      assert(@list2.member?(song2))
     end
 
     def test_difference

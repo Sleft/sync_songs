@@ -25,6 +25,8 @@ module SyncSongs
       self
     end
 
+    alias_method :<<, :add
+
     # Public: Calls _block_ once for each element in self, passing
     # that element as a parameter. Implemented mostly for enabling the
     # +Enumerable+ mixin.
