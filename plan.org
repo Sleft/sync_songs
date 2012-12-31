@@ -10,7 +10,7 @@
         raise Error                 # Change to some appropriate error
       end
     end
-    
+
     hash_parameters(:artist => "Artist", :title => "Title")
     hash_parameters(:artist => "Artist")
     hash_parameters(:title => "Title")
@@ -33,7 +33,6 @@
   2. Sync and differentiate.
   3. Threads for setting data.
   4. Sync and results.
-- Raise an exception if one tries to create a Song with an empty artist or title. Add test for this too.
 - Make test file hierarchy parallel to the tested files (check references for best practice).
 - Naming convention for test files: "tc_..." for test case, "ts_..." for test suite. (Check references for best practice.)
 - Make a test suites for all libs and for everything.

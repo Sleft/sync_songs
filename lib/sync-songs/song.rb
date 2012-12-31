@@ -14,9 +14,15 @@ module SyncSongs
     #
     # artist - The artist performing the song
     # title  - The title of the song
+    #
+    # Raises ArgumentError if the artist or title is empty.
     def initialize(artist, title)
       @artist = artist.strip
       @title  = title.strip
+
+      if @artist.empty? or @title.empty?
+        raise ArgumentError, "Songs must have a non-empty artist and title"
+      end
     end
 
     # Public: Compares this song to another song and returns true if

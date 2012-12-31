@@ -20,9 +20,13 @@ module SyncSongs
     end
 
     def test_simple
-      init_msg = "Song should initialize"
+      init_msg = "Songs should initialize"
       assert_not_nil(@song1, init_msg)
       assert_not_nil(@song2, init_msg)
+
+      assert_raise(ArgumentError) { song9 = Song.new("", "Title") }
+      assert_raise(ArgumentError) { song10 = Song.new("Artist", "") }
+      assert_raise(ArgumentError) { song11 = Song.new("   ", "    ") }
     end
 
     def test_strip
