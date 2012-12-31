@@ -47,15 +47,13 @@ module SyncSongs
       assert_not_equal(@song2.title, "Title1", getter_msg)
     end
 
-    # Equality should work as expected
     def test_song_equal
       identity_msg = "Songs should be self-identical"
       assert(@song1.eql?(@song1), identity_msg)
       assert(@song2.eql?(@song2), identity_msg)
 
-      symmetry_msg = "Equality for songs is symmetrical"
-      assert(!@song1.eql?(@song2), symmetry_msg)
-      assert(!@song2.eql?(@song1), symmetry_msg)
+      assert(!@song1.eql?(@song2) && !@song2.eql?(@song1),
+             "Non-equality for songs is symmetrical")
 
       both_fields_equality_msg = "Both fields affect equality"
       assert(!@song2.eql?(@song3), both_fields_equality_msg)
@@ -65,7 +63,7 @@ module SyncSongs
 
       assert(@song7.eql?(@song8), "Case should not matter for equality")
 
-      sanity_msg = "Assumption about test data should be correct"
+      sanity_msg = "Assumptions about test data should be correct"
       assert_not_equal(@song2, @song3, sanity_msg)
       assert_not_equal(@song3, @song4, sanity_msg)
       assert_not_equal(@song4, @song5, sanity_msg)
@@ -73,8 +71,8 @@ module SyncSongs
     end
 
     def test_to_s
-      assert_equal(@song1.to_s, "Artist1 - Title1", "to_s is conventional form")
-      assert(@song2.to_s.is_a?(String), "to_s return a String")
+      assert_equal(@song1.to_s, "Artist1 - Title1", "to_s is in conventional form")
+      assert(@song2.to_s.is_a?(String), "to_s returns a String")
     end
   end
 end

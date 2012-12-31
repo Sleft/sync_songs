@@ -37,5 +37,4 @@
 - Make test file hierarchy parallel to the tested files (check references for best practice).
 - Naming convention for test files: "tc_..." for test case, "ts_..." for test suite. (Check references for best practice.)
 - Make a test suites for all libs and for everything.
-- Make test messages constants.
 - Include the README in the documentation of the main class.

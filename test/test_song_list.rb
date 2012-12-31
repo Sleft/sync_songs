@@ -12,6 +12,14 @@ module SyncSongs
     def setup
       @list1 = SongList.new
       @list2 = SongList.new
+      @song1 = Song.new("Artist1", "Title1")
+      @song2 = Song.new(" Artist2", "Title2  ")
+      @song3 = Song.new("Artist1   ", "      Title2")
+      @song4 = Song.new("Artist2", "Title1")
+      @song5 = Song.new("Artist1", "Title1")
+      @song6 = Song.new("Artist2", "Title2")
+      @song7 = Song.new("artist", "Title")
+      @song8 = Song.new("Artist", "title")
     end
 
     def test_simple
@@ -22,43 +30,31 @@ module SyncSongs
 
     def test_add
       add_msg = "A song list should not manipulate its content"
-      song1 = Song.new("Artist1", "Title1")
-      song2 = Song.new(" Artist2", "Title2  ")
-      song3 = Song.new("Artist1   ", "      Title2")
-      puts song1
-      puts song2
-      puts song3
-      @list1.add(song1)
-      assert_equal(song1, @list1.first, add_msg)
-      @list2 << song2 << song3  # Test alias too
-      assert_equal(song2, @list2.first, add_msg)
-      assert(@list1.member?(song1))
-      assert(@list2.member?(song2))
+      @list1.add(@song1)
+      assert_equal(@song1, @list1.first, add_msg)
+      @list2 << @song2 << @song3  # Test alias too
+      assert_equal(@song2, @list2.first, add_msg)
+      assert(@list1.member?(@song1))
+      assert(@list2.member?(@song2))
     end
 
     def test_difference
-      song1 = Song.new("Artist1", "Title1")
-      song2 = Song.new("Artist2", "Title2")
-      song3 = Song.new("Artist1", "Title2")
-      song4 = Song.new("Artist2", "Title1")
-      song5 = Song.new("Artist1", "Title1")
-      song6 = Song.new("Artist2", "Title2")
-      song7 = Song.new("artist", "Title")
-      song8 = Song.new("Artist", "title")
+      assert(@list1.difference(@list2).empty?, "No difference between sets with the same members")
 
       list3 = SongList.new
       list4 = SongList.new
-      list3.add(song1).add(song2).add(song3)
-      list4.add(song3).add(song1).add(song2)
+
+      list3.add(@song1).add(@song2).add(@song3)
+      list4.add(@song3).add(@song1).add(@song2)
       assert(list3.difference(list4).empty?, "No difference between sets with the same members that has been added in different order")
       assert(list3.-(list4).empty?, "Aliases should be equal")
 
-      list3.add(song1)
-      list4.add(song3)
+      list3.add(@song1)
+      list4.add(@song3)
       assert(list3.difference(list4).empty?, "There are no duplicate entries")
 
-      list3.add(song7)
-      list4.add(song8)
+      list3.add(@song7)
+      list4.add(@song8)
       assert(list3.difference(list4).empty?, "Case should not matter for the difference")
     end
   end
