@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 require 'set'
-require_relative './song'
+require_relative 'song'
 
 # Public: Classes for syncing lists of songs
 module SyncSongs

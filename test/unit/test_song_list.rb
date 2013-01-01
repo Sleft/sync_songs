@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 require 'test/unit'
-require_relative '../lib/sync-songs/song_list.rb'
+require_relative '../../lib/sync-songs/song_list.rb'
 
 # Public: Classes for syncing lists of songs
 module SyncSongs

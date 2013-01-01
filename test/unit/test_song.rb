@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 require 'test/unit'
-require '../lib/sync-songs/song'
+require_relative '../../lib/sync-songs/song'
 
 # Public: Classes for syncing lists of songs
 module SyncSongs
