@@ -55,3 +55,8 @@
   3. Threads for setting data.
   4. Sync and results.
 - Include the README in the documentation of the main class.
+- Use Bundler to create a gem.
+- Refer from gemspec to main test suite via =s.test_file=.
+** README
+- Reference to docs
+- Copyright and license
