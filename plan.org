@@ -55,8 +55,9 @@
     end
   #+end_src
 - Include the README in the documentation of the main class.
+- Use Rake to make tests http://stackoverflow.com/q/9017158/789593
 ** Gem
-- Use Bundler to create a gem.
+- Use Bundler and Rake (PickAxe p. 22-230) to create a gem.
 - Refer from gemspec to main test suite via =s.test_file=.
 - Filter out relevant files for inclusion in gem via =candidates= and =Dir.glob=.
 - Run tomdoc via command similar to =s.has_rdoc= and =s.extra_rdoc_files=.
