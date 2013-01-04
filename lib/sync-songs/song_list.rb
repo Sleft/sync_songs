@@ -46,5 +46,10 @@ module SyncSongs
     end
 
     alias_method :difference, :-
+
+    # Public: Returns the song list formatted as a string.
+    def to_s
+      to_a.to_s
+    end
   end
 end
