@@ -55,8 +55,13 @@
   3. Threads for setting data.
   4. Sync and results.
 - Include the README in the documentation of the main class.
+** Gem
 - Use Bundler to create a gem.
 - Refer from gemspec to main test suite via =s.test_file=.
+- Filter out relevant files for inclusion in gem via =candidates= and =Dir.glob=.
+- Run tomdoc via command similar to =s.has_rdoc= and =s.extra_rdoc_files=.
+- Add dependicies to Ruby wrappers for GrooveShark and Last.fm.
+- Add it to RubyForge.
 ** README
 - Reference to docs
 - Copyright and license
