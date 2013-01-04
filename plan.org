@@ -2,6 +2,27 @@
 - Structure: As Ruby gems http://stackoverflow.com/questions/614309/ideal-ruby-project-structure
 - Style https://github.com/styleguide/ruby , also TomDoc forcomments.
 * TODO Plan
+- Allow the following example:
+  #+begin_src ruby
+    # Get favorites
+    groove_favs  = GrooveSharkList.new
+    last_fm_favs = LastFMList.new
+    # Get favorites by fetching them and store them in a SongList
+    groove_favs.getFavorites(username, password)
+    last_fm_favs.getFavorites(username, password)
+    
+    # Sync favorites by adding the difference of the argument and the
+    # receiver as favorites, i.e.
+    # 1. Calculate the difference.
+    # 2. Add favorites one song at the time as the API works that
+    #    way.
+    groove_favs.syncFavorites(username, password, last_fm_favs) # last_fm_favs - groove_favs
+    # to add as a favorites
+    last_fm_favs.syncFavorites(username, password, groove_favs) # groove_favs - last_fm_favs
+    # to add as favorites
+  #+end_src
+- Implement =syncFavorites= for the subclasses =GrooveSharkList= and =LastFMList= of =SongList=.
+- Implement the (private?) method =songsToSync= in terms of difference (i.e. - operator) in =SongList=.
 - Use hash style parameters for initializer, see PickAxe p. 84.
   #+begin_src ruby
     def hash_parameters(params)
