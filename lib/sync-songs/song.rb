@@ -4,21 +4,22 @@
 module SyncSongs
   # Public: Stores a song.
   class Song
-    # Public: Returns the artist performing the song and the title of
-    # the song respectively.
-    attr_reader :artist, :title
+    # Public: Returns the title of the song, the artist performing the
+    # song and the album the song is on respectively.
+    attr_reader :title, :artist, :album
 
-    # Public: Constructs a song of the given artist and title. Leading
-    # and trailing whitespace is removed as it has no semantic
-    # significance in songs.
+    # Public: Constructs a song. Leading and trailing whitespace is
+    # removed as it has no semantic significance for songs.
     #
-    # artist - The artist performing the song
     # title  - The title of the song
+    # artist - The artist performing the song
+    # album  - The album the song is on
     #
-    # Raises ArgumentError if the artist or title is empty.
-    def initialize(artist, title)
+    # Raises ArgumentError if the artist or the title is empty.
+    def initialize(title, artist, album)
       @artist = artist.strip
       @title  = title.strip
+      @album  = album.strip
 
       if @artist.empty? or @title.empty?
         raise ArgumentError, "Songs must have a non-empty artist and title"
@@ -28,7 +29,10 @@ module SyncSongs
     # Public: Compares this song to another song and returns true if
     # they are equal. Two songs are equal if they have the same title
     # and are by the same artist independently of the letter case of
-    # either.
+    # either. It is assumed that album is not significant for
+    # favorites, e.g. if a certain song by a certain artist is a
+    # favorite it is a favorite independently of which album it is
+    # found on.
     #
     # compared_song - Song that this song is compared with.
     #
@@ -39,14 +43,16 @@ module SyncSongs
         artist.casecmp(compared_song.artist) == 0
     end
 
-    # Public: Makes a hash value for this object and returns it.
+    # Public: Makes a hash value for this object and returns it. It is
+    # assumed that album is not significant for favorites. This is why
+    # the album is not included in the hash.
     def hash
-      (artist + title).downcase.hash
+      (title + artist).downcase.hash
     end
 
     # Public: Returns the song conventionally formatted as a string.
     def to_s
-      "#{artist} - #{title}"
+      "#{title} - #{artist} - #{album}"
     end
   end
 end

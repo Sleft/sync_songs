@@ -1,85 +1,81 @@
 # -*- coding: utf-8 -*-
 
 require 'test/unit'
-require_relative '../../lib/sync-songs/song_list.rb'
+require_relative '../../lib/sync-songs/song_list'
+require_relative 'sample_data/sample_data'
 
 # Public: Classes for syncing lists of songs
 module SyncSongs
   # Private: Unit test for the class SongList
   class TestSongList < Test::Unit::TestCase
+    include SampleData
 
     # Run before each test
     def setup
-      @list1 = SongList.new
-      @list2 = SongList.new
-      @song1 = Song.new("Artist1", "Title1")
-      @song2 = Song.new(" Artist2", "Title2  ")
-      @song3 = Song.new("Artist1   ", "      Title2")
-      @song4 = Song.new("Artist2", "Title1")
-      @song5 = Song.new("Artist1", "Title1")
-      @song6 = Song.new("Artist2", "Title2")
-      @song7 = Song.new("artist", "Title")
-      @song8 = Song.new("Artist", "title")
+      setupTestSongs
 
-      @list1.add(@song1)
-      @list2 << @song1  # Test alias too
+      @lists = [SongList.new, SongList.new]
+
+      @lists[0].add(@songs[0])
+      @lists[1] << @songs[0]  # Test alias too
     end
 
     def test_simple
       init_msg = "Song lists should initialize"
-      assert_not_nil(@list1, init_msg)
-      assert_not_nil(@list2, init_msg)
+      assert_not_nil(@lists[0], init_msg)
+      assert_not_nil(@lists[1], init_msg)
     end
 
     def test_add
       add_msg = "A song list should not manipulate its content"
-      assert_equal(@song1, @list1.first, add_msg)
-      assert_equal(@song1, @list2.first, add_msg)
-      assert(@list1.member?(@song1), add_msg)
-      assert(@list2.member?(@song1), add_msg)
+      assert_equal(@songs[0], @lists[0].first, add_msg)
+      assert_equal(@songs[0], @lists[1].first, add_msg)
+      assert(@lists[0].member?(@songs[0]), add_msg)
+      assert(@lists[1].member?(@songs[0]), add_msg)
     end
 
     def test_difference
       diff_eql_msg = "There is no difference between sets with the same members"
-      # @list1 = {@song1}
-      # @list2 = {@song1}
-      assert(@list1.difference(@list2).empty?, diff_eql_msg)
-      assert(@list2.difference(@list1).empty?, diff_eql_msg)
+      # @lists[0] = {@songs[0]}
+      # @lists[1] = {@songs[0]}
+      assert(@lists[0].difference(@lists[1]).empty?, diff_eql_msg)
+      assert(@lists[1].difference(@lists[0]).empty?, diff_eql_msg)
 
-      @list1.add(@song2)        # @list1 = {@song1, @song2}
-      @list2.add(@song3)        # @list2 = {@song1, @song3}
-      assert(!(@list1 - @list2).member?(@song1), "The difference is not the shared element")
+      @lists[0].add(@songs[1])        # @lists[0] = {@songs[0], @songs[1]}
+      @lists[1].add(@songs[2])        # @lists[1] = {@songs[0], @songs[2]}
+      assert(!(@lists[0] - @lists[1]).member?(@songs[0]), "The difference is not the shared element")
 
       diff_msg = "The difference is the non-shared element in the receiver"
-      assert((@list1 - @list2).member?(@song2), diff_msg)
-      assert((@list2 - @list1).member?(@song3), diff_msg)
-      @list1.add(@song3)        # @list1 = {@song1, @song2, @song3}
-      assert((@list1 - @list2).member?(@song2), diff_msg)
-      assert((@list2 - @list1).empty?, diff_msg)
+      assert((@lists[0] - @lists[1]).member?(@songs[1]), diff_msg)
+      assert((@lists[1] - @lists[0]).member?(@songs[2]), diff_msg)
+      @lists[0].add(@songs[2])        # @lists[0] = {@songs[0], @songs[1], @songs[2]}
+      assert((@lists[0] - @lists[1]).member?(@songs[1]), diff_msg)
+      assert((@lists[1] - @lists[0]).empty?, diff_msg)
 
-      list3 = SongList.new
-      list4 = SongList.new
-      list3 << @song1 << @song2 << @song3
-      list4 << @song3 << @song1 << @song2
-      assert((list3 - list4).empty?, "There is no difference between sets with the same members that has been added in different order")
-      assert((list3 - list4).empty?, "The alias - for difference should work")
+      @lists[2] = SongList.new
+      @lists[3] = SongList.new
+      @lists[2] << @songs[0] << @songs[1] << @songs[2]
+      @lists[3] << @songs[2] << @songs[0] << @songs[1]
+      assert((@lists[2] - @lists[3]).empty?, "There is no difference between sets with the same members that has been added in different order")
+      assert((@lists[2] - @lists[3]).empty?, "The alias - for difference should work")
 
-      list3.add(@song1)
-      list4.add(@song3)
-      assert((list3 - list4).empty?, "There are no duplicate entries")
+      @lists[2].add(@songs[0])
+      @lists[3].add(@songs[2])
+      assert((@lists[2] - @lists[3]).empty?, "There are no duplicate entries")
 
-      list3.add(@song7)
-      list4.add(@song8)
-      assert((list3 - list4).empty?, "Case should not matter for the difference")
+      @lists[2].add(@songs[6])
+      @lists[3].add(@songs[7])
+
+      assert((@lists[2] - @lists[3]).empty?, "Case nor album should matter for the difference")
     end
 
     def test_inspect
       # There should be a working inspect method
       assert_nothing_raised do
-        @list1.inspect
-        @list2.inspect
-        list5 = SongList.new
-        list5.inspect
+        @lists[0].inspect
+        @lists[1].inspect
+        @lists[4] = SongList.new
+        @lists[4].inspect
       end
     end
   end
