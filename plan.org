@@ -65,6 +65,8 @@
 - Add it to RubyForge.
 - Used gems:
   - sudo gem install grooveshark
+  - sudo gem install lastfm
+  - sudo gem install launchy
 ** README
 - Reference to docs
 - Copyright and license
