@@ -5,11 +5,11 @@ require_relative 'song'
 
 # Public: Classes for syncing lists of songs
 module SyncSongs
-  # Public: Stores a list of songs.
+  # Public: A list of songs.
   class SongList
     include Enumerable          # For +difference+
 
-    # Public: Constructs a new song list.
+    # Public: Constructs a new list.
     def initialize
       @songs = Set.new
     end
