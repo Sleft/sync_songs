@@ -18,29 +18,47 @@ module SyncSongs
     #
     # Raises XXXXXXXXXX if authentication
     #   fails.
-    def initialize(username, password)
+    def initialize(api_key, api_secret)
       super()
-
-      # Setup a Last.fm session
-      api_key = 'cd7095c6346889798024d5bddb730f97'
-      api_secret = 'f70776693c09fde4ebf220a3d7d9a0f7'
+      @api_key = api_key
       @lastfm = Lastfm.new(api_key, api_secret)
+    end
 
+    # Public: Get the user's loved songs from Last.fm.
+    #
+    # username - The username of the user to authenticate
+    # limit    - The maximum number of favorites to get
+    def getLoved(username, limit)
+      @lastfm.user.get_loved_tracks(:user => username, :api_key => @api_key, :limit => limit).each do |s|
+        add(Song.new(s['name'], s['artist']['name'], '')) # Last.fm loved track does not include an album field
+      end
+    end
+
+    # Public: Add the songs in the given list to the given user's
+    # loved songs on Last.fm.
+    #
+    # username - The username of the user to authenticate
+    # list     - SongList to add from
+    def addToLoved(username, list)
+      authorize
+      to_add = songsToAdd(list)
+      # For each song in to_add
+      #   find and store all its hits
+      #   add as favorite
+      #   print it if verbose
+    end
+
+    private
+
+    def authorize
       # Store token somewhere instead and only call URL if there is no
       # stored token.
-      token = @lastfm.auth.get_token      Launchy.open("http://www.last.fm/api/auth/?api_key=#{api_key}&token=#{token}")
-
+      token = @lastfm.auth.get_token
+      Launchy.open("http://www.last.fm/api/auth/?api_key=#@api_key&token=#{token}")
+      print 'A page asking for authorization of this tool with Last.fm should be open in your web browser. You need to approve it before proceeding. Continue? (y/n) '
+      exit unless gets.strip.casecmp('y') == 0
 
       @lastfm.session = @lastfm.auth.get_session(:token => token)['key']
     end
-
-    # Public: Get the user's favorites from Last.fm
-    def getFavorites
-      # @user.favorites.each do |s|
-      #   add(Song.new(s.name, s.artist, s.album))
-      # end
-    end
   end
-
-  list = LastfmList.new('','')
 end
