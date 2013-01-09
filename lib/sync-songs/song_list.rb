@@ -47,6 +47,13 @@ module SyncSongs
 
     alias_method :difference, :-
 
+    # Public: Returns the number of songs.
+    def size
+      @songs.size
+    end
+
+    alias_method :length, :size
+
     # Public: Returns a string containing a human-readable
     # representation of the set.
     def inspect

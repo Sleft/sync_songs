@@ -20,6 +20,12 @@ module SyncSongs
       @lists[1] << @songs[0]  # Test alias too
     end
 
+    def test_size
+      size_msg = "Should return list's size"
+      assert(@lists[0].size == 1, size_msg)
+      assert(@lists[1].length == 1, size_msg)
+    end
+
     def test_simple
       init_msg = "Song lists should initialize"
       assert_not_nil(@lists[0], init_msg)
