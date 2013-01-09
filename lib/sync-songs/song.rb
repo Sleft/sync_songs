@@ -52,7 +52,9 @@ module SyncSongs
 
     # Public: Returns the song conventionally formatted as a string.
     def to_s
-      "#{title} - #{artist} - #{album}"
+      s = "#{title} - #{artist}"
+      s << " - #{album}" unless album.empty?
+      s
     end
   end
 end

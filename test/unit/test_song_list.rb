@@ -21,19 +21,19 @@ module SyncSongs
     end
 
     def test_size
-      size_msg = "Should return list's size"
+      size_msg = 'Should return list\'s size'
       assert(@lists[0].size == 1, size_msg)
       assert(@lists[1].length == 1, size_msg)
     end
 
     def test_simple
-      init_msg = "Song lists should initialize"
+      init_msg = 'Song lists should initialize'
       assert_not_nil(@lists[0], init_msg)
       assert_not_nil(@lists[1], init_msg)
     end
 
     def test_add
-      add_msg = "A song list should not manipulate its content"
+      add_msg = 'A song list should not manipulate its content'
       assert_equal(@songs[0], @lists[0].first, add_msg)
       assert_equal(@songs[0], @lists[1].first, add_msg)
       assert(@lists[0].member?(@songs[0]), add_msg)
@@ -41,7 +41,7 @@ module SyncSongs
     end
 
     def test_difference
-      diff_eql_msg = "There is no difference between sets with the same members"
+      diff_eql_msg = 'There is no difference between sets with the same members'
       # @lists[0] = {@songs[0]}
       # @lists[1] = {@songs[0]}
       assert(@lists[0].difference(@lists[1]).empty?, diff_eql_msg)
@@ -49,9 +49,9 @@ module SyncSongs
 
       @lists[0].add(@songs[1])        # @lists[0] = {@songs[0], @songs[1]}
       @lists[1].add(@songs[2])        # @lists[1] = {@songs[0], @songs[2]}
-      assert(!(@lists[0] - @lists[1]).member?(@songs[0]), "The difference is not the shared element")
+      assert(!(@lists[0] - @lists[1]).member?(@songs[0]), 'The difference is not the shared element')
 
-      diff_msg = "The difference is the non-shared element in the receiver"
+      diff_msg = 'The difference is the non-shared element in the receiver'
       assert((@lists[0] - @lists[1]).member?(@songs[1]), diff_msg)
       assert((@lists[1] - @lists[0]).member?(@songs[2]), diff_msg)
       @lists[0].add(@songs[2])        # @lists[0] = {@songs[0], @songs[1], @songs[2]}
@@ -62,17 +62,17 @@ module SyncSongs
       @lists[3] = SongList.new
       @lists[2] << @songs[0] << @songs[1] << @songs[2]
       @lists[3] << @songs[2] << @songs[0] << @songs[1]
-      assert((@lists[2] - @lists[3]).empty?, "There is no difference between sets with the same members that has been added in different order")
-      assert((@lists[2] - @lists[3]).empty?, "The alias - for difference should work")
+      assert((@lists[2] - @lists[3]).empty?, 'There is no difference between sets with the same members that has been added in different order')
+      assert((@lists[2] - @lists[3]).empty?, 'The alias - for difference should work')
 
       @lists[2].add(@songs[0])
       @lists[3].add(@songs[2])
-      assert((@lists[2] - @lists[3]).empty?, "There are no duplicate entries")
+      assert((@lists[2] - @lists[3]).empty?, 'There are no duplicate entries')
 
       @lists[2].add(@songs[6])
       @lists[3].add(@songs[7])
 
-      assert((@lists[2] - @lists[3]).empty?, "Case nor album should matter for the difference")
+      assert((@lists[2] - @lists[3]).empty?, 'Case nor album should matter for the difference')
     end
 
     def test_inspect
