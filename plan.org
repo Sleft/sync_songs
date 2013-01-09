@@ -21,6 +21,13 @@
     groove_favs.syncFavorites
     last_fm_favs.syncFavorites
   #+end_src
+- Text user interface:
+  1. (Choose services. Default: Grooveshark and last.fm).
+  2. Choose direction. Default: both ways.
+  3. If verbose show fetched favorites.
+  4. Show how many favorites got from either service.
+  5. If verbose show which favorites that are synced.
+  6. Show how many favorites that are synced.
 - Use Ruby threads for getting and setting data, e.g.
   1. Threads for getting data.
   2. Sync and differentiate.
