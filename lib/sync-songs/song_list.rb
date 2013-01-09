@@ -34,15 +34,21 @@ module SyncSongs
       @songs.each(&block)
     end
 
-    # Public: Calculates which songs are in this list but not the compared
+    # Public: Returns songs that are in the given list but not in this
+    # list, i.e. songs that are exclusive to the given list.
+    #
+    # list - SongList to compare this list to
+    def songsToAdd(list)
+      list - @songs
+    end
+
+    # Public: Returns a SongList with songs that are in this list but
+    # not in the given list, i.e. songs that are exclusive to this
     # list.
     #
-    # compared_list Song list to compare this list to.
-    #
-    # Returns songs that are in this list but not in the compared
-    #   list.
-    def -(compared_list)
-      @songs - compared_list
+    # list - SongList to compare this list to
+    def -(list)
+      @songs - list
     end
 
     alias_method :difference, :-

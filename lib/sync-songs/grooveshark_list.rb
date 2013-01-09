@@ -11,7 +11,7 @@ module SyncSongs
 
     # Public: Constructs a Grooveshark list by logging in to
     # Grooveshark with the specified user.
-    # 
+    #
     # username - The username of the user to authenticate
     # password - The password of the user to authenticate
     #
@@ -35,9 +35,20 @@ module SyncSongs
 
     # Public: Get the user's favorites from Grooveshark.
     def getFavorites
-      @user.favorites.each do |s|
-        add(Song.new(s.name, s.artist, s.album))
-      end
+      @user.favorites.each { |s| add(Song.new(s.name, s.artist, s.album)) }
+    end
+
+    # Public: Add the songs in the given list to the user's favorite
+    # on Grooveshark.
+    #
+    # username - The username of the user to authenticate
+    # list     - SongList to add from
+    def addToFavorites(username, list)
+      to_add = songsToAdd(list)
+      # For each song in to_add
+      #   find and store all its hits
+      #   add as favorite
+      #   print it if verbose
     end
   end
 end

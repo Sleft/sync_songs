@@ -11,7 +11,7 @@
     # Do in threads
     groove_favs.getFavorites
     last_fm_favs.getFavorites
-    
+
     # Sync favorites by adding the difference of the argument and the
     # receiver as favorites, i.e.
     # 1. Calculate the difference.
