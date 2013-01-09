@@ -22,7 +22,7 @@ module SyncSongs
       @album  = album.strip
 
       if @title.empty? or @artist.empty?
-        raise ArgumentError, "Songs must have a non-empty title and artist"
+        raise ArgumentError, 'Songs must have a non-empty title and artist'
       end
     end
 
