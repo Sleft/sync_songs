@@ -53,17 +53,24 @@ module SyncSongs
 
     alias_method :difference, :-
 
-    # Public: Returns the number of songs.
-    def size
-      @songs.size
+    # Public: Removes all songs from the list and returns the
+    # list. Note that this only removes songs from this list and not
+    # from someplace else, such as your favorites at Grooveshark.
+    def clear
+      @songs.clear
     end
-
-    alias_method :length, :size
 
     # Public: Returns a string containing a human-readable
     # representation of the set.
     def inspect
       @songs.inspect
     end
+
+    # Public: Returns the number of songs.
+    def size
+      @songs.size
+    end
+
+    alias_method :length, :size
   end
 end

@@ -92,5 +92,11 @@ module SyncSongs
         @lists[4].inspect
       end
     end
+
+    def test_clear
+      list = SongList.new
+      @songs.each { |song| list << song }
+      assert(list.clear.empty?, "List should be empty after being cleared")
+    end
   end
 end
