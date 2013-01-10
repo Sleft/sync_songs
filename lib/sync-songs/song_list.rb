@@ -10,8 +10,12 @@ module SyncSongs
     include Enumerable          # For +difference+
 
     # Public: Constructs a new list.
-    def initialize
+    #
+    # *songs - If songs are provided they are added to the list
+    #          (default: nil).
+    def initialize(*songs)
       @songs = Set.new
+      songs.each { |song| @songs << song } if songs
     end
 
     # Public: Adds a song to the list.
