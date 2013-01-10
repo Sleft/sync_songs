@@ -2,9 +2,9 @@
 - Structure: As Ruby gems http://stackoverflow.com/questions/614309/ideal-ruby-project-structure
 - Style https://github.com/styleguide/ruby , also TomDoc forcomments.
 * TODO Plan
-- Use =yield= to ship out info for all methods that has a verbose mode.
+- Implement =addToFavorites/Loved= for the =GroovesharkList= and =LastFMList=.
+- Use =yield= to ship out info for all methods that has a verbose mode. Formulate as http://stackoverflow.com/a/14260193/789593
 - The attribute =album= is not needed in SongList?
-- Add the method =clear= to SongList.
 - Allow the following example:
   #+begin_src ruby
     # Get favorites
@@ -36,8 +36,6 @@
   2. Sync and differentiate.
   3. Threads for setting data.
   4. Sync and results.
-- Implement =syncFavorites= for the subclasses =GrooveSharkList= and =LastFMList= of =SongList=.
-- Implement the (private?) method =songsToSync= in terms of difference (i.e. - operator) in =SongList=.
 - Use hash style parameters for initializer, see PickAxe p. 84.
   #+begin_src ruby
     def hash_parameters(params)
