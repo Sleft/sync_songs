@@ -43,9 +43,13 @@ module SyncSongs
     #
     # username - The username of the user to authenticate
     # list     - SongList to add from
+    #
+    # Yields the songs_to_add, i.e. the songs that are not already in
+    #   this list, if a block is given.
     def addToFavorites(username, list)
-      to_add = songsToAdd(list)
-      # For each song in to_add
+      songs_to_add = songsToAdd(list)
+      yield songs_to_add if block_given?
+      # For each song in songs_to_add
       #   find and store all its hits
       #   add as favorite
       #   print it if verbose
