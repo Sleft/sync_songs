@@ -2,6 +2,9 @@
 - Structure: As Ruby gems http://stackoverflow.com/questions/614309/ideal-ruby-project-structure
 - Style https://github.com/styleguide/ruby , also TomDoc forcomments.
 * TODO Plan
+- Use =yield= to ship out info for all methods that has a verbose mode.
+- The attribute =album= is not needed in SongList?
+- Add the method =clear= to SongList.
 - Allow the following example:
   #+begin_src ruby
     # Get favorites
