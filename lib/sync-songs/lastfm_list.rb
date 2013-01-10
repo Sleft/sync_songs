@@ -15,9 +15,6 @@ module SyncSongs
     #
     # username - The username of the user to authenticate
     # password - The password of the user to authenticate
-    #
-    # Raises XXXXXXXXXX if authentication
-    #   fails.
     def initialize(api_key, api_secret)
       super()
       @api_key = api_key
@@ -28,6 +25,8 @@ module SyncSongs
     #
     # username - The username of the user to authenticate
     # limit    - The maximum number of favorites to get
+    #
+    # Raises Lastfm::ApiError if the username is invalid.
     def getLoved(username, limit)
       @lastfm.user.get_loved_tracks(:user => username, :api_key => @api_key, :limit => limit).each do |s|
         add(Song.new(s['name'], s['artist']['name'], '')) # Last.fm loved track does not include an album field
@@ -42,6 +41,9 @@ module SyncSongs
     #
     # Yields the songs_to_add, i.e. the songs that are not already in
     #   this list, if a block is given.
+    #
+    # Raises Lastfm::ApiError if the username is invalid or if the
+    #   Last.fm token has not been authorized.
     def addToLoved(username, list)
       authorize
       songs_to_add = songsToAdd(list)
