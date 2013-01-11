@@ -1,7 +1,7 @@
 #+title: Plan
 
 * TODO Plan
-- Follow https://github.com/styleguide/ruby , also TomDoc for comments.
+- Follow https://github.com/bbatsov/ruby-style-guide and https://github.com/styleguide/ruby , also TomDoc for comments.
 - Implement =addToFavorites/Loved= for the =GroovesharkList= and =LastFMList=.
 - Use each on getters and setters of lists to provide verbose mode. They (should) e.g. return the added songs.
 - Allow the following example:
