@@ -43,15 +43,14 @@ module SyncSongs
     #
     # list - SongList to add from
     #
-    # Yields the songs_to_add, i.e. the songs that are not already in
-    #   this list, if a block is given.
+    # Returns the songs that was added.
     def addToFavorites(list)
       songs_to_add = songsToAdd(list)
-      yield songs_to_add if block_given?
       # For each song in songs_to_add
       #   find and store all its hits
       #   add as favorite
       #   print it if verbose
     end
+    # Return the songs that was added.
   end
 end

@@ -43,7 +43,7 @@ module SyncSongs
     #
     # list - SongList to compare this list to
     def songsToAdd(list)
-      list - @songs
+      songs_to_add = list - @songs
     end
 
     # Public: Returns a SongList with songs that are in this list but
@@ -78,3 +78,9 @@ module SyncSongs
     alias_method :length, :size
   end
 end
+
+def meth
+  %w(a b c)
+end
+
+meth { |x| puts x}
