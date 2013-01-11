@@ -28,7 +28,9 @@ module SyncSongs
     #
     # Raises Lastfm::ApiError if the username is invalid.
     def getLoved(username, limit)
-      @lastfm.user.get_loved_tracks(:user => username, :api_key => @api_key, :limit => limit).each do |s|
+      @lastfm.user.get_loved_tracks(:user => username,
+                                    :api_key => @api_key,
+                                    :limit => limit).each do |s|
         add(Song.new(s['name'], s['artist']['name']))
       end
     end
@@ -37,23 +39,27 @@ module SyncSongs
     # loved songs on Last.fm.
     #
     # username - The username of the user to authenticate
-    # list     - SongList to add from
+    # other    - SongList to add from
     #
     # Raises Lastfm::ApiError if the username is invalid or if the
     #   Last.fm token has not been authorized.
     #
     # Returns the songs that was added.
-    def addToLoved(username, list)
+    def addToLoved(username, other)
       authorize
-      songs_to_add = songsToAdd(list)
+      songs_to_add = songsToAdd(other)
       # For each song in songs_to_add
       #   find and store all its hits
       #   add as favorite
       #   print it if verbose
-    end
     # Returns the songs that was added.
+    end
+
     private
 
+    # Internal: Authorize a Last.fm session (needed for certain calls
+    # to Last.fm) asking the user to authorize and open a page in the
+    # web browser in which the user can do this.
     def authorize
       # Store token somewhere instead and only call URL if there is no
       # stored token.

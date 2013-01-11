@@ -10,7 +10,7 @@ module SyncSongs
   class GroovesharkList < SongList
 
     # Public: Constructs a Grooveshark list by logging in to
-    # Grooveshark with the specified user.
+    # Grooveshark with the given user.
     #
     # username - The username of the user to authenticate
     # password - The password of the user to authenticate
@@ -24,13 +24,7 @@ module SyncSongs
       @client = Grooveshark::Client.new
       @session = @client.session
 
-      # Try to authenticate the given user.
-      begin
-        @user = @client.login(username, password)
-      rescue Grooveshark::InvalidAuthentication => e
-        $stderr.puts "#{e.message} An authenticated user is required for getting data from Grooveshark."
-        raise
-      end
+      login(username, password)
     end
 
     # Public: Get the user's favorites from Grooveshark.
@@ -41,16 +35,32 @@ module SyncSongs
     # Public: Add the songs in the given list to the user's favorite
     # on Grooveshark.
     #
-    # list - SongList to add from
+    # other - SongList to add from
     #
     # Returns the songs that was added.
-    def addToFavorites(list)
-      songs_to_add = songsToAdd(list)
+    def addToFavorites(other)
+      songs_to_add = songsToAdd(other)
       # For each song in songs_to_add
       #   find and store all its hits
       #   add as favorite
       #   print it if verbose
+      # Return the songs that was added.
     end
-    # Return the songs that was added.
+
+    private
+
+    # Internal: Tries to login to Grooveshark with the given user.
+    #
+    # username - The username of the user to authenticate
+    # password - The password of the user to authenticate
+    #
+    # Raises Grooveshark::InvalidAuthentication if authentication
+    #   fails.
+    def login(username, password)
+      @user = @client.login(username, password)
+    rescue Grooveshark::InvalidAuthentication => e
+      $stderr.puts "#{e.message} An authenticated user is required for getting data from Grooveshark."
+      raise
+    end
   end
 end

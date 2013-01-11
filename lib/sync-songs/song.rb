@@ -19,8 +19,8 @@ module SyncSongs
       @title  = title.strip
       @artist = artist.strip
 
-      if @title.empty? or @artist.empty?
-        raise ArgumentError, 'Songs must have a non-empty title and artist'
+      if @title.empty? || @artist.empty?
+        fail ArgumentError, 'Songs must have a non-empty title and artist'
       end
     end
 
@@ -29,17 +29,17 @@ module SyncSongs
     # and are by the same artist independently of the letter case of
     # either.
     #
-    # compared_song - Song that this song is compared with.
+    # other - Song that this song is compared with.
     #
     # Returns true if this song is equal to the compared song.
-    def eql?(compared_song)
-      title.casecmp(compared_song.title) == 0 and
-        artist.casecmp(compared_song.artist) == 0
+    def eql?(other)
+      title.casecmp(other.title) == 0 &&
+        artist.casecmp(other.artist) == 0
     end
 
     # Public: Makes a hash value for this object and returns it.
     def hash
-      (title + artist).downcase.hash
+      "#{title}#{artist}".downcase.hash
     end
 
     # Public: Returns the song formatted as a string.

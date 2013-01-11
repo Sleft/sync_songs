@@ -32,8 +32,7 @@ module SyncSongs
     alias_method :<<, :add
 
     # Public: Calls _block_ once for each element in self, passing
-    # that element as a parameter. Implemented mostly for enabling the
-    # +Enumerable+ mixin.
+    # that song as a parameter.
     def each(&block)
       @songs.each(&block)
     end
@@ -41,18 +40,18 @@ module SyncSongs
     # Public: Returns songs that are in the given list but not in this
     # list, i.e. songs that are exclusive to the given list.
     #
-    # list - SongList to compare this list to
-    def songsToAdd(list)
-      songs_to_add = list - @songs
+    # other - SongList to compare this list to
+    def songsToAdd(other)
+      other - @songs
     end
 
     # Public: Returns a SongList with songs that are in this list but
     # not in the given list, i.e. songs that are exclusive to this
     # list.
     #
-    # list - SongList to compare this list to
-    def -(list)
-      @songs - list
+    # other - SongList to compare this list to
+    def -(other)
+      @songs - other
     end
 
     alias_method :difference, :-
