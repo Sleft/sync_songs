@@ -47,6 +47,30 @@ module SyncSongs
       # Return the songs that was added.
     end
 
+    # Public: Searches for favorite candidates at Grooveshark.
+    #
+    # other - SongList to search for.
+    # strict_search - True if search should be strict (default: true).
+    #
+    # Returns a hash of Grooveshark ids associated the favorite
+    #   candidates.
+    def getFavoriteCandidates(other, strict_search = true)
+      candidates = {}
+
+      other.each do |song|
+        @client.search_songs(song.to_search_term).each do |found_song|
+          other = Song.new(found_song.name, found_song.artist)
+          if strict_search
+            next unless song.eql?(other)
+          else
+            next unless song.similar?(other)
+          end
+          candidates[found_song.id] = other
+        end
+      end
+      candidates
+    end
+
     private
 
     # Internal: Tries to login to Grooveshark with the given user.
