@@ -71,7 +71,7 @@ module SyncSongs
 
       lists[2].add(@songs[6])
       lists[3].add(@songs[7])
-      assert((lists[2] - lists[3]).empty?, 'Case nor album should matter for the difference')
+      assert((lists[2] - lists[3]).empty?, 'Case should not matter for the difference')
     end
 
     def test_songsToAdd

@@ -29,7 +29,7 @@ module SyncSongs
     # Raises Lastfm::ApiError if the username is invalid.
     def getLoved(username, limit)
       @lastfm.user.get_loved_tracks(:user => username, :api_key => @api_key, :limit => limit).each do |s|
-        add(Song.new(s['name'], s['artist']['name'], '')) # Last.fm loved track does not include an album field
+        add(Song.new(s['name'], s['artist']['name']))
       end
     end
 

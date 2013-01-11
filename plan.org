@@ -1,10 +1,9 @@
-* Guidelines
-- Structure: As Ruby gems http://stackoverflow.com/questions/614309/ideal-ruby-project-structure
-- Style https://github.com/styleguide/ruby , also TomDoc forcomments.
+#+title: Plan
+
 * TODO Plan
+- Follow https://github.com/styleguide/ruby , also TomDoc for comments.
 - Implement =addToFavorites/Loved= for the =GroovesharkList= and =LastFMList=.
 - Use =yield= to ship out info for all methods that has a verbose mode. Formulate as http://stackoverflow.com/a/14260193/789593
-- The attribute =album= is not needed in SongList?
 - Allow the following example:
   #+begin_src ruby
     # Get favorites
@@ -28,7 +27,7 @@
   1. (Choose services. Default: Grooveshark and last.fm).
   2. Choose direction. Default: both ways.
   3. If verbose show fetched favorites.
-  4. Show how many favorites got from either service.
+  4. Show which favorites to sync and ask if it shall continue (option for not syncing some songs).
   5. If verbose show which favorites that are synced.
   6. Show how many favorites that are synced.
 - Use Ruby threads for getting and setting data, e.g.

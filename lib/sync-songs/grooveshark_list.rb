@@ -35,7 +35,7 @@ module SyncSongs
 
     # Public: Get the user's favorites from Grooveshark.
     def getFavorites
-      @user.favorites.each { |s| add(Song.new(s.name, s.artist, s.album)) }
+      @user.favorites.each { |s| add(Song.new(s.name, s.artist)) }
     end
 
     # Public: Add the songs in the given list to the user's favorite

@@ -19,9 +19,9 @@ module SyncSongs
       assert_not_nil(@songs[0], init_msg)
       assert_not_nil(@songs[1], init_msg)
 
-      assert_raise(ArgumentError) { @songs << Song.new(''       , 'Title', '') }
-      assert_raise(ArgumentError) { @songs << Song.new('Artist', ''     , '') }
-      assert_raise(ArgumentError) { @songs << Song.new('   '   , '    ' , '') }
+      assert_raise(ArgumentError) { @songs << Song.new(''       , 'Title') }
+      assert_raise(ArgumentError) { @songs << Song.new('Artist' , '') }
+      assert_raise(ArgumentError) { @songs << Song.new('   '    , '    ') }
     end
 
     def test_strip
@@ -30,7 +30,6 @@ module SyncSongs
       @songs.each do |song|
         assert_nil(lead_trail_ws.match(song.title), strip_msg)
         assert_nil(lead_trail_ws.match(song.artist), strip_msg)
-        assert_nil(lead_trail_ws.match(song.album), strip_msg)
       end
     end
 
@@ -45,11 +44,6 @@ module SyncSongs
       assert_equal(@songs[1].title, 'Title2', getter_msg)
       assert_not_equal(@songs[0].title, 'Title2', getter_msg)
       assert_not_equal(@songs[1].title, 'Title1', getter_msg)
-
-      assert_equal(@songs[0].album, 'Album1', getter_msg)
-      assert_equal(@songs[1].album, 'Album2', getter_msg)
-      assert_not_equal(@songs[0].album, 'Album2', getter_msg)
-      assert_not_equal(@songs[1].album, 'Album1', getter_msg)
     end
 
     def test_song_equal
@@ -66,7 +60,11 @@ module SyncSongs
       assert(!@songs[3].eql?(@songs[4]), both_fields_equality_msg)
       assert(!@songs[4].eql?(@songs[5]), both_fields_equality_msg)
 
-      assert(@songs[6].eql?(@songs[7]), 'Case nor album should matter for equality')
+      spaces_not_significant_msg = 'Spaces are not significant for equality'
+      assert(@songs[0].eql?(@songs[4]), spaces_not_significant_msg)
+      assert(@songs[1].eql?(@songs[5]), spaces_not_significant_msg)
+
+      assert(@songs[6].eql?(@songs[7]), 'Case should not matter for equality')
 
       sanity_msg = 'Assumptions about test data should be correct'
       assert_not_equal(@songs[1], @songs[2], sanity_msg)
@@ -76,9 +74,8 @@ module SyncSongs
     end
 
     def test_to_s
-      assert_equal(@songs[0].to_s, 'Title1 - Artist1 - Album1', 'to_s is in conventional form')
       assert(@songs[1].to_s.is_a?(String), 'to_s returns a String')
-      assert_equal(@songs[7].to_s, 'title - Artist', 'to_s does not include album if its empty')
+      assert_equal(@songs[0].to_s, 'Title1 - Artist1', 'to_s is in correct form')
     end
   end
 end

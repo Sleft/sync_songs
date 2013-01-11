@@ -7,7 +7,7 @@ require_relative 'song'
 module SyncSongs
   # Public: A list of songs.
   class SongList
-    include Enumerable          # For +difference+
+    include Enumerable       # Several traversal and searching methods
 
     # Public: Constructs a new list.
     #
