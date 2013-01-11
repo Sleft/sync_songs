@@ -24,17 +24,31 @@ module SyncSongs
       end
     end
 
-    # Public: Compares this song to another song and returns true if
-    # they are equal. Two songs are equal if they have the same title
-    # and are by the same artist independently of the letter case of
-    # either.
+    # Public: Returns true if this song is equal to the compared song.
     #
     # other - Song that this song is compared with.
-    #
-    # Returns true if this song is equal to the compared song.
     def eql?(other)
       title.casecmp(other.title) == 0 &&
         artist.casecmp(other.artist) == 0
+    end
+
+    # Public: Returns true if this song includes the other song.
+    #
+    # other - Song that this song is compared with.
+    def include?(other)
+      title.downcase.include?(other.title.downcase) &&
+        artist.downcase.include?(other.artist.downcase)
+    end
+
+    # Public: Returns true if this song is similar to the compared
+    # song.
+    #
+    # other - Song that this song is compared with.
+    def similar?(other)
+      # Since the other song is more probably a song from a search in
+      # a big database with many versions of every song the following
+      # test order should perform better.
+      other.include?(self) || include?(other)
     end
 
     # Public: Makes a hash value for this object and returns it.
@@ -45,6 +59,12 @@ module SyncSongs
     # Public: Returns the song formatted as a string.
     def to_s
       "#{title} - #{artist}"
+    end
+
+    # Public: Returns the song formatted as appropriately for use in a
+    # search query.
+    def to_search_term
+      "#{title.downcase} #{artist.downcase}"
     end
   end
 end
