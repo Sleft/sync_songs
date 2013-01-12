@@ -5,7 +5,6 @@
 - Implement =setFavorites/Loved= for =GroovesharkList= and =LastFMList=.
   - Separate searching for favorite candidates and setting favorites.
 - Rename attribute title of Song to name to conform with libs.
-- Add ending punctuation (.) to paramter documentation.
 - Add tests for =Song#similar?= and =Song#include?= and =Song#to_search_term=.
 
 - Use each on getters and setters of lists to provide verbose mode. They (should) e.g. return the added songs.

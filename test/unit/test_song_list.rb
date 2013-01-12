@@ -4,13 +4,12 @@ require 'test/unit'
 require_relative '../../lib/sync-songs/song_list'
 require_relative 'sample_data/sample_data'
 
-# Public: Classes for syncing lists of songs
+# Public: Classes for syncing lists of songs.
 module SyncSongs
-  # Private: Unit test for the class SongList
+  # Private: Unit test for the class SongList.
   class TestSongList < Test::Unit::TestCase
     include SampleData
 
-    # Run before each test
     def setup
       setupTestSongs
     end
@@ -86,7 +85,7 @@ module SyncSongs
     def test_inspect
       lists = [SongList.new, SongList.new(@songs[0], @songs[1])]
 
-      # There should be a working inspect method
+      # There should be a working inspect method.
       assert_nothing_raised do
         lists.each { |list| list.inspect }
       end

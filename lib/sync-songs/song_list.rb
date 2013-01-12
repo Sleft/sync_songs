@@ -3,11 +3,11 @@
 require 'set'
 require_relative 'song'
 
-# Public: Classes for syncing lists of songs
+# Public: Classes for syncing lists of songs.
 module SyncSongs
   # Public: A list of songs.
   class SongList
-    include Enumerable       # Several traversal and searching methods
+    include Enumerable      # Several traversal and searching methods.
 
     # Public: Constructs a new list.
     #
@@ -40,7 +40,7 @@ module SyncSongs
     # Public: Returns songs that are in the given list but not in this
     # list, i.e. songs that are exclusive to the given list.
     #
-    # other - SongList to compare this list to
+    # other - SongList to compare this list to.
     def songsToAdd(other)
       other - @songs
     end
@@ -49,7 +49,7 @@ module SyncSongs
     # not in the given list, i.e. songs that are exclusive to this
     # list.
     #
-    # other - SongList to compare this list to
+    # other - SongList to compare this list to.
     def -(other)
       @songs - other
     end
@@ -77,9 +77,3 @@ module SyncSongs
     alias_method :length, :size
   end
 end
-
-def meth
-  %w(a b c)
-end
-
-meth { |x| puts x}

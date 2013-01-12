@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Public: Classes for syncing lists of songs
+# Public: Classes for syncing lists of songs.
 module SyncSongs
   # Public: Stores a song.
   class Song
@@ -11,8 +11,8 @@ module SyncSongs
     # Public: Constructs a song. Leading and trailing whitespace is
     # removed as it has no semantic significance for songs.
     #
-    # title  - The title of the song
-    # artist - The artist performing the song
+    # title  - The title of the song.
+    # artist - The artist performing the song.
     #
     # Raises ArgumentError if the artist or the title is empty.
     def initialize(title, artist)

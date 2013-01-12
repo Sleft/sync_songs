@@ -5,7 +5,7 @@ require 'lastfm'
 require 'launchy'
 require_relative 'song_list'
 
-# Public: Classes for syncing lists of songs
+# Public: Classes for syncing lists of songs.
 module SyncSongs
   # Public: A list of Grooveshark songs.
   class LastfmList < SongList
@@ -13,8 +13,8 @@ module SyncSongs
     # Public: Constructs a Last.fm list by logging in to
     # Last.fm with the specified user.
     #
-    # username - The username of the user to authenticate
-    # password - The password of the user to authenticate
+    # username - The username of the user to authenticate.
+    # password - The password of the user to authenticate.
     def initialize(api_key, api_secret)
       super()
       @api_key = api_key
@@ -23,8 +23,8 @@ module SyncSongs
 
     # Public: Get the user's loved songs from Last.fm.
     #
-    # username - The username of the user to authenticate
-    # limit    - The maximum number of favorites to get
+    # username - The username of the user to authenticate.
+    # limit    - The maximum number of favorites to get.
     #
     # Raises Lastfm::ApiError if the username is invalid.
     def getLoved(username, limit)
@@ -38,8 +38,8 @@ module SyncSongs
     # Public: Add the songs in the given list to the given user's
     # loved songs on Last.fm.
     #
-    # username - The username of the user to authenticate
-    # other    - SongList to add from
+    # username - The username of the user to authenticate.
+    # other    - SongList to add from.
     #
     # Raises Lastfm::ApiError if the username is invalid or if the
     #   Last.fm token has not been authorized.

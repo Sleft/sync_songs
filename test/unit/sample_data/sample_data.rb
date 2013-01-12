@@ -2,9 +2,9 @@
 
 require_relative '../../../lib/sync-songs/song'
 
-# Public: Classes for syncing lists of songs
+# Public: Classes for syncing lists of songs.
 module SyncSongs
-  # Internal: Data for tests
+  # Internal: Data for tests.
   module SampleData
     def setupTestSongs
       @songs = [Song.new('Title1  '    , '  Artist1'),   # 0
