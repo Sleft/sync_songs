@@ -1,3 +1,4 @@
+# -*- mode:org; indent-tabs-mode:nil; tab-width:2 -*-
 #+title: Plan
 
 * TODO Plan
