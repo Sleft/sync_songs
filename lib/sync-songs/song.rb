@@ -4,23 +4,23 @@
 module SyncSongs
   # Public: Stores a song.
   class Song
-    # Public: Returns the title of the song and the artist performing the
+    # Public: Returns the name of the song and the artist performing the
     # song.
-    attr_reader :title, :artist
+    attr_reader :name, :artist
 
     # Public: Constructs a song. Leading and trailing whitespace is
     # removed as it has no semantic significance for songs.
     #
-    # title  - The title of the song.
+    # name   - The name of the song.
     # artist - The artist performing the song.
     #
-    # Raises ArgumentError if the artist or the title is empty.
-    def initialize(title, artist)
-      @title  = title.strip
+    # Raises ArgumentError if the artist or the name is empty.
+    def initialize(name, artist)
+      @name  = name.strip
       @artist = artist.strip
 
-      if @title.empty? || @artist.empty?
-        fail ArgumentError, 'Songs must have a non-empty title and artist'
+      if @name.empty? || @artist.empty?
+        fail ArgumentError, 'Songs must have a non-empty name and artist'
       end
     end
 
@@ -28,7 +28,7 @@ module SyncSongs
     #
     # other - Song that this song is compared with.
     def eql?(other)
-      title.casecmp(other.title) == 0 &&
+      name.casecmp(other.name) == 0 &&
         artist.casecmp(other.artist) == 0
     end
 
@@ -36,7 +36,7 @@ module SyncSongs
     #
     # other - Song that this song is compared with.
     def include?(other)
-      title.downcase.include?(other.title.downcase) &&
+      name.downcase.include?(other.name.downcase) &&
         artist.downcase.include?(other.artist.downcase)
     end
 
@@ -53,18 +53,18 @@ module SyncSongs
 
     # Public: Makes a hash value for this object and returns it.
     def hash
-      "#{title}#{artist}".downcase.hash
+      "#{name}#{artist}".downcase.hash
     end
 
     # Public: Returns the song formatted as a string.
     def to_s
-      "#{title} - #{artist}"
+      "#{name} - #{artist}"
     end
 
     # Public: Returns the song formatted as appropriately for use in a
     # search query.
     def to_search_term
-      "#{title.downcase} #{artist.downcase}"
+      "#{name.downcase} #{artist.downcase}"
     end
   end
 end

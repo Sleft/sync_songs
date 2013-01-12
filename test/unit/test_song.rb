@@ -18,7 +18,7 @@ module SyncSongs
       assert_not_nil(@songs[0], init_msg)
       assert_not_nil(@songs[1], init_msg)
 
-      assert_raise(ArgumentError) { @songs << Song.new(''       , 'Title') }
+      assert_raise(ArgumentError) { @songs << Song.new(''       , 'Name') }
       assert_raise(ArgumentError) { @songs << Song.new('Artist' , '') }
       assert_raise(ArgumentError) { @songs << Song.new('   '    , '    ') }
     end
@@ -27,7 +27,7 @@ module SyncSongs
       lead_trail_ws = /(^\s+)|(\s+$)/
       strip_msg = 'Songs should be stripped from leading and trailing whitespace'
       @songs.each do |song|
-        assert_nil(lead_trail_ws.match(song.title), strip_msg)
+        assert_nil(lead_trail_ws.match(song.name), strip_msg)
         assert_nil(lead_trail_ws.match(song.artist), strip_msg)
       end
     end
@@ -39,10 +39,10 @@ module SyncSongs
       assert_not_equal(@songs[0].artist, 'Artist2', getter_msg)
       assert_not_equal(@songs[1].artist, 'Artist1', getter_msg)
 
-      assert_equal(@songs[0].title, 'Title1', getter_msg)
-      assert_equal(@songs[1].title, 'Title2', getter_msg)
-      assert_not_equal(@songs[0].title, 'Title2', getter_msg)
-      assert_not_equal(@songs[1].title, 'Title1', getter_msg)
+      assert_equal(@songs[0].name, 'Name1', getter_msg)
+      assert_equal(@songs[1].name, 'Name2', getter_msg)
+      assert_not_equal(@songs[0].name, 'Name2', getter_msg)
+      assert_not_equal(@songs[1].name, 'Name1', getter_msg)
     end
 
     def test_song_equal
@@ -53,7 +53,7 @@ module SyncSongs
       assert(!@songs[0].eql?(@songs[1]) && !@songs[1].eql?(@songs[0]),
              'Non-equality for songs is symmetrical')
 
-      both_fields_equality_msg = 'Only the fields title and artist affect equality'
+      both_fields_equality_msg = 'Only the fields name and artist affect equality'
       assert(!@songs[1].eql?(@songs[2]), both_fields_equality_msg)
       assert(!@songs[2].eql?(@songs[3]), both_fields_equality_msg)
       assert(!@songs[3].eql?(@songs[4]), both_fields_equality_msg)
@@ -74,7 +74,7 @@ module SyncSongs
 
     def test_to_s
       assert(@songs[1].to_s.is_a?(String), 'to_s returns a String')
-      assert_equal(@songs[0].to_s, 'Title1 - Artist1', 'to_s is in correct form')
+      assert_equal(@songs[0].to_s, 'Name1 - Artist1', 'to_s is in correct form')
     end
   end
 end

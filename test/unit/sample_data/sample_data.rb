@@ -7,14 +7,14 @@ module SyncSongs
   # Internal: Data for tests.
   module SampleData
     def setupTestSongs
-      @songs = [Song.new('Title1  '    , '  Artist1'),   # 0
-                Song.new(' Title2 '    , ' Artist2 '),   # 1
-                Song.new('  Title2    ', '   Artist1 '), # 2
-                Song.new('Title1'      , 'Artist2'),     # 3
-                Song.new(' Title1   '  , 'Artist1'),     # 4
-                Song.new('  Title2 '   , 'Artist2'),     # 5
-                Song.new('Title'       , '     artist'), # 6
-                Song.new('      title ', 'Artist     ')] # 7
+      @songs = [Song.new('Name1  '    , '  Artist1'),   # 0
+                Song.new(' Name2 '    , ' Artist2 '),   # 1
+                Song.new('  Name2    ', '   Artist1 '), # 2
+                Song.new('Name1'      , 'Artist2'),     # 3
+                Song.new(' Name1   '  , 'Artist1'),     # 4
+                Song.new('  Name2 '   , 'Artist2'),     # 5
+                Song.new('Name'       , '     artist'), # 6
+                Song.new('      name ', 'Artist     ')] # 7
     end
   end
 end
