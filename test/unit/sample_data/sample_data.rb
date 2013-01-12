@@ -4,7 +4,8 @@ require_relative '../../../lib/sync-songs/song'
 
 # Public: Classes for syncing lists of songs.
 module SyncSongs
-  # Internal: Data for tests.
+  # Internal: Data for tests. DO NOT CHANGE unless you want to change
+  # the meaning of many tests.
   module SampleData
     def setupTestSongs
       @songs = [Song.new('Name1  '    , '  Artist1'),   # 0
