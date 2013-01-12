@@ -45,7 +45,7 @@ module SyncSongs
       assert_not_equal(@songs[1].name, 'Name1', getter_msg)
     end
 
-    def test_song_equal
+    def test_eql?
       identity_msg = 'Songs should be self-identical'
       assert(@songs[0].eql?(@songs[0]), identity_msg)
       assert(@songs[1].eql?(@songs[1]), identity_msg)
@@ -72,9 +72,32 @@ module SyncSongs
       assert_not_equal(@songs[4], @songs[5], sanity_msg)
     end
 
+    def test_include?
+      identical_msg = 'Identical songs includes each others'
+      assert(@songs[0].include?(@songs[4]), identical_msg)
+      assert(@songs[4].include?(@songs[0]), identical_msg)
+      assert(@songs[1].include?(@songs[5]), identical_msg)      
+      assert(@songs[5].include?(@songs[1]), identical_msg)
+
+      case_msg = 'include? works as expected and is not sensitive to case'
+      assert(@songs[2].include?(@songs[6]), identical_msg)
+      assert(@songs[2].include?(@songs[7]), identical_msg)
+    end
+
+    def test_similar?
+      similar_msg = 'similar? is like reflexive include'
+      assert(@songs[0].similar?(@songs[6]), similar_msg)
+      assert(@songs[6].similar?(@songs[0]), similar_msg)
+      assert(@songs[3].similar?(@songs[7]), similar_msg)
+      assert(@songs[7].similar?(@songs[3]), similar_msg)
+    end
+
+    def to_search_term
+      assert_equal(@songs[0].to_search_term, 'name1 artist1', 'Search term is in correct form')
+    end
+
     def test_to_s
-      assert(@songs[1].to_s.is_a?(String), 'to_s returns a String')
-      assert_equal(@songs[0].to_s, 'Name1 - Artist1', 'to_s is in correct form')
+      assert_equal(@songs[0].to_s, 'Name1 - Artist1', 'String is in correct form')
     end
   end
 end

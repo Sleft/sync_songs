@@ -4,8 +4,8 @@
 - Follow https://github.com/bbatsov/ruby-style-guide and https://github.com/styleguide/ruby , also TomDoc for comments.
 - Implement =setFavorites/Loved= for =GroovesharkList= and =LastFMList=.
   - Separate searching for favorite candidates and setting favorites.
-- Add tests for =Song#similar?= and =Song#include?= and =Song#to_search_term=.
 - Use each on getters and setters of lists to provide verbose mode. They (should) e.g. return the added songs.
+- Add examples to documentation as in Tomdoc specification?
 - Allow the following example:
   #+begin_src ruby
     # Get favorites
