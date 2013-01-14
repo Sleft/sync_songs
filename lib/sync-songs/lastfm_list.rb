@@ -38,26 +38,25 @@ module SyncSongs
     # Public: Add the songs in the given list to the given user's
     # loved songs on Last.fm.
     #
-    # username - The username of the user to authenticate.
-    # other    - SongList to add from.
+    # other - An array of songs to add from.
     #
-    # Raises Lastfm::ApiError if the username is invalid or if the
-    #   Last.fm token has not been authorized.
+    # Raises Lastfm::ApiError if the username if the Last.fm token has
+    #   not been authorized or if the song is not recognized.
     #
-    # Returns the songs that was added.
-    def addToLoved(username, other)
+    # Returns an array of the songs that was added.
+    def addToLoved(other)
       authorize
-      songs_to_add = exclusiveTo(other)
-      # For each song in songs_to_add
-      #   find and store all its hits
-      #   add as favorite
-      #   print it if verbose
-      # Returns the songs that was added.
+
+      songsAdded = []
+
+      other.each { |song| songsAdded << song if @lastfm.track.love(track: song.name, artist: song.artist) }
+
+      songsAdded
     end
 
     # Public: Searches for loved candidates at Last.fm.
     #
-    # other - SongList to search for.
+    # other         - SongList to search for.
     # strict_search - True if search should be strict (default: true).
     #
     # Returns an array of loved candidates.
@@ -67,18 +66,12 @@ module SyncSongs
       # Search for songs that are not already favorites and add them
       # as candidates if they are sufficiently similar.
       exclusiveTo(other).each do |song|
-        # The optional parameter artist for track.search does does not
-        # seem to work not seem to work so it is not used.
-        search = @lastfm.track.search(track: song.to_search_term,
-                                      limit: limit)['results']
-     
-        found_songs = search['trackmatches']['track']
-        # The structure of search results is for some reason different
-        # if there is only one match. The following hacks around that
-        # fact. https://github.com/youpy/ruby-lastfm/issues/46
-        found_songs = [found_songs] if Integer(search['totalResults']) == 1
+        # The optional parameter artist for track.search does not seem
+        # to work so it is not used.
+        found_songs = @lastfm.track.search(track: song.to_search_term,
+                                      limit: limit)['results']['trackmatches']['track'].compact
 
-        if found_songs
+        unless found_songs.empty?
           found_songs.each do |found_song|
             other = Song.new(found_song['name'], found_song['artist'])
             if strict_search
