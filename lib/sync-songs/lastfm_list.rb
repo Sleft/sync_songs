@@ -47,7 +47,7 @@ module SyncSongs
     # Returns the songs that was added.
     def addToLoved(username, other)
       authorize
-      songs_to_add = songsToAdd(other)
+      songs_to_add = exclusiveTo(other)
       # For each song in songs_to_add
       #   find and store all its hits
       #   add as favorite
@@ -66,7 +66,7 @@ module SyncSongs
 
       # Search for songs that are not already favorites and add them
       # as candidates if they are sufficiently similar.
-      songsToAdd(other).each do |song|
+      exclusiveTo(other).each do |song|
         # The optional parameter artist for track.search does does not
         # seem to work not seem to work so it is not used.
         search = @lastfm.track.search(track: song.to_search_term,

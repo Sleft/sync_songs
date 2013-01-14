@@ -41,7 +41,7 @@ module SyncSongs
     # list, i.e. songs that are exclusive to the given list.
     #
     # other - SongList to compare this list to.
-    def songsToAdd(other)
+    def exclusiveTo(other)
       other - @songs
     end
 

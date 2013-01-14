@@ -73,13 +73,13 @@ module SyncSongs
       assert((lists[2] - lists[3]).empty?, 'Case should not matter for the difference')
     end
 
-    def test_songsToAdd
+    def test_exclusiveTo
       lists = [SongList.new(@songs[0], @songs[1]),
                SongList.new(@songs[1], @songs[2])]
 
-      songsToAdd_msg = 'The songs to add are those that are in the given list but not in this list'
-      assert(lists[0].songsToAdd(lists[1]).first.eql?(@songs[2]), songsToAdd_msg)
-      assert(lists[1].songsToAdd(lists[0]).first.eql?(@songs[0]), songsToAdd_msg)
+      exclusiveTo_msg = 'The songs to add are those that are in the given list but not in this list'
+      assert(lists[0].exclusiveTo(lists[1]).first.eql?(@songs[2]), exclusiveTo_msg)
+      assert(lists[1].exclusiveTo(lists[0]).first.eql?(@songs[0]), exclusiveTo_msg)
     end
 
     def test_inspect
