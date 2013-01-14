@@ -64,7 +64,9 @@ module SyncSongs
     def getLovedCandidates(other, limit, strict_search = true)
       candidates = []
 
-      other.each do |song|
+      # Search for songs that are not already favorites and add them
+      # as candidates if they are sufficiently similar.
+      songsToAdd(other).each do |song|
         # The optional parameter artist for track.search does does not
         # seem to work not seem to work so it is not used.
         search = @lastfm.track.search(track: song.to_search_term,
