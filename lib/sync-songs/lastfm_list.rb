@@ -28,9 +28,9 @@ module SyncSongs
     #
     # Raises Lastfm::ApiError if the username is invalid.
     def getLoved(username, limit)
-      @lastfm.user.get_loved_tracks(:user => username,
-                                    :api_key => @api_key,
-                                    :limit => limit).each do |s|
+      @lastfm.user.get_loved_tracks(user: username,
+                                    api_key: @api_key,
+                                    limit: limit).each do |s|
         add(Song.new(s['name'], s['artist']['name']))
       end
     end
@@ -55,6 +55,31 @@ module SyncSongs
     # Returns the songs that was added.
     end
 
+    # Public: Searches for loved candidates at Last.fm.
+    #
+    # other - SongList to search for.
+    # strict_search - True if search should be strict (default: true).
+    #
+    # Returns a hash of Last.fm ids associated with loved candidates.
+    def getLovedCandidates(other, strict_search = true)
+      candidates = {}
+
+      other.each do |song|
+        @lastfm.track.search(track: song.name.downcase,
+                             artist: song.artist.downcase).each do |found_song|
+          p found_song
+          # other = Song.new(found_song.name, found_song.artist)
+          # if strict_search
+          #   next unless song.eql?(other)
+          # else
+          #   next unless song.similar?(other)
+          # end
+          # candidates[found_song.id] = other
+        end
+      end
+      candidates
+    end
+
     private
 
     # Internal: Authorize a Last.fm session (needed for certain calls
@@ -68,7 +93,7 @@ module SyncSongs
       print 'A page asking for authorization of this tool with Last.fm should be open in your web browser. You need to approve it before proceeding. Continue? (y/n) '
       exit unless gets.strip.casecmp('y') == 0
 
-      @lastfm.session = @lastfm.auth.get_session(:token => token)['key']
+      @lastfm.session = @lastfm.auth.get_session(token: token)['key']
     end
   end
 end

@@ -52,7 +52,7 @@ module SyncSongs
     # other - SongList to search for.
     # strict_search - True if search should be strict (default: true).
     #
-    # Returns a hash of Grooveshark ids associated the favorite
+    # Returns a hash of Grooveshark ids associated with favorite
     #   candidates.
     def getFavoriteCandidates(other, strict_search = true)
       candidates = {}
