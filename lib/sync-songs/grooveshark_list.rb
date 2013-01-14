@@ -57,7 +57,9 @@ module SyncSongs
     def getFavoriteCandidates(other, strict_search = true)
       candidates = {}
 
-      other.each do |song|
+      # Search for songs that are not already loved and add them as
+      # candidates if they are sufficiently similar.
+      songsToAdd(other).each do |song|
         @client.search_songs(song.to_search_term).each do |found_song|
           other = Song.new(found_song.name, found_song.artist)
           if strict_search

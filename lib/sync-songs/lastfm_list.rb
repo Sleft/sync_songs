@@ -52,7 +52,7 @@ module SyncSongs
       #   find and store all its hits
       #   add as favorite
       #   print it if verbose
-    # Returns the songs that was added.
+      # Returns the songs that was added.
     end
 
     # Public: Searches for loved candidates at Last.fm.
@@ -60,21 +60,32 @@ module SyncSongs
     # other - SongList to search for.
     # strict_search - True if search should be strict (default: true).
     #
-    # Returns a hash of Last.fm ids associated with loved candidates.
-    def getLovedCandidates(other, strict_search = true)
-      candidates = {}
+    # Returns an array of loved candidates.
+    def getLovedCandidates(other, limit, strict_search = true)
+      candidates = []
 
       other.each do |song|
-        @lastfm.track.search(track: song.name.downcase,
-                             artist: song.artist.downcase).each do |found_song|
-          p found_song
-          # other = Song.new(found_song.name, found_song.artist)
-          # if strict_search
-          #   next unless song.eql?(other)
-          # else
-          #   next unless song.similar?(other)
-          # end
-          # candidates[found_song.id] = other
+        # The optional parameter artist for track.search does does not
+        # seem to work not seem to work so it is not used.
+        search = @lastfm.track.search(track: song.to_search_term,
+                                      limit: limit)['results']
+     
+        found_songs = search['trackmatches']['track']
+        # The structure of search results is for some reason different
+        # if there is only one match. The following hacks around that
+        # fact. https://github.com/youpy/ruby-lastfm/issues/46
+        found_songs = [found_songs] if Integer(search['totalResults']) == 1
+
+        if found_songs
+          found_songs.each do |found_song|
+            other = Song.new(found_song['name'], found_song['artist'])
+            if strict_search
+              next unless song.eql?(other)
+            else
+              next unless song.similar?(other)
+            end
+            candidates << other
+          end
         end
       end
       candidates
