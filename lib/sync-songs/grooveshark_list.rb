@@ -35,16 +35,15 @@ module SyncSongs
     # Public: Add the songs in the given list to the user's favorite
     # on Grooveshark.
     #
-    # other - SongList to add from.
+    # other - A hash of Grooveshark ids and songs to add.
     #
     # Returns the songs that was added.
     def addToFavorites(other)
-      songs_to_add = exclusiveTo(other)
-      # For each song in songs_to_add
-      #   find and store all its hits
-      #   add as favorite
-      #   print it if verbose
-      # Return the songs that was added.
+      songsAdded = []
+
+      other.each { |id, song| songsAdded << song if @user.add_favorite(id) }
+
+      songsAdded
     end
 
     # Public: Searches for favorite candidates at Grooveshark.
@@ -67,7 +66,7 @@ module SyncSongs
           else
             next unless song.similar?(other)
           end
-          candidates[found_song.id] = other
+          candidates[Integer(found_song.id)] = other
         end
       end
       candidates
