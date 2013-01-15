@@ -43,9 +43,10 @@ module SyncSongs
     end
 
     def test_add?
+      addq_msg = 'add? works as expected'
       list = SongList.new
-      assert_equal(list.add?(@songs[0]), list)
-      assert_equal(list.add?(@songs[0]), nil)
+      assert_equal(list.add?(@songs[0]), list, addq_msg)
+      assert_equal(list.add?(@songs[0]), nil, addq_msg)
     end
 
     def test_difference
@@ -110,7 +111,15 @@ module SyncSongs
       list = SongList.new
       @songs.each { |song| list << song }
 
-      assert(list.clear.empty?, "List should be empty after being cleared")
+      assert(list.clear.empty?, 'List should be empty after being cleared')
+    end
+
+    def test_to_a
+      to_a_msg = 'to_a works as expected'
+      list = SongList.new(@songs[0], @songs[1])
+      list = list.to_a
+      assert_equal(list.class, Array, to_a_msg)
+      assert_equal(list[0], @songs[0], to_a_msg)
     end
   end
 end

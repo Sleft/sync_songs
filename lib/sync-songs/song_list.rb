@@ -83,6 +83,11 @@ module SyncSongs
       @songs.size
     end
 
+    # Public: Converts the list to an array.
+    def to_a
+      @songs.to_a
+    end
+
     alias_method :length, :size
   end
 end
