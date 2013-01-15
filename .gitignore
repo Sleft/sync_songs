@@ -1,3 +1,4 @@
 # Ignore editor backups
 *~
-test_sensitive.rb
+test_lastfm_list.rb
+test_grooveshark_list.rb
