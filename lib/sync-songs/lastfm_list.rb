@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-require 'rubygems'
 require 'lastfm'
 require 'launchy'
 require_relative 'song_list'

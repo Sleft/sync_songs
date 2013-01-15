@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-require 'rubygems'
 require 'grooveshark'
 require_relative 'song_list'
 
