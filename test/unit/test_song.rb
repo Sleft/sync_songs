@@ -102,8 +102,8 @@ module SyncSongs
       assert(@songs[5].include?(@songs[1]), identical_msg)
 
       case_msg = 'include? works as expected and is not sensitive to case'
-      assert(@songs[2].include?(@songs[6]), identical_msg)
-      assert(@songs[2].include?(@songs[7]), identical_msg)
+      assert(@songs[2].include?(@songs[6]), case_msg)
+      assert(@songs[2].include?(@songs[7]), case_msg)
     end
 
     def test_similar?
