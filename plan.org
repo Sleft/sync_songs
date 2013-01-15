@@ -7,6 +7,10 @@
   - Separate searching for favorite candidates and setting favorites.
 - Use each on getters and setters of lists to provide verbose mode. They (should) e.g. return the added songs.
 - Add examples to documentation as in Tomdoc specification?
+- Use Module#ancestor and methods and respond_to for deciding which lists to sync between.
+- Define <=> in Song and mixin Comparable. Implement in terms of casecmp of strings and implement eql? in terms of <=>. Makes sort possible in SongList?
+- What status should be sent to exit in LastfmList#authorize?
+- Use YAML.dump to store Last.fm token?
 - Allow the following example:
   #+begin_src ruby
     # Get favorites
