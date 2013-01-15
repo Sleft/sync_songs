@@ -36,7 +36,7 @@ module SyncSongs
     #
     # other - A hash of Grooveshark ids and songs to add.
     #
-    # Returns the songs that was added.
+    # Returns an array of the songs that was added.
     def addToFavorites(other)
       songsAdded = []
 
