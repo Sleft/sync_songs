@@ -18,18 +18,22 @@ module SyncSongs
       songs.each { |song| @songs << song } if songs
     end
 
-    # Public: Adds a song to the list.
-    #
-    # song - The song to add to the list.
-    #
-    # Returns the song list to enable chaining of calls to this
-    #   method.
+    # Public: Adds the given song to the list and returns self.
     def add(song)
       @songs.add(song)
       self
     end
 
     alias_method :<<, :add
+
+    # Public: Adds the given song to the list and returns self or nil
+    # if the song is already in the list.
+    #
+    # Returns the song list to enable chaining of calls to this
+    #   method.
+    def add?(song)
+      include?(song) ? nil : add(song)
+    end
 
     # Public: Calls _block_ once for each element in self, passing
     # that song as a parameter.

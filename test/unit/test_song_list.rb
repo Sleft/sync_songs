@@ -32,6 +32,7 @@ module SyncSongs
     end
 
     def test_add
+      # add is used by the constructor of SongList
       lists = [SongList.new(@songs[0]), SongList.new(@songs[0])]
 
       add_msg = 'A song list should not manipulate its content'
@@ -39,6 +40,12 @@ module SyncSongs
       assert_equal(@songs[0], lists[1].first, add_msg)
       assert(lists[0].member?(@songs[0]), add_msg)
       assert(lists[1].member?(@songs[0]), add_msg)
+    end
+
+    def test_add?
+      list = SongList.new
+      assert_equal(list.add?(@songs[0]), list)
+      assert_equal(list.add?(@songs[0]), nil)
     end
 
     def test_difference
