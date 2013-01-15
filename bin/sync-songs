@@ -1,0 +1,42 @@
+#!/usr/bin/env ruby
+# -*- coding: utf-8; mode: ruby -*-
+
+require 'thor'
+require_relative '../lib/sync-songs.rb'
+
+# Public: Classes for syncing sets of songs.
+module SyncSongs
+  class Cli < Thor
+    class_option :verbose, :type => :boolean, :aliases => '-v'
+
+    desc 'sync', 'Sync sets of songs'
+    long_desc <<-LONGDESC
+    WRITE!!!
+   LONGDESC
+    
+    method_option :services, :type => :array, :required => true, :default => ['grooveshark', 'lastfm']
+    method_option :type, :type => :string, :required => true, :default => 'favorites'
+    def sync
+      # Ask for direction of sync
+      # For each service initialize
+      # Threads: For each service get data
+      #          Save compare data
+      # Ask for each missing song if it shall be synced (y/n)
+      # Threads (if both directions): Set data
+
+      # puts ObjectSpace.each_object(Class).select { |klass| klass < SongSet }
+    end
+
+    method_option :services, :type => :array, :required => true, :default => ['grooveshark', 'lastfm']
+    method_option :type, :type => :string, :required => true, :default => 'favorites'
+    desc 'diff', 'Diff sets of songs'
+    long_desc <<-LONGDESC
+    WRITE!!!
+   LONGDESC
+    def diff
+      
+    end
+  end
+  
+  Cli.start(ARGV)
+end

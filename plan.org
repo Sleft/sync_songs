@@ -3,8 +3,6 @@
 
 * TODO Plan
 - Follow https://github.com/bbatsov/ruby-style-guide and https://github.com/styleguide/ruby , also TomDoc for comments.
-- Implement =setFavorites/Loved= for =GroovesharkSet= and =LastFMSet=.
-  - Separate searching for favorite candidates and setting favorites.
 - Use each on getters and setters of sets to provide verbose mode. They (should) e.g. return the added songs.
 - Add examples to documentation as in Tomdoc specification?
 - Use Module#ancestor and methods and respond_to for deciding which sets to sync between.
@@ -79,6 +77,8 @@
   - sudo gem install grooveshark
   - sudo gem install lastfm
   - sudo gem install launchy
+  - sudo gem install thor
+  - sudo gem install highline
 ** README
 - Reference to docs
 - Copyright and license
