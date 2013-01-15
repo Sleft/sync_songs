@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Public: Classes for syncing lists of songs.
+# Public: Classes for syncing sets of songs.
 module SyncSongs
   # Public: Stores a song.
   class Song

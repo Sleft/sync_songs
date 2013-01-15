@@ -3,10 +3,10 @@
 require 'set'
 require_relative 'song'
 
-# Public: Classes for syncing lists of songs.
+# Public: Classes for syncing sets of songs.
 module SyncSongs
-  # Public: A list of songs.
-  class SongList
+  # Public: A set of songs.
+  class SongSet
     include Enumerable      # Several traversal and searching methods.
 
     # Public: Constructs a new list.

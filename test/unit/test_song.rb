@@ -3,7 +3,7 @@
 require 'test/unit'
 require_relative 'sample_data/sample_data'
 
-# Public: Classes for syncing lists of songs.
+# Public: Classes for syncing sets of songs.
 module SyncSongs
   # Internal: Unit test for the class Song.
   class TestSong < Test::Unit::TestCase

@@ -2,7 +2,7 @@
 
 require_relative '../../../lib/sync-songs/song'
 
-# Public: Classes for syncing lists of songs.
+# Public: Classes for syncing sets of songs.
 module SyncSongs
   # Internal: Data for tests. DO NOT CHANGE unless you want to change
   # the meaning of many tests.

@@ -2,14 +2,14 @@
 
 require 'lastfm'
 require 'launchy'
-require_relative 'song_list'
+require_relative 'song_set'
 
-# Public: Classes for syncing lists of songs.
+# Public: Classes for syncing sets of songs.
 module SyncSongs
-  # Public: A list of Grooveshark songs.
-  class LastfmList < SongList
+  # Public: A set of Grooveshark songs.
+  class LastfmSet < SongSet
 
-    # Public: Constructs a Last.fm list by logging in to
+    # Public: Constructs a Last.fm set by logging in to
     # Last.fm with the specified user.
     #
     # username - The username of the user to authenticate.
@@ -34,7 +34,7 @@ module SyncSongs
       end
     end
 
-    # Public: Add the songs in the given list to the given user's
+    # Public: Add the songs in the given set to the given user's
     # loved songs on Last.fm.
     #
     # other - An array of songs to add from.
@@ -55,7 +55,7 @@ module SyncSongs
 
     # Public: Searches for loved candidates at Last.fm.
     #
-    # other         - SongList to search for.
+    # other         - SongSet to search for.
     # strict_search - True if search should be strict (default: true).
     #
     # Returns an array of loved candidates.

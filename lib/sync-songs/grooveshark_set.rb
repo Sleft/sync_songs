@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
 require 'grooveshark'
-require_relative 'song_list'
+require_relative 'song_set'
 
-# Public: Classes for syncing lists of songs.
+# Public: Classes for syncing sets of songs.
 module SyncSongs
-  # Public: A list of Grooveshark songs.
-  class GroovesharkList < SongList
+  # Public: A set of Grooveshark songs.
+  class GroovesharkSet < SongSet
 
-    # Public: Constructs a Grooveshark list by logging in to
+    # Public: Constructs a Grooveshark set by logging in to
     # Grooveshark with the given user.
     #
     # username - The username of the user to authenticate.
@@ -31,7 +31,7 @@ module SyncSongs
       @user.favorites.each { |s| add(Song.new(s.name, s.artist)) }
     end
 
-    # Public: Add the songs in the given list to the user's favorite
+    # Public: Add the songs in the given set to the user's favorite
     # on Grooveshark.
     #
     # other - A hash of Grooveshark ids and songs to add.
@@ -47,7 +47,7 @@ module SyncSongs
 
     # Public: Searches for favorite candidates at Grooveshark.
     #
-    # other - SongList to search for.
+    # other - SongSet to search for.
     # strict_search - True if search should be strict (default: true).
     #
     # Returns a hash of Grooveshark ids associated with favorite
