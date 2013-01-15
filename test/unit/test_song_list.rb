@@ -73,6 +73,14 @@ module SyncSongs
       assert((lists[2] - lists[3]).empty?, 'Case should not matter for the difference')
     end
 
+    def test_empty?
+      empty_msg = 'empty? works as expected'
+      list = SongList.new()
+      assert(list.empty?, empty_msg)
+      list << @songs[0]
+      assert(!list.empty?, empty_msg)
+    end
+
     def test_exclusiveTo
       lists = [SongList.new(@songs[0], @songs[1]),
                SongList.new(@songs[1], @songs[2])]

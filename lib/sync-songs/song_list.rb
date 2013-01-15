@@ -63,6 +63,11 @@ module SyncSongs
       @songs.clear
     end
 
+    # Public: Returns true if the list contains no song.
+    def empty?
+      @songs.empty?
+    end
+
     # Public: Returns a string containing a human-readable
     # representation of the set.
     def inspect
