@@ -45,6 +45,28 @@ module SyncSongs
       assert_not_equal(@songs[1].name, 'Name1', getter_msg)
     end
 
+    def test_spaceship
+      spaceship_msg = 'The spaceship works as expected'
+      assert_equal(@songs[0] <=> @songs[1], -1, spaceship_msg)
+      assert_equal(@songs[1] <=> @songs[0], 1, spaceship_msg)
+      assert_equal(@songs[1] <=> @songs[2], 1, spaceship_msg)
+      assert_equal(@songs[4] <=> @songs[3], -1, spaceship_msg)
+      assert_equal(@songs[0] <=> @songs[4], 0, spaceship_msg)
+      assert_equal(@songs[1] <=> @songs[5], 0, spaceship_msg)
+      assert_equal(@songs[6] <=> @songs[7], 0, spaceship_msg)
+    end
+
+    def test_comparison_operators
+      comparison_msg = 'Comparison operators works as expected'
+      assert(@songs[0] < @songs[1], comparison_msg)
+      assert(@songs[1] > @songs[0], comparison_msg)
+      assert(@songs[1] > @songs[2], comparison_msg)
+      assert(@songs[0] < @songs[3], comparison_msg)
+      assert(@songs[4] <= @songs[5], comparison_msg)
+      assert(@songs[6] <= @songs[7], comparison_msg)
+      assert(@songs[6] == @songs[7], comparison_msg)
+    end
+
     def test_eql?
       identity_msg = 'Songs should be self-identical'
       assert(@songs[0].eql?(@songs[0]), identity_msg)
@@ -76,7 +98,7 @@ module SyncSongs
       identical_msg = 'Identical songs includes each others'
       assert(@songs[0].include?(@songs[4]), identical_msg)
       assert(@songs[4].include?(@songs[0]), identical_msg)
-      assert(@songs[1].include?(@songs[5]), identical_msg)      
+      assert(@songs[1].include?(@songs[5]), identical_msg)
       assert(@songs[5].include?(@songs[1]), identical_msg)
 
       case_msg = 'include? works as expected and is not sensitive to case'
