@@ -22,7 +22,7 @@ module SyncSongs
 
       services.combination(2) do |c|
         direction = ask("#{c.first} <=> #{c.last} ") do |q|
-          q.responses[:not_valid] = 'Enter < for to left, > for to right, = for both directions or q to quit'
+          q.responses[:not_valid] = 'Enter < for to left, > for to right, = for both directions or q to quit.'
           q.default = '='
           q.validate = /\A[<>=#{QUIT_CHARACTER}]\Z/i
         end
