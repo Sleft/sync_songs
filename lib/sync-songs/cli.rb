@@ -5,8 +5,15 @@ require 'highline/import'
 # Public: Classes for syncing sets of songs.
 module SyncSongs
   # Public: Command-line interface
-  module CLI
-    QUIT_CHARACTER = 'q'
+  class CLI
+    @@QUIT_CHARACTER = 'q'
+
+    # Public: Constructs a command-line interface.
+    #
+    # verbose - True if interface is verbose (default: nil).
+    def initialize(verbose = nil)
+      @verbose = verbose
+    end
 
     # Public: Asks for directions to write in.
     #
@@ -14,33 +21,37 @@ module SyncSongs
     #
     # Returns an array of structs, SyncDirection, of two services and
     #   the direction to sync in.
-    def self.getDirections(services)
-      Struct.new("SyncDirection", :service1, :service2, :direction)
+    def getDirections(services)
+      Struct.new("SyncDirection", :service1, :direction, :service2)
       syncDirections = []
 
       say 'Enter directions to write in.'
 
       services.combination(2) do |c|
-        direction = ask("#{c.first} <=> #{c.last} ") do |q|
+        direction_msg = [c.first, '<=>', c.last]
+        direction = ask("#{direction_msg.join(' ')} ") do |q|
           q.responses[:not_valid] = 'Enter < for to left, > for to right, = for both directions or q to quit.'
           q.default = '='
-          q.validate = /\A[<>=#{QUIT_CHARACTER}]\Z/i
+          q.validate = /\A[<>=#@@QUIT_CHARACTER]\Z/i
         end
 
         exitOption(direction)
-        syncDirections << Struct::SyncDirection.new(c.first, c.last, direction)
+
+        direction_msg[1] = direction
+        say direction_msg.join(' ') if @verbose
+        syncDirections << Struct::SyncDirection.new(*direction_msg)
       end
       
       syncDirections
     end
 
+    private
+
     # Internal: Exits if input is a character for quitting.
     #
     # input - Input from user.
-    def self.exitOption(input)
-      exit if input.casecmp(QUIT_CHARACTER) == 0
+    def exitOption(input)
+      exit if input.casecmp(@@QUIT_CHARACTER) == 0
     end
-
-    private_class_method :exitOption
   end
 end

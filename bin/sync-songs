@@ -18,14 +18,7 @@ module SyncSongs
     method_option *services_option
     method_option :type, type: :string, required: true, default: 'favorites'
     def sync
-      CLI.getDirections(options[:services])
-      # For each service initialize
-      # Threads: For each service get data
-      #          Save compare data
-      # Ask for each missing song if it shall be synced (y/n)
-      # Threads (if both directions): Set data
-
-      # puts ObjectSpace.each_object(Class).select { |klass| klass < SongSet }
+      controller = Controller.new(options[:services], options[:type], CLI.new(options[:verbose]))
     end
 
     method_option *services_option

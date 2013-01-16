@@ -7,10 +7,12 @@ require_relative 'lastfm_set'
 module SyncSongs
   # Public: A CLI for Last.fm sets of songs.
   class LastfmCLI
+    attr_reader :set
+
     def initialize
-      api_key = ask('Last.fm API key? ') { |q| q.echo = false }
-      api_secret = ask('Last.fm API secret? ') { |q| q.echo = false }
-      @set = LastfmSet.new(api_key, api_secret)
+      @set = LastfmSet.new(ask('Last.fm API key? ') { |q| q.echo = false },
+                           ask('Last.fm API secret? ') { |q| q.echo = false },
+                           ask('Last.fm username? '))
     end
   end
 end

@@ -7,12 +7,12 @@ require_relative 'grooveshark_set'
 module SyncSongs
   # Public: A CLI for Grooveshark sets of songs.
   class GroovesharkCLI
+    attr_reader :set
+
     def initialize
-      p username = ask('Grooveshark username? ')
-      password = ask('Grooveshark password? ') { |q| q.echo = false }
-      @set = GroovesharkSet.new(username, password)
+      @set = GroovesharkSet.new(ask('Grooveshark username? '),
+                                ask('Grooveshark password? ') { |q| q.echo = false })
+
     end
   end
-
-  var = GroovesharkCLI.new
 end
