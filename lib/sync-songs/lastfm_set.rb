@@ -14,26 +14,29 @@ module SyncSongs
     # Public: Constructs a Last.fm set by logging in to
     # Last.fm with the specified user.
     #
-    # username - The username of the user to authenticate.
-    # password - The password of the user to authenticate.
-    # limit    - The maximum number of results from calls (default:
-    #            @@DEFAULT_LIMIT).
-    def initialize(api_key, api_secret, limit = @@DEFAULT_LIMIT)
+    # api_key    - Last.fm API key.
+    # api_secret - Last.fm secret for API key.
+    # username   - The username of the Last.fm user.
+    # limit      - The maximum number of results from calls (default:
+    #              @@DEFAULT_LIMIT).
+    def initialize(api_key, api_secret, username = nil, limit = @@DEFAULT_LIMIT)
       super()
       @api_key = api_key
+      @username = username
       @lastfm = Lastfm.new(api_key, api_secret)
       @limit = limit
     end
 
     # Public: Get the user's loved songs from Last.fm.
     #
-    # username - The username of the user to authenticate.
+    # username - The username of the user to authenticate (default:
+    #            @username).
     # 
     # limit    - The maximum number of favorites to get (default:
     #            @limit).
     #
     # Raises Lastfm::ApiError if the username is invalid.
-    def getLoved(username, limit = @limit)
+    def getLoved(username = @username, limit = @limit)
       @lastfm.user.get_loved_tracks(user: username,
                                     api_key: @api_key,
                                     limit: limit).each do |s|
