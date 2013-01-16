@@ -48,8 +48,8 @@ module SyncSongs
     #
     # other - An array of songs to add from.
     #
-    # Raises Lastfm::ApiError if the username if the Last.fm token has
-    #   not been authorized or if the song is not recognized.
+    # Raises Lastfm::ApiError if the Last.fm token has not been
+    #   authorized or if the song is not recognized.
     #
     # Returns an array of the songs that was added.
     def addToLoved(other)
