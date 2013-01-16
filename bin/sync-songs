@@ -17,7 +17,7 @@ module SyncSongs
     method_option :services, type: :array, required: true, default: ['grooveshark', 'lastfm']
     method_option :type, type: :string, required: true, default: 'favorites'
     def sync
-      # Ask for direction of sync
+      CLI.getDirections(options[:services])
       # For each service initialize
       # Threads: For each service get data
       #          Save compare data
@@ -37,6 +37,8 @@ module SyncSongs
       
     end
   end
+
+  # p '1<<' =~ /[<>=]{1}/
   
   Cli.start(ARGV)
 end
