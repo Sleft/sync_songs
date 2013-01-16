@@ -8,13 +8,14 @@ require_relative '../lib/sync-songs.rb'
 module SyncSongs
   class Cli < Thor
     class_option :verbose, type: :boolean, aliases: '-v'
+    services_option = [:services, {type: :array, required: true, default: ['grooveshark', 'lastfm']}]
 
     desc 'sync', 'Sync sets of songs'
     long_desc <<-LONGDESC
     WRITE!!!
    LONGDESC
     
-    method_option :services, type: :array, required: true, default: ['grooveshark', 'lastfm']
+    method_option *services_option
     method_option :type, type: :string, required: true, default: 'favorites'
     def sync
       CLI.getDirections(options[:services])
@@ -27,7 +28,7 @@ module SyncSongs
       # puts ObjectSpace.each_object(Class).select { |klass| klass < SongSet }
     end
 
-    method_option :services, type: :array, required: true, default: ['grooveshark', 'lastfm']
+    method_option *services_option
     method_option :type, type: :string, required: true, default: 'favorites'
     desc 'diff', 'Diff sets of songs'
     long_desc <<-LONGDESC
