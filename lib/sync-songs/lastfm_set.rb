@@ -36,12 +36,15 @@ module SyncSongs
     #            @limit).
     #
     # Raises Lastfm::ApiError if the username is invalid.
+    #
+    # Returns self.
     def getLoved(username = @username, limit = @limit)
       @lastfm.user.get_loved_tracks(user: username,
                                     api_key: @api_key,
                                     limit: limit).each do |s|
         add(Song.new(s['name'], s['artist']['name']))
       end
+      self
     end
 
     alias_method :getFavorites, :getLoved
