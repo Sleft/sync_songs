@@ -9,7 +9,10 @@ require_relative 'song_set'
 module SyncSongs
   # Public: A set of Grooveshark songs.
   class LastfmSet < SongSet
-    @@DEFAULT_LIMIT = 1_000_000
+    # Public: Hash of types of services associated with what they support.
+    SERVICES = {loved: :rw, favorites: :rw}
+    # Public: Default limit for API calls.
+    DEFAULT_LIMIT = 1_000_000
 
     # Public: Constructs a Last.fm set by logging in to
     # Last.fm with the specified user.
@@ -18,8 +21,8 @@ module SyncSongs
     # api_secret - Last.fm secret for API key.
     # username   - The username of the Last.fm user.
     # limit      - The maximum number of results from calls (default:
-    #              @@DEFAULT_LIMIT).
-    def initialize(api_key, api_secret, username = nil, limit = @@DEFAULT_LIMIT)
+    #              DEFAULT_LIMIT).
+    def initialize(api_key, api_secret, username = nil, limit = DEFAULT_LIMIT)
       super()
       @api_key = api_key
       @username = username
@@ -38,7 +41,7 @@ module SyncSongs
     # Raises Lastfm::ApiError if the username is invalid.
     #
     # Returns self.
-    def getLoved(username = @username, limit = @limit)
+    def loved(username = @username, limit = @limit)
       @lastfm.user.get_loved_tracks(user: username,
                                     api_key: @api_key,
                                     limit: limit).each do |s|
@@ -47,7 +50,7 @@ module SyncSongs
       self
     end
 
-    alias_method :getFavorites, :getLoved
+    alias_method :favorites, :loved
 
     # Public: Add the songs in the given set to the given user's
     # loved songs on Last.fm.
@@ -81,7 +84,7 @@ module SyncSongs
     # strict_search - True if search should be strict (default: true).
     #
     # Returns an array of loved candidates.
-    def getLovedCandidates(other, limit = @limit, strict_search = true)
+    def lovedCandidates(other, limit = @limit, strict_search = true)
       candidates = []
 
       # Search for songs that are not already favorites and add them
@@ -107,7 +110,7 @@ module SyncSongs
       candidates
     end
 
-    alias_method :getFavoriteCandidates, :getLovedCandidates
+    alias_method :favoriteCandidates, :lovedCandidates
 
     private
 

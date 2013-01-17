@@ -7,6 +7,8 @@ require_relative 'song_set'
 module SyncSongs
   # Public: A set of Grooveshark songs.
   class GroovesharkSet < SongSet
+    # Public: Hash of types of services associated with what they support.
+    SERVICES = {favorites: :rw}
 
     # Public: Constructs a Grooveshark set by logging in to
     # Grooveshark with the given user.
@@ -29,7 +31,7 @@ module SyncSongs
     # Public: Get the user's favorites from Grooveshark.
     #
     # Returns self.
-    def getFavorites
+    def favorites
       @user.favorites.each { |s| add(Song.new(s.name, s.artist)) }
       self
     end
@@ -55,7 +57,7 @@ module SyncSongs
     #
     # Returns a hash of Grooveshark ids associated with favorite
     #   candidates.
-    def getFavoriteCandidates(other, strict_search = true)
+    def favoriteCandidates(other, strict_search = true)
       candidates = {}
 
       # Search for songs that are not already loved and add them as
