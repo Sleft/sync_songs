@@ -19,23 +19,22 @@ module SyncSongs
     long_desc <<-LONGDESC
     WRITE!!!
    LONGDESC
-    
     method_option *services_option
     def sync
       controller = Controller.new(__method__.to_sym, options[:services], CLI.new(options[:verbose]))
     end
-
-    method_option *services_option
+    
     desc 'diff', 'Diff sets of songs'
     long_desc <<-LONGDESC
-    WRITE!!!
-   LONGDESC
+    #   WRITE!!!
+     LONGDESC
+    method_option *services_option
     def diff
+      puts "Hej!"
+      p __method__
       controller = Controller.new(__method__.to_sym, options[:services], CLI.new(options[:verbose]))
     end
   end
-
-  # p '1<<' =~ /[<>=]{1}/
   
   Cli.start(ARGV)
 end
