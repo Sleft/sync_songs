@@ -8,7 +8,12 @@ require_relative '../lib/sync-songs.rb'
 module SyncSongs
   class Cli < Thor
     class_option :verbose, type: :boolean, aliases: '-v'
-    services_option = [:services, {type: :array, required: true, default: ['grooveshark', 'lastfm']}]
+    services_option = [:services, {type: :hash, required: true,
+                         default: {'grooveshark' => 'favorites',
+                           'lastfm' => 'favorites'},
+                         banner: 'service:type',
+                         desc: 'A list of at least two services paired with types, e.g. grooveshark:favorites lastfm:favorites',
+                         aliases: '-s'}]
 
     desc 'sync', 'Sync sets of songs'
     long_desc <<-LONGDESC
@@ -16,19 +21,17 @@ module SyncSongs
    LONGDESC
     
     method_option *services_option
-    method_option :type, type: :string, required: true, default: 'favorites'
     def sync
-      controller = Controller.new(options[:services], options[:type], CLI.new(options[:verbose]))
+      controller = Controller.new(__method__.to_sym, options[:services], CLI.new(options[:verbose]))
     end
 
     method_option *services_option
-    method_option :type, type: :string, required: true, default: 'favorites'
     desc 'diff', 'Diff sets of songs'
     long_desc <<-LONGDESC
     WRITE!!!
    LONGDESC
     def diff
-      
+      controller = Controller.new(__method__.to_sym, options[:services], CLI.new(options[:verbose]))
     end
   end
 

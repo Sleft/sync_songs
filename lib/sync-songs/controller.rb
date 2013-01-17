@@ -9,26 +9,26 @@ module SyncSongs
 
     # Public: Constructs a controller.
     #
-    # services - An array of the services to sync.
-    # type     - The type of sync to do.
+    # action   - A Symbol naming the action to perform.
+    # types    - A hash of services associated with types.
     # ui       - The user interface to use.
-    def initialize(services, type, ui)
+    def initialize(action, services, ui)
+      @action = action
       @services = services
-      @type = type
       @ui = ui
+      ui.fail('You must supply at least two distinct services.') if @services.size < 2
+
+      @directions = ui.getDirections(@services) if @action == :sync
 
       required_methods_defined?
-      
+
+      @services.each { |s, _| initializeUI(s) }
+
       @sets = []
-      
-      @services.each do |s|
-        # Init set UI
-        @sets << (eval "#{s.capitalize}#{ui.class.name.split('::').last}.new").set
-      end
-      
+
       @sets.each { |s| p s.getFavorites }
 
-      ui.getDirections(@services)
+
 
       # For each service initialize
       # Threads: For each service get data
@@ -41,22 +41,43 @@ module SyncSongs
 
     private
 
+    # Internal: Try to initialize the UI for the given service. Sends
+    # a message to the UI if it fails.
+    #
+    # service - A String naming the service.
+    def initializeUI(service)
+      service_ui = "#{service.capitalize}#{@ui.class.name.split('::').last}"
+      begin
+        @sets << (eval "#{service_ui}.new").set
+      rescue NameError => e
+        @ui.fail("Failed to initialize #{service_ui}.", e)
+      end
+    end
+
     # Internal: Raises NoMethodError if a required method for the
     # services in question is not defined. It is better to fail sooner
     # than later.
     def required_methods_defined?
-      @required_set_methods = ["get#{@type.capitalize}".to_sym,
-                               "addTo#{@type.capitalize}".to_sym,
-                               "get#{@type[0..-2].capitalize}Candidates".to_sym]
+      # @required_methods = { get: ["get#{@type.capitalize}".to_sym,
+      #                             "get#{@type[0..-2].capitalize}Candidates".to_sym],
+      #   set: "addTo#{@type.capitalize}".to_sym }
 
-      Struct.new("RequiredMethods", :class_suffix, :required_methods)
-      classes_and_required_methods = [Struct::RequiredMethods.new('Set', @required_set_methods)]
+      # För varje service kolla om läsa ifall riktning är från eller båda
+      @services.each do |service, type|
+        if @action == :sync
 
-      @services.each do |s|
-        classes_and_required_methods.each do |c|
-          c.required_methods.each do |m|
-            test_class = "#{s.capitalize}#{c.class_suffix}"
-            fail NoMethodError, "#{test_class} lacks the required method #{m}" unless eval "#{test_class}.method_defined?(:#{m})"
+        elsif @action == :diff
+          # Check if there are read methods for all
+          required_methods = ["get#{type.capitalize}".to_sym,
+                              "get#{type[0..-2].capitalize}Candidates".to_sym]
+
+          required_methods.each do |m|
+            test_class = "#{service.capitalize}Set"
+            begin
+              @ui.fail("#{test_class} lacks the required method #{m}.") unless eval "#{test_class}.method_defined?(:#{m})"
+            rescue NameError
+              @ui.fail("The service #{service} is not supported.")
+            end
           end
         end
       end

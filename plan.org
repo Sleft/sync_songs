@@ -5,10 +5,13 @@
 - Follow https://github.com/bbatsov/ruby-style-guide and https://github.com/styleguide/ruby , also TomDoc for comments.
 - Use each on getters and setters of sets to provide verbose mode. They (should) e.g. return the added songs.
 - Add examples to documentation as in Tomdoc specification?
+- Add argument types to documentation, from Tomdoc: "The expected type (or types) of each argument SHOULD be clearly indicated in the explanation. When you specify a type, use the proper classname of the type (for instance, use 'String' instead of 'string' to refer to a String type)."
 - Use Module#ancestor and methods and respond_to for deciding which sets to sync between.
 - Write a guide for adding new services.
-- Add the class CSVSet and its ui CSVCLI. Use the standard CSV class. It should only have one type of data so alias getFavorites with getLibrary.
-- Use YAML.dump to store Last.fm token?
+- Add the class CSVSet and its ui CSVCLI. Use the standard CSV class.
+  - It should only have one type of data so alias getFavorites with getLibrary.
+  - Test it with StringIO instead of a separate sample data file, see PickAxe p. 736.
+- Use YAML.dump and lib tmpdir to store Last.fm token?
 - Allow the following example:
   #+begin_src ruby
     # Get favorites

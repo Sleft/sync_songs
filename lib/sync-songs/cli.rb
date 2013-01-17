@@ -17,17 +17,16 @@ module SyncSongs
 
     # Public: Asks for directions to write in.
     #
-    # services - An array of services to sync.
+    # services - A hash of services associated with types.
     #
-    # Returns an array of structs, SyncDirection, of two services and
-    #   the direction to sync in.
+    # Returns an array of hashes with the services associated with
+    #   direction (:r, :r or :rw).
     def getDirections(services)
-      Struct.new("SyncDirection", :service1, :direction, :service2)
       syncDirections = []
 
       say 'Enter directions to write in.'
 
-      services.combination(2) do |c|
+      services.to_a.combination(2) do |c|
         direction_msg = [c.first, '<=>', c.last]
         direction = ask("#{direction_msg.join(' ')} ") do |q|
           q.responses[:not_valid] = 'Enter < for to left, > for to right, = for both directions or q to quit.'
@@ -37,12 +36,38 @@ module SyncSongs
 
         exitOption(direction)
 
-        direction_msg[1] = direction
-        say direction_msg.join(' ') if @verbose
-        syncDirections << Struct::SyncDirection.new(*direction_msg)
+        syncDirections << case direction
+                          when '<'
+                            [{ c.first => :w },
+                             { c.last => :r }]
+                          when '='
+                            [{ c.first => :rw },
+                             { c.last => :rw }]
+                            when '>'
+                            [{ c.first => :r },
+                             { c.last => :w }]
+                          end
+
+        if @verbose
+          direction_msg[1] = direction
+          say direction_msg.join(' ') 
+        end
       end
       
-      syncDirections
+      p syncDirections
+    end
+
+    # Public: Shows failure message and exit.
+    #
+    # message   - The String failure message.
+    # exception - The Exception causing the failure (default: nil).
+    def fail(message, exception = nil)
+      say message
+      if @verbose
+        p exception
+        puts exception.backtrace
+      end
+      exit
     end
 
     private
