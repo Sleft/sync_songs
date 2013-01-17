@@ -19,42 +19,33 @@ module SyncSongs
     #
     # services - A hash of services associated with types.
     #
-    # Returns an array of hashes with the services associated with
-    #   direction (:r, :r or :rw).
-    def getDirections(services)
-      syncDirections = []
+    # Returns a hash of services associated with types of services and
+    #   the input direction.
+    def directions(services)
+      directions = {}
 
       say 'Enter directions to write in.'
 
+      # Ask for the direction of every combination of services.
       services.to_a.combination(2) do |c|
-        direction_msg = [c.first, '<=>', c.last]
-        direction = ask("#{direction_msg.join(' ')} ") do |q|
+        question = [c.first, '<=>', c.last]
+        input = ask("#{question.join(' ')} ") do |q|
           q.responses[:not_valid] = 'Enter < for to left, > for to right, = for both directions or q to quit.'
           q.default = '='
           q.validate = /\A[<>=#@@QUIT_CHARACTER]\Z/i
         end
 
-        exitOption(direction)
+        exitOption(input)
 
-        syncDirections << case direction
-                          when '<'
-                            [{ c.first => :w },
-                             { c.last => :r }]
-                          when '='
-                            [{ c.first => :rw },
-                             { c.last => :rw }]
-                            when '>'
-                            [{ c.first => :r },
-                             { c.last => :w }]
-                          end
+        inputDirectionToHash(input, directions, c)
 
         if @verbose
-          direction_msg[1] = direction
-          say direction_msg.join(' ') 
+          question[1] = direction
+          say question.join(' ') 
         end
       end
       
-      p syncDirections
+      directions
     end
 
     # Public: Shows failure message and exit.
@@ -71,6 +62,24 @@ module SyncSongs
     end
 
     private
+
+    # Internal: Translate input of direction to a symbol and store it
+    # in the given hash.
+    #
+    # input - User input String to translate.
+    # hash  - Hash to write to.
+    # data  - Data to associate with directions in hash.
+    def inputDirectionToHash(input, hash, data)
+      support = []
+
+      case input
+      when '<' then support << :w << :r
+      when '=' then support << :rw << :rw
+      when '>' then support << :r << :w
+      end        
+
+      data.each { |st| hash[st.shift.to_sym] = {st.shift.to_sym => support.shift} }
+    end
 
     # Internal: Exits if input is a character for quitting.
     #
