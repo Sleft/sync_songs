@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-#require_relative '../sync-songs.rb'
+require 'set'
 
 # Public: Classes for syncing sets of songs.
 module SyncSongs
@@ -18,7 +18,24 @@ module SyncSongs
       @ui = ui
       ui.fail('You must supply at least two distinct services.') if @services.size < 2
 
-      @directions = ui.getDirections(@services) if @action == :sync
+      @directions = ui.directions(@services) if @action == :sync
+
+      # Check if service exists
+      supported_services = Controller.services
+
+      if @action == :sync
+        @directions.each do |type, support|
+          if supported_services.key?(type)
+            unless supported_services[type].find { |k, v| {k => v} == support } ||
+                (supported_services[type] && support == :rw)
+              ui.fail("#{support.values.join(', ')} to #{support.keys.join(', ')} for #{type} is not supported.")
+            end
+          else
+            ui.fail("#{type} is not supported.")
+          end
+          
+        end
+      end
 
       required_methods_defined?
 
@@ -29,14 +46,31 @@ module SyncSongs
       @sets.each { |s| p s.getFavorites }
 
 
-
       # For each service initialize
       # Threads: For each service get data
       #          Save compare data
       # Ask for each missing song if it shall be synced (y/n)
       # Threads (if both directions): Set data
 
-      # puts ObjectSpace.each_object(Class).select { |klass| klass < SongSet }
+
+    end
+
+    # Public: Returns a hash of services associated with types of
+    # services and their support direction.
+    def self.services
+      services = {}
+
+      # Get the classes that extends SongSet.
+      classes = ObjectSpace.each_object(Class).select { |klass| klass < SongSet }
+      
+      # Associate the class name with it services.
+      classes.each do |klass|
+        class_name = klass.name.split('::').last.sub(/Set\Z/, '').downcase
+        # Only accept classes that ends with 'Set'.
+        services[class_name.to_sym] = klass::SERVICES unless class_name.empty?
+      end
+
+      services
     end
 
     private
@@ -47,7 +81,7 @@ module SyncSongs
     # service - A String naming the service.
     def initializeUI(service)
       service_ui = "#{service.capitalize}#{@ui.class.name.split('::').last}"
-      begin
+      begin                     # AVOID EVAL
         @sets << (eval "#{service_ui}.new").set
       rescue NameError => e
         @ui.fail("Failed to initialize #{service_ui}.", e)
