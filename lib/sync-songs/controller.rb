@@ -20,21 +20,19 @@ module SyncSongs
 
       @directions = ui.directions(@services) if @action == :sync
 
-      # Check if service exists
       supported_services = Controller.services
 
+      # Check if service and type exists
       if @action == :sync
         @directions.each do |type, support|
-          if supported_services.key?(type)
-            unless supported_services[type].find { |k, v| {k => v} == support } ||
-                (supported_services[type] && support == :rw)
-              ui.fail("#{support.values.join(', ')} to #{support.keys.join(', ')} for #{type} is not supported.")
-            end
-          else
-            ui.fail("#{type} is not supported.")
+          ui.fail("#{type} is not supported.") unless supported_services.key?(type)
+          unless supported_services[type].find { |k, v| {k => v} == support } ||
+              (supported_services[type] && support == :rw)
+            ui.fail("#{support.values.join(', ')} to #{support.keys.join(', ')} for #{type} is not supported.")
           end
-          
         end
+      elsif @action == :diff
+        # Check if types of services has :r or :rw.
       end
 
       @services.each { |s, _| initializeUI(s) }
@@ -60,7 +58,7 @@ module SyncSongs
 
       # Get the classes that extends SongSet.
       classes = ObjectSpace.each_object(Class).select { |klass| klass < SongSet }
-      
+
       # Associate the class name with it services.
       classes.each do |klass|
         class_name = klass.name.split('::').last.sub(/Set\Z/, '').downcase
