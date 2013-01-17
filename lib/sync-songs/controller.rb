@@ -37,8 +37,6 @@ module SyncSongs
         end
       end
 
-      required_methods_defined?
-
       @services.each { |s, _| initializeUI(s) }
 
       @sets = []
@@ -85,35 +83,6 @@ module SyncSongs
         @sets << (eval "#{service_ui}.new").set
       rescue NameError => e
         @ui.fail("Failed to initialize #{service_ui}.", e)
-      end
-    end
-
-    # Internal: Raises NoMethodError if a required method for the
-    # services in question is not defined. It is better to fail sooner
-    # than later.
-    def required_methods_defined?
-      # @required_methods = { get: ["get#{@type.capitalize}".to_sym,
-      #                             "get#{@type[0..-2].capitalize}Candidates".to_sym],
-      #   set: "addTo#{@type.capitalize}".to_sym }
-
-      # För varje service kolla om läsa ifall riktning är från eller båda
-      @services.each do |service, type|
-        if @action == :sync
-
-        elsif @action == :diff
-          # Check if there are read methods for all
-          required_methods = ["get#{type.capitalize}".to_sym,
-                              "get#{type[0..-2].capitalize}Candidates".to_sym]
-
-          required_methods.each do |m|
-            test_class = "#{service.capitalize}Set"
-            begin
-              @ui.fail("#{test_class} lacks the required method #{m}.") unless eval "#{test_class}.method_defined?(:#{m})"
-            rescue NameError
-              @ui.fail("The service #{service} is not supported.")
-            end
-          end
-        end
       end
     end
   end
