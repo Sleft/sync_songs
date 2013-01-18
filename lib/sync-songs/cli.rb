@@ -4,9 +4,9 @@ require 'highline/import'
 
 # Public: Classes for syncing sets of songs.
 module SyncSongs
-  # Public: Command-line interface
+  # Public: Command-line interface.
   class CLI
-    @@QUIT_CHARACTER = 'q'
+    QUIT_CHARACTER = 'q'
 
     # Public: Constructs a command-line interface.
     #
@@ -15,14 +15,14 @@ module SyncSongs
       @verbose = verbose
     end
 
-    # Public: Asks for directions to write in.
+    # Public: Asks for directions to write in and return them.
     #
     # services - A hash of services associated with types.
     #
-    # Returns a hash of services associated with types of services and
-    #   the input direction.
+    # Returns an array of Structs, DirectionInput(:service, :type,
+    # :action).
     def directions(services)
-      directions = {}
+      directions = []
 
       say 'Enter directions to write in.'
 
@@ -32,19 +32,18 @@ module SyncSongs
         input = ask("#{question.join(' ')} ") do |q|
           q.responses[:not_valid] = 'Enter < for to left, > for to right, = for both directions or q to quit.'
           q.default = '='
-          q.validate = /\A[<>=#@@QUIT_CHARACTER]\Z/i
+          q.validate = /\A[<>=#{QUIT_CHARACTER}]\Z/i
         end
 
         exitOption(input)
 
-        inputDirectionToHash(input, directions, c)
-
         if @verbose
-          question[1] = direction
-          say question.join(' ') 
+          question[1] = input
+          say question.join(' ')
         end
+
+        directions << inputDirectionToStruct(input, c)
       end
-      
       directions
     end
 
@@ -63,27 +62,31 @@ module SyncSongs
 
     private
 
-    # Internal: Translate input of direction to a symbol and store it
-    # in the given hash.
+    # Internal: Translate input of direction to a Struct,
+    # DirectionInput(:service, :type, :action), and store the Structs
+    # in an array.
     #
     # input - User input String to translate.
-    # hash  - Hash to write to.
-    # data  - Data to associate with directions in hash.
-    def inputDirectionToHash(input, hash, data)
+    # data  - Array of arrays of services and types.
+    #
+    # Returns an array of Structs.
+    def inputDirectionToStruct(input, data)
       support = []
 
       case input
       when '<' then support << :w << :r
       when '=' then support << :rw << :rw
       when '>' then support << :r << :w
-      end        
+      end
 
-      data.each { |st| hash[st.shift.to_sym] = {st.shift.to_sym => support.shift} }
+      data.collect { |d| Struct::DirectionInput.new(d.shift.to_sym,
+                                                    d.shift.to_sym,
+                                                    support.shift) }
     end
 
     # Internal: Exits if input is a character for quitting.
     #
-    # input - Input from user.
+    # input - Input String from user.
     def exitOption(input)
       exit if input.casecmp(@@QUIT_CHARACTER) == 0
     end
