@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-require_relative '../../../lib/sync-songs/song'
+require_relative '../../../lib/sync_songs/song'
 
 # Public: Classes for syncing sets of songs.
 module SyncSongs

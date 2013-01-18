@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 require 'test/unit'
-require_relative '../../lib/sync-songs/song_set'
+require_relative '../../lib/sync_songs/song_set'
 require_relative 'sample_data/sample_data'
 
 # Public: Classes for syncing sets of songs.
