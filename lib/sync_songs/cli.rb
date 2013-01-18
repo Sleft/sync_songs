@@ -24,13 +24,13 @@ module SyncSongs
     def directions(services)
       directions = []
 
-      say 'Enter directions to write in.'
+      say 'Enter directions to write in'
 
       # Ask for the direction of every combination of services.
       services.to_a.combination(2) do |c|
         question = [c.first, '<=>', c.last]
         input = ask("#{question.join(' ')} ") do |q|
-          q.responses[:not_valid] = 'Enter < for to left, > for to right, = for both directions or q to quit.'
+          q.responses[:not_valid] = 'Enter < for to left, > for to right, = for both directions or q to quit'
           q.default = '='
           q.validate = /\A[<>=#{QUIT_CHARACTER}]\Z/i
         end
@@ -58,6 +58,10 @@ module SyncSongs
         puts exception.backtrace
       end
       exit
+    end
+
+    def verboseMessage(message)
+      say message if @verbose
     end
 
     # Public: Prints supported services.

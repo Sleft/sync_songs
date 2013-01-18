@@ -15,16 +15,18 @@ module SyncSongs
       @ui = ui
       @services = services
       ui.fail('You must supply at least two distinct services.') if @services.size < 2
-      @sets = []
+      @sets = {}
     end
 
     def diff
+      @ui.verboseMessage("Preparing to diff song sets")
       @directions = @services.collect { |i| Struct::DirectionInput.new(i.shift.to_sym, i.shift.to_sym, :r) }
       getData
       # showDifference
     end
 
     def sync
+      @ui.verboseMessage("Preparing to sync song sets")
       @directions = @ui.directions(@services)
       getData
       # addData(interactive = true)
@@ -90,19 +92,28 @@ module SyncSongs
       checkSupport
       @services.each { |s, _| initializeUI(s) }
 
-      @sets.each { |s| threads << Thread.new(s) { |set| set.favorites } }
+      @sets.each do |n, s|
+        threads << Thread.new(n, s) do |name, set|
+          @ui.verboseMessage("Downloading from #{name}...")
+          set.favorites # Need to delegate this to UI so that lastfm's
+                        # version can be rescued if it throws an
+                        # exception
+          @ui.verboseMessage("Finished downloading from #{name}")
+        end
+      end
 
       threads.each { |t| t.join }
     end
 
     # Internal: Try to initialize the UI for the given service and get
-    # a reference to its song set.
+    # a reference to its song set which is stored in hash associated
+    # with the service name.
     #
     # service - A String naming the service.
     def initializeUI(service)
       service_ui = "#{service.capitalize}#{@ui.class.name.split('::').last}"
       begin                     # AVOID EVAL
-        @sets << (eval "#{service_ui}.new").set
+        @sets[service.to_sym] = (eval "#{service_ui}.new").set
       rescue NameError => e
         @ui.fail("Failed to initialize #{service_ui}.", e)
       end
