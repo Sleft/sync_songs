@@ -4,7 +4,7 @@ require 'rubygems'
 require 'bundler/setup'
 
 # Path to the library
-PATH = './sync-songs/'
+PATH = './sync_songs/'
 
 # Load the library
 require_relative "#{PATH}cli"

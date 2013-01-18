@@ -44,7 +44,7 @@ module SyncSongs
 
         directions << inputDirectionToStruct(input, c)
       end
-      directions
+      directions.flatten
     end
 
     # Public: Shows failure message and exit.
@@ -53,7 +53,7 @@ module SyncSongs
     # exception - The Exception causing the failure (default: nil).
     def fail(message, exception = nil)
       say message
-      if @verbose
+      if @verbose && exception
         p exception
         puts exception.backtrace
       end
@@ -94,16 +94,16 @@ module SyncSongs
       when '>' then support << :r << :w
       end
 
-      data.collect { |d| Struct::DirectionInput.new(d.shift.to_sym,
-                                                    d.shift.to_sym,
-                                                    support.shift) }
+      data.map { |d| Struct::DirectionInput.new(d.first.to_sym,
+                                                d.last.to_sym,
+                                                support.shift) }
     end
 
     # Internal: Exits if input is a character for quitting.
     #
     # input - Input String from user.
     def exitOption(input)
-      exit if input.casecmp(@@QUIT_CHARACTER) == 0
+      exit if input.casecmp(QUIT_CHARACTER) == 0
     end
   end
 end

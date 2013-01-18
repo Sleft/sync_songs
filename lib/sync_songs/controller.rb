@@ -20,25 +20,31 @@ module SyncSongs
     def diff
       @directions = @services.collect { |i| Struct::DirectionInput.new(i.shift.to_sym, i.shift.to_sym, :r) }
       checkSupport
+      @services.each { |s, _| initializeUI(s) }
+      # getData
+      # showDifference
     end
 
     def sync
-      @directions = @ui.directions(input_services)
+      @directions = @ui.directions(@services)
       checkSupport
+      @services.each { |s, _| initializeUI(s) }
+      # getData
+      # addData(interactive = true)
     end
 
     # input_services.each { |s, _| initializeUI(s) }
 
-    # @sets = []
+    # 
 
     # @sets.each { |s| s.getFavorites }
-
 
     # For each service initialize
     # Threads: For each service get data
     #          Save compare data
     # Ask for each missing song if it shall be synced (y/n)
     # Threads (if both directions): Set data
+
 
     # Public: Returns a hash of services associated with types of
     # services and their support direction.

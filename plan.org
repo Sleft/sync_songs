@@ -97,7 +97,7 @@
     
     Add this line to your application's Gemfile:
     
-        gem 'sync-songs'
+        gem 'sync_songs'
     
     And then execute:
     
@@ -105,7 +105,7 @@
     
     Or install it yourself as:
     
-        $ gem install sync-songs
+        $ gem install sync_songs
     
     ## Usage
     

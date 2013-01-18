@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    sync-songs (0.0.0)
+    sync_songs (0.0.0)
       grooveshark (>= 0.2.7)
       highline
       lastfm (>= 1.14.0)
@@ -48,4 +48,4 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  sync-songs!
+  sync_songs!

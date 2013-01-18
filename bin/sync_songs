@@ -2,7 +2,7 @@
 # -*- coding: utf-8; mode: ruby -*-
 
 require 'thor'
-require_relative '../lib/sync-songs.rb'
+require_relative '../lib/sync_songs.rb'
 
 # Public: Classes for syncing sets of songs.
 module SyncSongs

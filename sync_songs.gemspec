@@ -2,10 +2,10 @@
 
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'sync-songs/version'
+require 'sync_songs/version'
 
 Gem::Specification.new do |gem|
-  gem.name          = 'sync-songs'
+  gem.name          = 'sync_songs'
   gem.version       = SyncSongs::VERSION
   gem.authors       = ['Sleft']
   gem.email         = ['fte08eas@student.lu.se']
