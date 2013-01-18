@@ -1,4 +1,7 @@
 # Ignore editor backups
 *~
+.bundle
+*.gem
+.bundle
 test_lastfm_set.rb
 test_grooveshark_set.rb

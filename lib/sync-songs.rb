@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Path to Ruby code
+require 'rubygems'
+require 'bundler/setup'
+
+# Path to the library
 PATH = './sync-songs/'
 
 # Load the library
@@ -10,4 +13,5 @@ require_relative "#{PATH}grooveshark_cli"
 require_relative "#{PATH}grooveshark_set"
 require_relative "#{PATH}grooveshark_set"
 require_relative "#{PATH}lastfm_cli"
+require_relative "#{PATH}version"
 Struct.new('DirectionInput', :service, :type, :action)
