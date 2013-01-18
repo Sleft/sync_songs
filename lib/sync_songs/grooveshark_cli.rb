@@ -12,7 +12,6 @@ module SyncSongs
     def initialize
       @set = GroovesharkSet.new(ask('Grooveshark username? '),
                                 ask('Grooveshark password? ') { |q| q.echo = false })
-
     end
   end
 end

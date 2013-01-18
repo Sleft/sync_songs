@@ -15,29 +15,20 @@ module SyncSongs
       @ui = ui
       @services = services
       ui.fail('You must supply at least two distinct services.') if @services.size < 2
+      @sets = []
     end
 
     def diff
       @directions = @services.collect { |i| Struct::DirectionInput.new(i.shift.to_sym, i.shift.to_sym, :r) }
-      checkSupport
-      @services.each { |s, _| initializeUI(s) }
-      # getData
+      getData
       # showDifference
     end
 
     def sync
       @directions = @ui.directions(@services)
-      checkSupport
-      @services.each { |s, _| initializeUI(s) }
-      # getData
+      getData
       # addData(interactive = true)
     end
-
-    # input_services.each { |s, _| initializeUI(s) }
-
-    # 
-
-    # @sets.each { |s| s.getFavorites }
 
     # For each service initialize
     # Threads: For each service get data
@@ -92,8 +83,20 @@ module SyncSongs
       end
     end
 
-    # Internal: Try to initialize the UI for the given service. Sends
-    # a message to the UI if it fails.
+    # Internal: Gets the data for each service.
+    def getData
+      threads = []
+
+      checkSupport
+      @services.each { |s, _| initializeUI(s) }
+
+      @sets.each { |s| threads << Thread.new(s) { |set| set.favorites } }
+
+      threads.each { |t| t.join }
+    end
+
+    # Internal: Try to initialize the UI for the given service and get
+    # a reference to its song set.
     #
     # service - A String naming the service.
     def initializeUI(service)
