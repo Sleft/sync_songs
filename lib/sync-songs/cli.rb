@@ -60,6 +60,21 @@ module SyncSongs
       exit
     end
 
+    # Public: Prints supported services.
+    def self.supportedServices
+      msg = []
+
+      Controller.supportedServices.each do |service, type_action|
+        type_msg = []
+        type_action.each do |type, action|
+          type_msg << "#{type} #{action}"
+        end
+        msg << "#{service}: #{type_msg.join(', ')}"
+      end
+
+      say msg.join("\n")
+    end
+
     private
 
     # Internal: Translate input of direction to a Struct,

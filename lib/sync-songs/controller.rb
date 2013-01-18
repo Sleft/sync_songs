@@ -11,19 +11,19 @@ module SyncSongs
     # services - A hash of services associated with types,
     #            e.g. {'lastfm' => 'favorites', 'grooveshark' =>
     #            'favorites'} (default = nil).
-    def initialize(ui, input_services = nil)
+    def initialize(ui, services)
       @ui = ui
-      @input_services = input_services
-      ui.fail('You must supply at least two distinct services.') if @input_services.size < 2
+      @services = services
+      ui.fail('You must supply at least two distinct services.') if @services.size < 2
     end
 
     def diff
-      @input_directions = @input_services.collect { |i| Struct::DirectionInput.new(i.shift.to_sym, i.shift.to_sym, :r) }
+      @directions = @services.collect { |i| Struct::DirectionInput.new(i.shift.to_sym, i.shift.to_sym, :r) }
       checkSupport
     end
 
     def sync
-      @input_directions = @ui.directions(input_services)
+      @directions = @ui.directions(input_services)
       checkSupport
     end
 
@@ -42,7 +42,7 @@ module SyncSongs
 
     # Public: Returns a hash of services associated with types of
     # services and their support direction.
-    def self.services
+    def self.supportedServices
       services = {}
 
       # Get the classes that extends SongSet.
@@ -65,9 +65,9 @@ module SyncSongs
     # Grooveshark (service) is supported. Fails via UI if something is
     # not supported.
     def checkSupport
-      supported_services = Controller.services
+      supported_services = Controller.supportedServices
 
-      @input_directions.each do |i|
+      @directions.each do |i|
         fail_msg = " is not supported."
 
         # Is the service supported?

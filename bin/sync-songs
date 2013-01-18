@@ -24,7 +24,7 @@ module SyncSongs
       controller = Controller.new(CLI.new(options[:verbose]), options[:services])
       controller.sync
     end
-    
+
     desc 'diff', 'Diff sets of songs'
     long_desc <<-LONGDESC
     #   WRITE!!!
@@ -33,6 +33,15 @@ module SyncSongs
     def diff
       controller = Controller.new(CLI.new(options[:verbose]), options[:services])
       controller.diff
+    end
+
+    desc 'supp', 'List supported services'
+    long_desc <<-LONGDESC
+  Prints a list of the supported services.
+     LONGDESC
+    method_option(*services_option)
+    def supp
+      CLI.supportedServices
     end
   end
   
