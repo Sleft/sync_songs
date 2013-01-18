@@ -10,4 +10,4 @@ require_relative "#{PATH}grooveshark_cli"
 require_relative "#{PATH}grooveshark_set"
 require_relative "#{PATH}grooveshark_set"
 require_relative "#{PATH}lastfm_cli"
-Struct.new("DirectionInput", :service, :type, :action)
+Struct.new('DirectionInput', :service, :type, :action)
