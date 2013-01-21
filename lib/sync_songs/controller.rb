@@ -30,7 +30,7 @@ module SyncSongs
       @directions = @ui.directions(@input_services)
       directionsToServices
       getData
-      # addData(interactive = true)
+      addData
     end
 
     # For each service initialize
@@ -95,7 +95,7 @@ module SyncSongs
 
       @services.each do |service|
         threads << Thread.new(service) do |s|
-          @ui.verboseMessage("Downloading from #{s.type} from #{s.name}...")
+          @ui.verboseMessage("Downloading #{s.type} from #{s.name}...")
           s.set.send(s.type) # Need to delegate this to UI so that
           # lastfm's version can be rescued if it
           # throws an exception
@@ -106,17 +106,61 @@ module SyncSongs
       threads.each { |t| t.join }
     end
 
-    def addData(strict_search = true, interactive = true)
-      @services.each { |s| s.ui.addPreferences(s) }
+    def addData
+      @directions.each do |d|
+        if d.direction == :'<' || d.direction == :'='
+          d.services.first.ui.addPreferences
+        end
+        if d.direction == :'>' || d.direction == :'='
+          d.services.last.ui.addPreferences
 
-      # For each in direction(service1, service2, direction)
-      #   if < or =
-      #    search and write from service2 to service1
-      #   if > or =
-      #    search and write from service1 to service2
+        end
+      end
 
-      # @services.each do |s|
-      #   s.set.send("#{s.type}Candidates")
+      threads = []
+
+      @directions.each do |direction|
+        threads << Thread.new(direction) do |d|
+          if d.direction == :'<' || d.direction == :'='
+            d.services.first.search_result = search(d.services.first, d.services.last)
+          end
+        end
+        threads << Thread.new(direction) do |d|
+          if d.direction == :'>' || d.direction == :'='
+            d.services.last.search_result = search(d.services.last, d.services.first)
+          end
+        end
+      end
+
+      threads.each { |t| t.join }
+
+      @directions.each do |d|
+        d.services.each do |s|
+          if s.interactive
+            interactiveAdd(s)
+          end
+        end
+      end
+    end
+
+    def search(service1, service2)
+      @ui.verboseMessage("Searching #{service1.name}...")
+      result = service1.set.send(:search, service2.set, service1.strict_search)
+      @ui.verboseMessage("Finished searching #{service1.name}")
+
+      result
+    end
+
+    def interactiveAdd(service)
+      if service.search_result.is_a?(Hash)
+        service.songs_to_add = {}
+
+        service.search_result.each { |id, song| service.songs_to_add[id] = song if @ui.interactiveAdd(song, service) }
+      else
+        service.songs_to_add = []       # should be a set
+
+        service.search_result.each { |song| service.songs_to_add << song if @ui.addSong?(song, service) }
+      end
     end
 
     # Internal: Try to initialize the UI for the given service and get
@@ -127,7 +171,7 @@ module SyncSongs
     def initializeUI(service)
       service_ui = "#{service.name.capitalize}#{@ui.class.name.split('::').last}"
       begin
-        service.ui = SyncSongs.const_get(service_ui).new(@ui)
+        service.ui = SyncSongs.const_get(service_ui).new(service, @ui)
         service.set = service.ui.set
       rescue NameError => e
         @ui.fail("Failed to initialize #{service_ui}.", e)

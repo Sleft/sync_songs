@@ -15,5 +15,6 @@ require_relative "#{PATH}grooveshark_set"
 require_relative "#{PATH}lastfm_cli"
 require_relative "#{PATH}version"
 Struct.new('Service', :name, :type, :action,
-           :set, :ui, :strict_search, :interactive)
+           :set, :ui, :strict_search, :interactive,
+           :search_result, :songs_to_add)
 Struct.new('Direction', :services, :direction)

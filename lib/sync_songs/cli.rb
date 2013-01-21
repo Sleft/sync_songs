@@ -51,29 +51,27 @@ module SyncSongs
     end
 
     def strict_search(service)
-      if service.set.takesParameter('strict_search')
-        input = ask('Do you want to make a strict search? ') do |q|
-          q.responses[:not_valid] = 'A strict search is recommended as a wide search may generate too many hits. Enter y for yes, n for no or q to quit'
-          q.default = 'y'
-          q.validate = /\A[yn#{QUIT_CHARACTER}]\Z/i
-        end
+      input = ask("Use strict search for #{service.name}? ") do |q|
+        q.responses[:not_valid] = 'A strict search is recommended as a wide search may generate too many hits. Enter y for yes, n for no or q to quit'
+        q.default = 'y'
+        q.validate = /\A[yn#{QUIT_CHARACTER}]\Z/i
 
-        input.eql?('y') ? service.strict_search = true : service.strict_search = false
+        service.strict_search = input.eql?('y') ? true : false
       end
     end
 
     def interactive(service)
-      input = ask('For every found song, do you want to asked whether to add it (interactive mode)? ') do |q|
+      input = ask("Interactive mode for #{service.name}, i.e. for every found song in #{service.name}, do you want to be asked whether to add it? ") do |q|
         q.responses[:not_valid] = 'Interactive mode is recommended for everything but services you have direct access to, such as text files. Enter y for yes, n for no or q to quit'
         q.default = 'y'
         q.validate = /\A[yn#{QUIT_CHARACTER}]\Z/i
       end
 
-      input.eql?('y') ? service.interactive = true : service.interactive = false
+      service.interactive = input.eql?('y') ? true : false
     end
 
-    def interactiveAdd(song, service)
-      input = ask('Do you want to add #{song} to #{service.name}? ') do |q|
+    def addSong?(song, service)
+      input = ask("Add #{song} to #{service.name} #{service.type}? ") do |q|
         q.responses[:not_valid] = 'Enter y for yes, n for no or q to quit'
         q.default = 'y'
         q.validate = /\A[yn#{QUIT_CHARACTER}]\Z/i
@@ -87,7 +85,7 @@ module SyncSongs
     # message   - The String failure message.
     # exception - The Exception causing the failure (default: nil).
     def fail(message, exception = nil)
-      say message
+      puts message
       if @verbose && exception
         p exception
         puts exception.backtrace
@@ -96,7 +94,7 @@ module SyncSongs
     end
 
     def verboseMessage(message)
-      say message if @verbose
+      puts message if @verbose
     end
 
     # Public: Prints supported services.

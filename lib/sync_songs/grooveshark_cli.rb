@@ -10,9 +10,11 @@ module SyncSongs
     attr_reader :set
 
     # Public: Construct a CLI.
-    # 
-    # ui - General user interface to use.
-    def initialize(ui)
+    #
+    # service - Service for which this is a user interface.
+    # ui      - General user interface to use.
+    def initialize(service, ui)
+      @service = service
       @ui = ui
       @logged_in = false
 
@@ -21,9 +23,9 @@ module SyncSongs
       end
     end
 
-    def addPreferences(service)
-      @ui.strict_search(service)
-      @ui.interactive(service)
+    def addPreferences
+      @ui.strict_search(@service)
+      @ui.interactive(@service)
     end
 
     private

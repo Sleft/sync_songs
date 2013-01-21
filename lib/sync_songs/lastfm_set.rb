@@ -85,7 +85,7 @@ module SyncSongs
     #
     # Returns an array of loved candidates.
     def search(other, limit = @limit, strict_search = true)
-      candidates = []
+      candidates = []           # Should be a set
 
       # Search for songs that are not already in this set and return
       # them if they are sufficiently similar.

@@ -64,6 +64,7 @@ module SyncSongs
       exclusiveTo(other).each do |song|
         @client.search_songs(song.to_search_term).each do |found_song|
           other = Song.new(found_song.name, found_song.artist)
+
           if strict_search
             next unless song.eql?(other)
           else

@@ -11,17 +11,19 @@ module SyncSongs
 
     # Public: Construct a CLI.
     #
-    # ui - General user interface to use.
-    def initialize(ui)
+    # service - Service for which this is a user interface.
+    # ui      - General user interface to use.
+    def initialize(service, ui)
+      @service = service
       @ui = ui
       @set = LastfmSet.new(ask('Last.fm API key? ') { |q| q.echo = false },
                            ask('Last.fm API secret? ') { |q| q.echo = false },
                            ask('Last.fm username? '))
     end
 
-    def addPreferences(service)
-      @ui.strict_search(service)
-      @ui.interactive(service)
+    def addPreferences
+      @ui.strict_search(@service)
+      @ui.interactive(@service)
     end
   end
 end
