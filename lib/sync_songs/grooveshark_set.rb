@@ -32,7 +32,7 @@ module SyncSongs
     #
     # Returns self.
     def favorites
-      @user.favorites.each { |s| add(Song.new(s.name, s.artist)) }
+      @user.favorites.each { |s| add(Song.new(s.name, s.artist, s.album)) }
       self
     end
 
@@ -55,25 +55,26 @@ module SyncSongs
     # other         - SongSet to search for.
     # strict_search - True if search should be strict (default: true).
     #
-    # Returns a hash of Grooveshark ids associated with songs.
+    # Returns a Songdef.
     def search(other, strict_search = true)
-      candidates = {}
+      result = SongSet.new
 
       # Search for songs that are not already in this set and return
       # them if they are sufficiently similar.
       exclusiveTo(other).each do |song|
-        @client.search_songs(song.to_search_term).each do |found_song|
-          other = Song.new(found_song.name, found_song.artist)
+        @client.search_songs(song.to_search_term).each do |s|
+          other = Song.new(s.name, s.artist, s.album,
+                           Float(s.duration), s.id)
 
           if strict_search
             next unless song.eql?(other)
           else
             next unless song.similar?(other)
           end
-          candidates[Integer(found_song.id)] = other
+          result << song
         end
       end
-      candidates
+      result
     end
 
     private
@@ -88,7 +89,7 @@ module SyncSongs
     def login(username, password)
       @user = @client.login(username, password)
     rescue Grooveshark::InvalidAuthentication => e
-       raise Grooveshark::InvalidAuthentication, "#{e.message} An authenticated user is required for getting data from Grooveshark"
+      raise Grooveshark::InvalidAuthentication, "#{e.message} An authenticated user is required for getting data from Grooveshark"
       raise
     end
   end

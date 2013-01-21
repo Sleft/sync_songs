@@ -44,9 +44,17 @@ module SyncSongs
     def loved(username = @username, limit = @limit)
       @lastfm.user.get_loved_tracks(user: username,
                                     api_key: @api_key,
-                                    limit: limit).each do |s|
-        add(Song.new(s['name'], s['artist']['name']))
+                                    limit: limit).each do |l|
+        
+        # Get metadata for loved track.
+        s = @lastfm.track.get_info(track: l['name'],
+                                   artist: l['artist']['name'])
+
+        add(Song.new(s['name'], s['artist']['name'],
+                     # Not all Last.fm tracks belong to an album.
+                     s.key?('album') ? s['album']['title'] : nil))
       end
+
       self
     end
 
@@ -83,31 +91,39 @@ module SyncSongs
     #                 @limit).
     # strict_search - True if search should be strict (default: true).
     #
-    # Returns an array of loved candidates.
+    # Returns a SongSet.
     def search(other, limit = @limit, strict_search = true)
-      candidates = []           # Should be a set
+      result = SongSet.new
 
       # Search for songs that are not already in this set and return
       # them if they are sufficiently similar.
       exclusiveTo(other).each do |song|
         # The optional parameter artist for track.search does not seem
         # to work so it is not used.
-        found_songs = @lastfm.track.search(track: song.to_search_term,
+        search_result = @lastfm.track.search(track: song.to_search_term,
                                       limit: limit)['results']['trackmatches']['track'].compact
 
+        found_songs = []
+        
+        search_result.each { |r|
+          found_songs << @lastfm.track.get_info(track: r['name'],
+                                                artist: r['artist']) }
+
         unless found_songs.empty?
-          found_songs.each do |found_song|
-            other = Song.new(found_song['name'], found_song['artist'])
+          found_songs.each do |f|
+            other = Song.new(f['name'], f['artist']['name'],
+                              f.key?('album') ? f['album']['title'] : nil,
+                              Float(f['duration']) / 1_000)
             if strict_search
               next unless song.eql?(other)
             else
               next unless song.similar?(other)
             end
-            candidates << other
+            result << other
           end
         end
       end
-      candidates
+      result
     end
 
     private

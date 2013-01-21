@@ -8,7 +8,7 @@ module SyncSongs
 
     # Public: Returns the name of the song and the artist performing the
     # song.
-    attr_reader :name, :artist
+    attr_reader :name, :artist, :album, :duration, :id
 
     # Public: Constructs a song. Leading and trailing whitespace is
     # removed as it has no semantic significance for songs.
@@ -17,9 +17,12 @@ module SyncSongs
     # artist - The artist performing the song.
     #
     # Raises ArgumentError if the artist or the name is empty.
-    def initialize(name, artist)
-      @name   = name.strip
-      @artist = artist.strip
+    def initialize(name, artist, album = nil, duration = nil, id = nil)
+      @name     = name.strip
+      @artist   = artist.strip
+      @album    = album.strip if album
+      @duration = Time.at(duration).utc.strftime("%H:%M:%S") unless duration.zero? if duration
+      @id       = id
 
       if @name.empty? || @artist.empty?
         fail ArgumentError, 'Songs must have a non-empty name and artist'
@@ -32,9 +35,25 @@ module SyncSongs
     #
     # other - Song that this song is compared with.
     def <=>(other)
-      comparison = name.casecmp(other.name)
+      comp = name.casecmp(other.name)
 
-      comparison == 0 ? artist.casecmp(other.artist) : comparison
+      if comp == 0
+        comp = artist.casecmp(other.artist)
+      end
+
+      if comp == 0 && album && other.album
+        comp = album.casecmp(other.album)
+      end
+
+      # if comp == 0
+      #   if album && !other.album
+      #     comp = 1
+      #   elsif !album && other.album
+      #     comp = -1
+      #   end
+      # end
+
+      comp
     end
 
     # Public: Returns true if this song is equal to the compared song.
@@ -65,18 +84,19 @@ module SyncSongs
 
     # Public: Makes a hash value for this object and returns it.
     def hash
-      "#{name}#{artist}".downcase.hash
+      [artist, name, album].compact.join('').downcase.hash
     end
 
     # Public: Returns the song formatted as a string.
     def to_s
-      "#{name} - #{artist}"
+      [artist, name, album, duration].compact.join(' - ')
     end
 
     # Public: Returns the song formatted as appropriately for use in a
     # search query.
     def to_search_term
-      "#{name.downcase} #{artist.downcase}"
+      # When including album search on Last.fm barely finds anything.
+      [artist, name].compact.join(' ')
     end
   end
 end

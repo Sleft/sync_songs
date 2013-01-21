@@ -119,7 +119,7 @@ module SyncSongs
     end
 
     def test_to_s
-      assert_equal(@songs[0].to_s, 'Name1 - Artist1', 'String is in correct form')
+      assert_equal(@songs[0].to_s, 'Artist1 - Name1', 'String is in correct form')
     end
   end
 end
