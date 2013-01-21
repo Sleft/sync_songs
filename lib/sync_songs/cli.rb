@@ -19,7 +19,7 @@ module SyncSongs
     #
     # services - A hash of services associated with types.
     #
-    # Returns an array of Struct::Service.
+    # Returns an array of Struct::Direction.
     def directions(services)
       directions = []
 
@@ -27,7 +27,7 @@ module SyncSongs
 
       # Ask for the direction of every combination of services.
       services.to_a.combination(2) do |c|
-        question = [c.first, '<=>', c.last]
+        question = [c.first, '?', c.last]
         input = ask("#{question.join(' ')} ") do |q|
           q.responses[:not_valid] = 'Enter < for to left, > for to right, = for both directions or q to quit'
           q.default = '='
@@ -41,9 +41,13 @@ module SyncSongs
           say question.join(' ')
         end
 
-        directions << inputDirectionToStruct(input, c)
+        directions << Struct::Direction.new([Struct::Service.new(c.first.first.to_sym,
+                                                                 c.first.last.to_sym),
+                                             Struct::Service.new(c.last.first.to_sym,
+                                                                 c.last.last.to_sym)],
+                                            input.to_sym)
       end
-      directions.flatten
+      directions
     end
 
     def strict_search(service)
@@ -111,27 +115,6 @@ module SyncSongs
     end
 
     private
-
-    # Internal: Translate input of direction to a Struct::Service and
-    # store the Structs in an array.
-    #
-    # input - User input String to translate.
-    # data  - Array of arrays of services and types.
-    #
-    # Returns an array of Structs.
-    def inputDirectionToStruct(input, data)
-      support = []
-
-      case input
-      when '<' then support << :w << :r
-      when '=' then support << :rw << :rw
-      when '>' then support << :r << :w
-      end
-
-      data.map { |d| Struct::Service.new(d.first.to_sym,
-                                         d.last.to_sym,
-                                         support.shift) }
-    end
 
     # Internal: Exits if input is a character for quitting.
     #

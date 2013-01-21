@@ -16,3 +16,4 @@ require_relative "#{PATH}lastfm_cli"
 require_relative "#{PATH}version"
 Struct.new('Service', :name, :type, :action,
            :set, :ui, :strict_search, :interactive)
+Struct.new('Direction', :services, :direction)

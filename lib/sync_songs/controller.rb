@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-require_relative '../sync_songs'
-
 # Public: Classes for syncing sets of songs.
 module SyncSongs
   # Public: Controls syncing.
@@ -17,18 +15,20 @@ module SyncSongs
       @ui = ui
       @input_services = input_services
       ui.fail('You must supply at least two distinct services.') if @input_services.size < 2
+      @services = Set.new
     end
 
     def diff
       @ui.verboseMessage("Preparing to diff song sets")
-      @services = @input_services.collect { |i| Struct::Service.new(i.shift.to_sym, i.shift.to_sym, :r) }
+      @input_services.each { |i| @services << Struct::Service.new(i.shift.to_sym, i.shift.to_sym, :r) }
       getData
       # showDifference
     end
 
     def sync
       @ui.verboseMessage("Preparing to sync song sets")
-      @services = @ui.directions(@input_services)
+      @directions = @ui.directions(@input_services)
+      directionsToServices
       getData
       # addData(interactive = true)
     end
@@ -109,11 +109,14 @@ module SyncSongs
     def addData(strict_search = true, interactive = true)
       @services.each { |s| s.ui.addPreferences(s) }
 
-      # For
-      @services.each do |s|
-        s.set.send("#{s.type}Candidates")
+      # For each in direction(service1, service2, direction)
+      #   if < or =
+      #    search and write from service2 to service1
+      #   if > or =
+      #    search and write from service1 to service2
 
-      end
+      # @services.each do |s|
+      #   s.set.send("#{s.type}Candidates")
     end
 
     # Internal: Try to initialize the UI for the given service and get
@@ -128,6 +131,24 @@ module SyncSongs
         service.set = service.ui.set
       rescue NameError => e
         @ui.fail("Failed to initialize #{service_ui}.", e)
+      end
+    end
+
+    # Internal: Translate directions to an array of Struct::Service.
+    def directionsToServices
+      @directions.each do |d|
+        support = []
+
+        case d.direction
+        when :'<' then support << :w << :r
+        when :'=' then support << :rw << :rw
+        when :'>' then support << :r << :w
+        end
+
+        d.services.each do |s|
+          s.action = support.shift
+          @services << s
+        end
       end
     end
   end
