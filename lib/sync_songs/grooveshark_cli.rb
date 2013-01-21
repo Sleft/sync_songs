@@ -9,12 +9,21 @@ module SyncSongs
   class GroovesharkCLI
     attr_reader :set
 
-    def initialize
+    # Public: Construct a CLI.
+    # 
+    # ui - General user interface to use.
+    def initialize(ui)
+      @ui = ui
       @logged_in = false
 
       until @logged_in
         tryLogin
       end
+    end
+
+    def addPreferences(service)
+      @ui.strict_search(service)
+      @ui.interactive(service)
     end
 
     private
