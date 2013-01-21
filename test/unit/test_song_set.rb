@@ -45,7 +45,7 @@ module SyncSongs
     def test_add?
       addq_msg = 'add? works as expected'
       set = SongSet.new
-      assert_equal(set.add?(@songs[0]), set, addq_msg)
+      set.add?(@songs[0])
       assert_equal(set.add?(@songs[0]), nil, addq_msg)
     end
 
