@@ -75,7 +75,7 @@ module SyncSongs
 
     alias_method :addToFavorites, :addToLoved
 
-    # Public: Searches for loved candidates at Last.fm.
+    # Public: Searches for the given song set at Last.fm.
     #
     #
     # other         - SongSet to search for.
@@ -84,11 +84,11 @@ module SyncSongs
     # strict_search - True if search should be strict (default: true).
     #
     # Returns an array of loved candidates.
-    def lovedCandidates(other, limit = @limit, strict_search = true)
+    def search(other, limit = @limit, strict_search = true)
       candidates = []
 
-      # Search for songs that are not already favorites and add them
-      # as candidates if they are sufficiently similar.
+      # Search for songs that are not already in this set and return
+      # them if they are sufficiently similar.
       exclusiveTo(other).each do |song|
         # The optional parameter artist for track.search does not seem
         # to work so it is not used.
@@ -109,8 +109,6 @@ module SyncSongs
       end
       candidates
     end
-
-    alias_method :favoriteCandidates, :lovedCandidates
 
     private
 

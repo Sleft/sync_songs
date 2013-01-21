@@ -50,18 +50,17 @@ module SyncSongs
       songsAdded
     end
 
-    # Public: Searches for favorite candidates at Grooveshark.
+    # Public: Searches for the given song set at Grooveshark.
     #
-    # other - SongSet to search for.
+    # other         - SongSet to search for.
     # strict_search - True if search should be strict (default: true).
     #
-    # Returns a hash of Grooveshark ids associated with favorite
-    #   candidates.
-    def favoriteCandidates(other, strict_search = true)
+    # Returns a hash of Grooveshark ids associated with songs.
+    def search(other, strict_search = true)
       candidates = {}
 
-      # Search for songs that are not already loved and add them as
-      # candidates if they are sufficiently similar.
+      # Search for songs that are not already in this set and return
+      # them if they are sufficiently similar.
       exclusiveTo(other).each do |song|
         @client.search_songs(song.to_search_term).each do |found_song|
           other = Song.new(found_song.name, found_song.artist)
