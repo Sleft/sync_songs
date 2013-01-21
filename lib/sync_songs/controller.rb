@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+require_relative '../sync_songs'
+
 # Public: Classes for syncing sets of songs.
 module SyncSongs
   # Public: Controls syncing.
@@ -93,26 +95,37 @@ module SyncSongs
 
       @services.each do |service|
         threads << Thread.new(service) do |s|
-          @ui.verboseMessage("Downloading from #{s.name}...")
-          s.set.call(s.type) # Need to delegate this to UI so that
-                             # lastfm's version can be rescued if it
-                             # throws an exception
-          @ui.verboseMessage("Finished downloading from #{name}")
+          @ui.verboseMessage("Downloading from #{s.type} from #{s.name}...")
+          s.set.send(s.type) # Need to delegate this to UI so that
+          # lastfm's version can be rescued if it
+          # throws an exception
+          @ui.verboseMessage("Finished downloading #{s.type} from #{s.name}")
         end
       end
 
       threads.each { |t| t.join }
     end
 
+    def addData(strict_search = true, interactive = true)
+      @services.each { |s| s.ui.addPreferences(s) }
+
+      # For
+      @services.each do |s|
+        s.set.send("#{s.type}Candidates")
+
+      end
+    end
+
     # Internal: Try to initialize the UI for the given service and get
     # a reference to its song set which is stored in the Service
     # Struct.
     #
-    # service - A Struct, Service(:name, :type, :action, :set).
+    # service - A Struct::Service.
     def initializeUI(service)
       service_ui = "#{service.name.capitalize}#{@ui.class.name.split('::').last}"
       begin
-        service.set = (eval "#{service_ui}.new").set # AVOID EVAL
+        service.ui = SyncSongs.const_get(service_ui).new(@ui)
+        service.set = service.ui.set
       rescue NameError => e
         @ui.fail("Failed to initialize #{service_ui}.", e)
       end

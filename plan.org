@@ -2,6 +2,8 @@
 #+title: Plan
 
 * TODO Plan
+- In Struct::Direction service1, service2, direction. Then parse and act (search in, write to) accordingly.
+- Rescue SocketError so that it can handle no net connection.
 - Follow https://github.com/bbatsov/ruby-style-guide and https://github.com/styleguide/ruby , also TomDoc for comments.
 - Use each on getters and setters of sets to provide verbose mode. They (should) e.g. return the added songs.
 - Add examples to documentation as in Tomdoc specification?

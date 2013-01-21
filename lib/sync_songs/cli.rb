@@ -19,8 +19,7 @@ module SyncSongs
     #
     # services - A hash of services associated with types.
     #
-    # Returns an array of Structs, Service(:name, :type, :action,
-    #   :set).
+    # Returns an array of Struct::Service.
     def directions(services)
       directions = []
 
@@ -45,6 +44,38 @@ module SyncSongs
         directions << inputDirectionToStruct(input, c)
       end
       directions.flatten
+    end
+
+    def strict_search(service)
+      if service.set.takesParameter('strict_search')
+        input = ask('Do you want to make a strict search? ') do |q|
+          q.responses[:not_valid] = 'A strict search is recommended as a wide search may generate too many hits. Enter y for yes, n for no or q to quit'
+          q.default = 'y'
+          q.validate = /\A[yn#{QUIT_CHARACTER}]\Z/i
+        end
+
+        input.eql?('y') ? service.strict_search = true : service.strict_search = false
+      end
+    end
+
+    def interactive(service)
+      input = ask('For every found song, do you want to asked whether to add it (interactive mode)? ') do |q|
+        q.responses[:not_valid] = 'Interactive mode is recommended for everything but services you have direct access to, such as text files. Enter y for yes, n for no or q to quit'
+        q.default = 'y'
+        q.validate = /\A[yn#{QUIT_CHARACTER}]\Z/i
+      end
+
+      input.eql?('y') ? service.interactive = true : service.interactive = false
+    end
+
+    def interactiveAdd(song, service)
+      input = ask('Do you want to add #{song} to #{service.name}? ') do |q|
+        q.responses[:not_valid] = 'Enter y for yes, n for no or q to quit'
+        q.default = 'y'
+        q.validate = /\A[yn#{QUIT_CHARACTER}]\Z/i
+      end
+
+      input.eql?('y')
     end
 
     # Public: Shows failure message and exit.
@@ -81,9 +112,8 @@ module SyncSongs
 
     private
 
-    # Internal: Translate input of direction to a Struct,
-    # Service(:name, :type, :action, :set), and store the Structs in
-    # an array.
+    # Internal: Translate input of direction to a Struct::Service and
+    # store the Structs in an array.
     #
     # input - User input String to translate.
     # data  - Array of arrays of services and types.
@@ -99,8 +129,8 @@ module SyncSongs
       end
 
       data.map { |d| Struct::Service.new(d.first.to_sym,
-                                                d.last.to_sym,
-                                                support.shift) }
+                                         d.last.to_sym,
+                                         support.shift) }
     end
 
     # Internal: Exits if input is a character for quitting.
