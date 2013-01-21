@@ -19,8 +19,8 @@ module SyncSongs
     #
     # services - A hash of services associated with types.
     #
-    # Returns an array of Structs, DirectionInput(:service, :type,
-    # :action).
+    # Returns an array of Structs, Service(:name, :type, :action,
+    #   :set).
     def directions(services)
       directions = []
 
@@ -82,8 +82,8 @@ module SyncSongs
     private
 
     # Internal: Translate input of direction to a Struct,
-    # DirectionInput(:service, :type, :action), and store the Structs
-    # in an array.
+    # Service(:name, :type, :action, :set), and store the Structs in
+    # an array.
     #
     # input - User input String to translate.
     # data  - Array of arrays of services and types.
@@ -98,7 +98,7 @@ module SyncSongs
       when '>' then support << :r << :w
       end
 
-      data.map { |d| Struct::DirectionInput.new(d.first.to_sym,
+      data.map { |d| Struct::Service.new(d.first.to_sym,
                                                 d.last.to_sym,
                                                 support.shift) }
     end

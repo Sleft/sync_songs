@@ -7,27 +7,26 @@ module SyncSongs
 
     # Public: Constructs a controller.
     #
-    # ui       - The user interface to use.
-    # services - A hash of services associated with types,
-    #            e.g. {'lastfm' => 'favorites', 'grooveshark' =>
-    #            'favorites'} (default = nil).
-    def initialize(ui, services)
+    # ui             - The user interface to use.
+    # input_services - A hash of services associated with types,
+    #                  e.g. {'lastfm' => 'favorites', 'grooveshark' =>
+    #                  'favorites'} (default = nil).
+    def initialize(ui, input_services)
       @ui = ui
-      @services = services
-      ui.fail('You must supply at least two distinct services.') if @services.size < 2
-      @sets = {}
+      @input_services = input_services
+      ui.fail('You must supply at least two distinct services.') if @input_services.size < 2
     end
 
     def diff
       @ui.verboseMessage("Preparing to diff song sets")
-      @directions = @services.collect { |i| Struct::DirectionInput.new(i.shift.to_sym, i.shift.to_sym, :r) }
+      @services = @input_services.collect { |i| Struct::Service.new(i.shift.to_sym, i.shift.to_sym, :r) }
       getData
       # showDifference
     end
 
     def sync
       @ui.verboseMessage("Preparing to sync song sets")
-      @directions = @ui.directions(@services)
+      @services = @ui.directions(@input_services)
       getData
       # addData(interactive = true)
     end
@@ -66,15 +65,15 @@ module SyncSongs
     def checkSupport
       supported_services = Controller.supportedServices
 
-      @directions.each do |i|
+      @services.each do |i|
         fail_msg = " is not supported."
 
         # Is the service supported?
-        fail_msg = "#{i.service}#{fail_msg}"
-        @ui.fail(fail_msg) unless supported_services.key?(i.service)
+        fail_msg = "#{i.name}#{fail_msg}"
+        @ui.fail(fail_msg) unless supported_services.key?(i.name)
 
         # Is the type supported?
-        supported_types = supported_services[i.service]
+        supported_types = supported_services[i.name]
         fail_msg = "#{i.type} for #{fail_msg}"
         @ui.fail(fail_msg) unless supported_types.key?(i.type)
 
@@ -90,14 +89,14 @@ module SyncSongs
       threads = []
 
       checkSupport
-      @services.each { |s, _| initializeUI(s) }
+      @services.each { |s| initializeUI(s) }
 
-      @sets.each do |n, s|
-        threads << Thread.new(n, s) do |name, set|
-          @ui.verboseMessage("Downloading from #{name}...")
-          set.favorites # Need to delegate this to UI so that lastfm's
-                        # version can be rescued if it throws an
-                        # exception
+      @services.each do |service|
+        threads << Thread.new(service) do |s|
+          @ui.verboseMessage("Downloading from #{s.name}...")
+          s.set.call(s.type) # Need to delegate this to UI so that
+                             # lastfm's version can be rescued if it
+                             # throws an exception
           @ui.verboseMessage("Finished downloading from #{name}")
         end
       end
@@ -106,14 +105,14 @@ module SyncSongs
     end
 
     # Internal: Try to initialize the UI for the given service and get
-    # a reference to its song set which is stored in hash associated
-    # with the service name.
+    # a reference to its song set which is stored in the Service
+    # Struct.
     #
-    # service - A String naming the service.
+    # service - A Struct, Service(:name, :type, :action, :set).
     def initializeUI(service)
-      service_ui = "#{service.capitalize}#{@ui.class.name.split('::').last}"
-      begin                     # AVOID EVAL
-        @sets[service.to_sym] = (eval "#{service_ui}.new").set
+      service_ui = "#{service.name.capitalize}#{@ui.class.name.split('::').last}"
+      begin
+        service.set = (eval "#{service_ui}.new").set # AVOID EVAL
       rescue NameError => e
         @ui.fail("Failed to initialize #{service_ui}.", e)
       end
