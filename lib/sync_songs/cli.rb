@@ -93,6 +93,10 @@ module SyncSongs
       exit
     end
 
+    def message(message)
+      puts message
+    end
+
     def verboseMessage(message)
       puts message if @verbose
     end

@@ -21,6 +21,9 @@ module SyncSongs
     def diff
       @ui.verboseMessage("Preparing to diff song sets")
       @input_services.each { |i| @services << Struct::Service.new(i.shift.to_sym, i.shift.to_sym, :r) }
+      checkSupport
+      directionsToServices
+      @services.each { |s| initializeUI(s) }
       getData
       # showDifference
     end
@@ -28,7 +31,11 @@ module SyncSongs
     def sync
       @ui.verboseMessage("Preparing to sync song sets")
       @directions = @ui.directions(@input_services)
+      checkSupport
       directionsToServices
+      @services.each { |s| initializeUI(s) }
+      addPreferences
+
       getData
       addData
     end
@@ -88,10 +95,13 @@ module SyncSongs
 
     # Internal: Gets the data for each service.
     def getData
-      threads = []
+      @ui.message('Downloading data. This might take a while.')
+      getCurrentData
+      getSearchResults
+    end
 
-      checkSupport
-      @services.each { |s| initializeUI(s) }
+    def getCurrentData
+      threads = []
 
       @services.each do |service|
         threads << Thread.new(service) do |s|
@@ -106,17 +116,7 @@ module SyncSongs
       threads.each { |t| t.join }
     end
 
-    def addData
-      @directions.each do |d|
-        if d.direction == :'<' || d.direction == :'='
-          d.services.first.ui.addPreferences
-        end
-        if d.direction == :'>' || d.direction == :'='
-          d.services.last.ui.addPreferences
-
-        end
-      end
-
+    def getSearchResults
       threads = []
 
       @directions.each do |direction|
@@ -133,7 +133,9 @@ module SyncSongs
       end
 
       threads.each { |t| t.join }
+    end
 
+    def addData
       @directions.each do |d|
         d.services.each do |s|
           if s.interactive
@@ -141,6 +143,8 @@ module SyncSongs
           end
         end
       end
+
+      # Threaded add each service.songs_to_add
     end
 
     def search(service1, service2)
@@ -160,6 +164,17 @@ module SyncSongs
         service.songs_to_add = []       # should be a set
 
         service.search_result.each { |song| service.songs_to_add << song if @ui.addSong?(song, service) }
+      end
+    end
+
+    def addPreferences
+      @directions.each do |d|
+        if d.direction == :'<' || d.direction == :'='
+          d.services.first.ui.addPreferences
+        end
+        if d.direction == :'>' || d.direction == :'='
+          d.services.last.ui.addPreferences
+        end
       end
     end
 
