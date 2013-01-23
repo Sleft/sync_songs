@@ -10,7 +10,7 @@ module SyncSongs
     class_option :verbose, type: :boolean, aliases: '-v'
     services_option = [:services, {type: :hash, required: true,
                          default: {'grooveshark' => 'favorites',
-                           'lastfm' => 'favorites'},
+                           'lastfm' => 'loved'},
                          banner: 'service:type',
                          desc: 'A list of at least two services paired with types, e.g. grooveshark:favorites lastfm:favorites',
                          aliases: '-s'}]
