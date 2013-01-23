@@ -23,6 +23,23 @@ module SyncSongs
       end
     end
 
+    # Public: UI wrapper for library favorites. Nothing needs to be
+    # done here so the call is just pass on.
+    def favorites
+      @set.favorites
+    end
+
+    # Public: UI wrapper for addToFavorites in library. Nothing needs to be
+    # done here so the call is just pass on.
+    #
+    # other - A SongSet to add from.
+    #
+    # Returns an array of the songs that was added.
+    def addToFavorites(other)
+      @set.addToFavorites(other)
+    end
+
+    # Public: Ask for preferences of options for adding songs.
     def addPreferences
       @ui.strict_search(@service)
       @ui.interactive(@service)
@@ -37,7 +54,7 @@ module SyncSongs
                                 ask('Grooveshark password? ') { |q| q.echo = false })
       @logged_in = true
     rescue Grooveshark::InvalidAuthentication => e
-      say e.message
+      say "Grooveshark: #{e.message}"
     rescue SocketError => e
       @ui.fail('Failed to connect to Grooveshark', e)
     end

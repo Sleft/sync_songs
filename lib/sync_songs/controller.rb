@@ -63,9 +63,12 @@ module SyncSongs
 
       # Associate the class name with its supported services.
       classes.each do |klass|
+        class_name = klass.name.split('::').last
+
         # Only accept classes that ends with 'Set'.
-        class_name = klass.name.split('::').last.sub(/Set\Z/, '').downcase
-        services[class_name.to_sym] = klass::SERVICES unless class_name.empty?
+        if match = class_name.match(/(\w+)Set\Z/)
+          services[match[1].downcase.to_sym] = klass::SERVICES
+        end
       end
 
       services
@@ -116,9 +119,7 @@ module SyncSongs
       @services.each do |service|
         threads << Thread.new(service) do |s|
           @ui.verboseMessage("Downloading #{s.type} from #{s.name}...")
-          s.set.send(s.type) # Need to delegate this to UI so that
-          # lastfm's version can be rescued if it
-          # throws an exception
+          s.ui.send(s.type)
           @ui.verboseMessage("Finished downloading #{s.type} from #{s.name}")
         end
       end
@@ -178,12 +179,13 @@ module SyncSongs
 
     # Internal: Gets data to be synced to each service.
     def getDataToAdd
+
       @directions.each do |d|
         d.services.each do |s|
           if s.interactive      # Add songs interactively
             interactiveAdd(s)
           else                  # or add them all without asking.
-            s.songs_to_add = s.search_results
+            s.songs_to_add = s.search_result
           end
         end
       end
@@ -191,12 +193,15 @@ module SyncSongs
 
     # Internal: Adds the data to be synced to each service.
     def addData
+      @ui.message('Adding data. This might take a while.')
       threads = []
 
       @services.each do |service|
         threads << Thread.new(service) do |s|
-          unless s.songs_to_add.empty?
-            s.added_songs = s.send("addTo#{s.type.capitalize}(#{s.songs_to_add})") 
+          if s.songs_to_add && !s.songs_to_add.empty?
+            @ui.verboseMessage("Adding #{s.type} to #{s.name}...")
+            s.added_songs = s.ui.send("addTo#{s.type.capitalize}", s.songs_to_add)
+            @ui.verboseMessage("Finished adding #{s.type} to #{s.name}")
           end
         end
       end
@@ -209,6 +214,9 @@ module SyncSongs
     # Internal: For each found missing song in a service, ask whether
     # to add it to that service.
     def interactiveAdd(service)
+      service.songs_to_add = SongSet.new
+      @ui.message("Found #{service.search_result.size} candidates for #{service.name} #{service.type}")
+
       service.search_result.each { |song| service.songs_to_add << song if @ui.addSong?(song, service) }
     end
 
@@ -244,18 +252,26 @@ module SyncSongs
         end
       end
     end
-  end
 
-  # Internal: Sends a message of which songs that was added to the UI.
-  def sayAddedSongs
-    msg = []
+    # Internal: Sends a message of which songs that was added to the
+    # UI.
+    def sayAddedSongs
+      counts_msg = []
+      v_msg = []
 
-    @services.each do |service|
-      unless services.added_songs.empty?
-        services.added_songs { |s| msg << "Added #{s} to #{service.name} #{service.type}" }
+      @services.each do |service|
+        if service.added_songs
+          counts_msg << "Added #{service.added_songs.size} songs to #{service.name} #{service.type}"
+          v_msg << service.added_songs.map { |s| "Added #{s} to #{service.name} #{service.type}" }
+        end
+      end
+
+      unless v_msg.empty? && counts_msg.empty?
+        @ui.verboseMessage(v_msg.flatten.join('\n'))
+        @ui.message(counts_msg.join('\n'))
+      else
+        @ui.message('Nothing done')
       end
     end
-
-    @ui.verboseMessage(msg)
   end
 end
