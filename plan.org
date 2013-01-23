@@ -2,14 +2,14 @@
 #+title: Plan
 
 * TODO Plan
-- In Struct::Direction service1, service2, direction. Then parse and act (search in, write to) accordingly.
 - Rescue SocketError half way through sync/diff. Try sync/diff by disabling connecting halfway through it and see where it fails and rescue that if appropriate.
+- Add option to write accepted songs so far in interactive mode.
+- Add the possibility to sync between same service and type but different users (will be file name in CSVSet).
 - Add tests for all new things.
   - Add tests for songs with album.
 - Use watir for testing last.fm auth.
 - Go through all documentation and fix it.
 - Follow https://github.com/bbatsov/ruby-style-guide and https://github.com/styleguide/ruby , also TomDoc for comments.
-- Use each on getters and setters of sets to provide verbose mode. They (should) e.g. return the added songs.
 - Add examples to documentation as in Tomdoc specification?
 - Add argument types to documentation, from Tomdoc: "The expected type (or types) of each argument SHOULD be clearly indicated in the explanation. When you specify a type, use the proper classname of the type (for instance, use 'String' instead of 'string' to refer to a String type)."
 - Use Module#ancestor and methods and respond_to for deciding which sets to sync between.
