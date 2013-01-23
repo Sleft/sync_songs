@@ -3,10 +3,11 @@
 
 * TODO Plan
 - In Struct::Direction service1, service2, direction. Then parse and act (search in, write to) accordingly.
-- Rescue SocketError so that it can handle no net connection.
+- Rescue SocketError half way through sync/diff. Try sync/diff by disabling connecting halfway through it and see where it fails and rescue that if appropriate.
 - Add tests for all new things.
   - Add tests for songs with album.
-- Go through all documentation and fix it.    
+- Use watir for testing last.fm auth.
+- Go through all documentation and fix it.
 - Follow https://github.com/bbatsov/ruby-style-guide and https://github.com/styleguide/ruby , also TomDoc for comments.
 - Use each on getters and setters of sets to provide verbose mode. They (should) e.g. return the added songs.
 - Add examples to documentation as in Tomdoc specification?
@@ -95,29 +96,29 @@
 - Skeleton
   #+begin_src text
     # Sync::Songs
-    
+
     TODO: Write a gem description
-    
+
     ## Installation
-    
+
     Add this line to your application's Gemfile:
-    
+
         gem 'sync_songs'
-    
+
     And then execute:
-    
+
         $ bundle
-    
+
     Or install it yourself as:
-    
+
         $ gem install sync_songs
-    
+
     ## Usage
-    
+
     TODO: Write usage instructions here
-    
+
     ## Contributing
-    
+
     1. Fork it
     2. Create your feature branch (`git checkout -b my-new-feature`)
     3. Commit your changes (`git commit -am 'Add some feature'`)

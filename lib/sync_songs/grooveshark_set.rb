@@ -17,7 +17,7 @@ module SyncSongs
     # password - The password of the user to authenticate.
     #
     # Raises Grooveshark::InvalidAuthentication if authentication
-    #   fails.
+    #   fails. Raises SocketError if network connection fails.
     def initialize(username, password)
       super()
 
