@@ -101,9 +101,10 @@ module SyncSongs
 
     # Internal: Gets the data for each service.
     def getData
-      @ui.message('Downloading data. This might take a while.')
+      @ui.message('Getting data. This might take a while.')
       getCurrentData
       getSearchResults
+      getDataToAdd
     end
 
     # Internal: Gets the current data from each service, e.g. the
@@ -175,8 +176,8 @@ module SyncSongs
       end
     end
 
-    # Internal: Adds the data to be synced to each service.
-    def addData
+    # Internal: Gets data to be synced to each service.
+    def getDataToAdd
       @directions.each do |d|
         d.services.each do |s|
           if s.interactive      # Add songs interactively
@@ -186,8 +187,23 @@ module SyncSongs
           end
         end
       end
+    end
 
-      # Threaded add each service.songs_to_add
+    # Internal: Adds the data to be synced to each service.
+    def addData
+      threads = []
+
+      @services.each do |service|
+        threads << Thread.new(service) do |s|
+          unless s.songs_to_add.empty?
+            s.added_songs = s.send("addTo#{s.type.capitalize}(#{s.songs_to_add})") 
+          end
+        end
+      end
+
+      threads.each { |t| t.join }
+
+      sayAddedSongs
     end
 
     # Internal: For each found missing song in a service, ask whether
@@ -228,5 +244,18 @@ module SyncSongs
         end
       end
     end
+  end
+
+  # Internal: Sends a message of which songs that was added to the UI.
+  def sayAddedSongs
+    msg = []
+
+    @services.each do |service|
+      unless services.added_songs.empty?
+        services.added_songs { |s| msg << "Added #{s} to #{service.name} #{service.type}" }
+      end
+    end
+
+    @ui.verboseMessage(msg)
   end
 end
