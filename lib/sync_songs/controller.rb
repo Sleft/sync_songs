@@ -51,10 +51,11 @@ module SyncSongs
     # Public: Returns a hash of services associated with their
     # supported types associated with supported action.
     #
-    # Example:
-    #   Controller.supportedServices =>
-    #     {:grooveshark=>{:favorites=>:rw}, :lastfm=>{:loved=>:rw,
-    #     :favorites=>:rw}}
+    # Examples
+    # 
+    #   Controller.supportedServices
+    #   # => {:grooveshark=>{:favorites=>:rw}, :lastfm=>{:loved=>:rw,
+    #        :favorites=>:rw}}
     def self.supportedServices
       services = {}
 
