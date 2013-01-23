@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 require 'lastfm'
-require 'highline/import'       # Should be in UI?
-require 'launchy'               # Should be in UI?
 require_relative 'song_set'
 
 # Public: Classes for syncing sets of songs.
@@ -38,7 +36,8 @@ module SyncSongs
     # limit    - The maximum number of favorites to get (default:
     #            @limit).
     #
-    # Raises Lastfm::ApiError if the username is invalid.
+    # Raises Lastfm::ApiError if the username is invalid or there is a
+    # temporary error.
     #
     # Returns self.
     def loved(username = @username, limit = @limit)
@@ -60,18 +59,18 @@ module SyncSongs
 
     alias_method :favorites, :loved
 
-    # Public: Add the songs in the given set to the given user's
-    # loved songs on Last.fm.
+    # Public: Add the songs in the given set to the given user's loved
+    # songs on Last.fm. This method requires an authorized session
+    # which is gotten by getting the user to authorize via the url
+    # given by authorizeURL and then running authorize.
     #
-    # other - An array of songs to add from.
+    # other - A SongSet to add from.
     #
     # Raises Lastfm::ApiError if the Last.fm token has not been
     #   authorized or if the song is not recognized.
     #
     # Returns an array of the songs that was added.
     def addToLoved(other)
-      authorize
-      
       songsAdded = []
 
       if @lastfm.session
@@ -126,19 +125,22 @@ module SyncSongs
       result
     end
 
-    private
+    # Public: Return an URL for authorizing a Last.fm session.
+    def authorizeURL
+      @token = @lastfm.auth.get_token
+      "http://www.last.fm/api/auth/?api_key=#@api_key&token=#@token"
+    end
 
-    # Internal: Authorize a Last.fm session (needed for certain calls
-    # to Last.fm). Sould be in UI?
+
+    # Public: Authorize a Last.fm session (needed for certain calls to
+    # Last.fm, such as addToLoved). Get the user to authorize via the
+    # URL returned by authorizeURL before calling this method.
     def authorize
-      # Store token somewhere instead and only call URL if there is no
-      # stored token.
-      token = @lastfm.auth.get_token
-
-      Launchy.open("http://www.last.fm/api/auth/?api_key=#@api_key&token=#{token}")
-      exit unless ask('A page asking for authorization of this tool with Last.fm should be open in your web browser. You need to approve it before proceeding. Continue? (y/n) ').casecmp('y') == 0
-
-      @lastfm.session = @lastfm.auth.get_session(token: token)['key']
+      if @token
+        @lastfm.session = @lastfm.auth.get_session(token: @token)['key']
+      else
+        fail StandardError, "Before calling #{__method__} a token must be authorized, e.g. by calling authorizeURL and getting the user to authorize via that URL."
+      end
     end
   end
 end
