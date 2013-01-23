@@ -11,9 +11,10 @@ require_relative "#{PATH}cli"
 require_relative "#{PATH}controller"
 require_relative "#{PATH}grooveshark_cli"
 require_relative "#{PATH}grooveshark_set"
-require_relative "#{PATH}grooveshark_set"
 require_relative "#{PATH}lastfm_cli"
+require_relative "#{PATH}lastfm_set"
 require_relative "#{PATH}version"
+
 # TODO document (why are these structs not hashes? search!)
 Struct.new('Service', :name, :type, :action,
            :set, :ui, :strict_search, :interactive,
