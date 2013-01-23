@@ -2,7 +2,7 @@
 
 # Public: Classes for syncing sets of songs.
 module SyncSongs
-  # Public: Controls syncing.
+  # Public: Controls syncing and diffing of sets of songs.
   class Controller
 
     # Public: Constructs a controller.
@@ -10,7 +10,7 @@ module SyncSongs
     # ui             - The user interface to use.
     # input_services - A hash of services associated with types,
     #                  e.g. {'lastfm' => 'favorites', 'grooveshark' =>
-    #                  'favorites'} (default = nil).
+    #                  'favorites'}.
     def initialize(ui, input_services)
       @ui = ui
       @input_services = input_services
@@ -18,47 +18,53 @@ module SyncSongs
       @services = Set.new
     end
 
+    # Public: Diffs the song sets of the input services.
     def diff
       @ui.verboseMessage("Preparing to diff song sets")
+
       @input_services.each { |i| @services << Struct::Service.new(i.shift.to_sym, i.shift.to_sym, :r) }
       checkSupport
+
       directionsToServices
-      @services.each { |s| initializeUI(s) }
+      @services.each { |s| initializeServiceUI(s) }
+
       getData
       # showDifference
     end
 
+    # Public: Syncs the song sets of the input services.
     def sync
       @ui.verboseMessage("Preparing to sync song sets")
+
       @directions = @ui.directions(@input_services)
       checkSupport
+
       directionsToServices
-      @services.each { |s| initializeUI(s) }
+      @services.each { |s| initializeServiceUI(s) }
+
       addPreferences
 
       getData
       addData
     end
 
-    # For each service initialize
-    # Threads: For each service get data
-    #          Save compare data
-    # Ask for each missing song if it shall be synced (y/n)
-    # Threads (if both directions): Set data
-
-
-    # Public: Returns a hash of services associated with types of
-    # services and their support direction.
+    # Public: Returns a hash of services associated with their
+    # supported types associated with supported action.
+    #
+    # Example:
+    #   Controller.supportedServices =>
+    #     {:grooveshark=>{:favorites=>:rw}, :lastfm=>{:loved=>:rw,
+    #     :favorites=>:rw}}
     def self.supportedServices
       services = {}
 
       # Get the classes that extends SongSet.
       classes = ObjectSpace.each_object(Class).select { |klass| klass < SongSet }
 
-      # Associate the class name with it services.
+      # Associate the class name with its supported services.
       classes.each do |klass|
-        class_name = klass.name.split('::').last.sub(/Set\Z/, '').downcase
         # Only accept classes that ends with 'Set'.
+        class_name = klass.name.split('::').last.sub(/Set\Z/, '').downcase
         services[class_name.to_sym] = klass::SERVICES unless class_name.empty?
       end
 
@@ -67,10 +73,10 @@ module SyncSongs
 
     private
 
-    # Internal: Checks if the input service, type and action are
-    # supported, e.g. if reading (action) from favorites (type) at
-    # Grooveshark (service) is supported. Fails via UI if something is
-    # not supported.
+    # Internal: Checks if the action and the type and for the input
+    # service are supported, e.g. if reading (action) from favorites
+    # (type) at Grooveshark (service) is supported. Fails via UI if
+    # something is not supported.
     def checkSupport
       supported_services = Controller.supportedServices
 
@@ -100,6 +106,9 @@ module SyncSongs
       getSearchResults
     end
 
+    # Internal: Gets the current data from each service, e.g. the
+    # current favorites from Grooveshark and Last.fm. The data is not
+    # returned but stored in the set of the each service.
     def getCurrentData
       threads = []
 
@@ -116,6 +125,9 @@ module SyncSongs
       threads.each { |t| t.join }
     end
 
+    # Internal: Gets the search result from the services that should
+    # be synced to. The data is stored in the search_result of each
+    # Struct::Service.
     def getSearchResults
       threads = []
 
@@ -135,18 +147,14 @@ module SyncSongs
       threads.each { |t| t.join }
     end
 
-    def addData
-      @directions.each do |d|
-        d.services.each do |s|
-          if s.interactive
-            interactiveAdd(s)
-          end
-        end
-      end
-
-      # Threaded add each service.songs_to_add
-    end
-
+    # Internal: Searches for songs that are exclusive to service2 at
+    # service1, e.g. gets the search result on Grooveshark of the
+    # songs that are exclusive to Last.fm.
+    #
+    # service1 - Service to search.
+    # service2 - Service with songs to search for.
+    #
+    # Returns the result as a SongSet.
     def search(service1, service2)
       @ui.verboseMessage("Searching #{service1.name}...")
       result = service1.set.send(:search, service2.set, service1.strict_search)
@@ -155,18 +163,7 @@ module SyncSongs
       result
     end
 
-    def interactiveAdd(service)
-      if service.search_result.is_a?(Hash)
-        service.songs_to_add = {}
-
-        service.search_result.each { |id, song| service.songs_to_add[id] = song if @ui.interactiveAdd(song, service) }
-      else
-        service.songs_to_add = []       # should be a set
-
-        service.search_result.each { |song| service.songs_to_add << song if @ui.addSong?(song, service) }
-      end
-    end
-
+    # Internal: Ask for preferences of options for adding songs.
     def addPreferences
       @directions.each do |d|
         if d.direction == :'<' || d.direction == :'='
@@ -178,12 +175,33 @@ module SyncSongs
       end
     end
 
+    # Internal: Adds the data to be synced to each service.
+    def addData
+      @directions.each do |d|
+        d.services.each do |s|
+          if s.interactive      # Add songs interactively
+            interactiveAdd(s)
+          else                  # or add them all without asking.
+            s.songs_to_add = s.search_results
+          end
+        end
+      end
+
+      # Threaded add each service.songs_to_add
+    end
+
+    # Internal: For each found missing song in a service, ask whether
+    # to add it to that service.
+    def interactiveAdd(service)
+      service.search_result.each { |song| service.songs_to_add << song if @ui.addSong?(song, service) }
+    end
+
     # Internal: Try to initialize the UI for the given service and get
-    # a reference to its song set which is stored in the Service
-    # Struct.
+    # a reference to its song set which is then stored in the
+    # Struct::Service.
     #
     # service - A Struct::Service.
-    def initializeUI(service)
+    def initializeServiceUI(service)
       service_ui = "#{service.name.capitalize}#{@ui.class.name.split('::').last}"
       begin
         service.ui = SyncSongs.const_get(service_ui).new(service, @ui)

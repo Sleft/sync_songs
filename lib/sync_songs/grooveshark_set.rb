@@ -55,7 +55,7 @@ module SyncSongs
     # other         - SongSet to search for.
     # strict_search - True if search should be strict (default: true).
     #
-    # Returns a Songdef.
+    # Returns a SongSet.
     def search(other, strict_search = true)
       result = SongSet.new
 
