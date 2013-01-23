@@ -23,7 +23,7 @@ module SyncSongs
     def directions(services)
       directions = []
 
-      say 'Enter directions to write in'
+      say 'Enter direction to write in'
 
       # Ask for the direction of every combination of services.
       services.to_a.combination(2) do |c|
@@ -55,9 +55,11 @@ module SyncSongs
         q.responses[:not_valid] = 'A strict search is recommended as a wide search may generate too many hits. Enter y for yes, n for no or q to quit'
         q.default = 'y'
         q.validate = /\A[yn#{QUIT_CHARACTER}]\Z/i
-
-        service.strict_search = input.eql?('y') ? true : false
       end
+
+      exitOption(input)
+
+      service.strict_search = input.eql?('y') ? true : false
     end
 
     def interactive(service)
@@ -66,6 +68,8 @@ module SyncSongs
         q.default = 'y'
         q.validate = /\A[yn#{QUIT_CHARACTER}]\Z/i
       end
+
+      exitOption(input)
 
       service.interactive = input.eql?('y') ? true : false
     end
@@ -77,6 +81,8 @@ module SyncSongs
         q.validate = /\A[yn#{QUIT_CHARACTER}]\Z/i
       end
 
+      exitOption(input)
+
       input.eql?('y')
     end
 
@@ -85,7 +91,7 @@ module SyncSongs
     # message   - The String failure message.
     # exception - The Exception causing the failure (default: nil).
     def fail(message, exception = nil)
-      puts message
+      say message.strip     # Messages from Last.fm have leading spaces.
       if @verbose && exception
         p exception
         puts exception.backtrace
@@ -113,7 +119,7 @@ module SyncSongs
         msg << "#{service}: #{type_msg.join(', ')}"
       end
 
-      say msg.join("\n")
+      puts msg.join("\n")
     end
 
     private
