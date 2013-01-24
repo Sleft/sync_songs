@@ -4,17 +4,19 @@
 module SyncSongs
   # Public: Controls syncing and diffing of sets of songs.
   class Controller
+    INPUT_FORM = '[user|file path]:service:type'
 
     # Public: Constructs a controller.
     #
-    # ui             - The user interface to use.
-    # input_services - A hash of services associated with types,
-    #                  e.g. {'lastfm' => 'favorites', 'grooveshark' =>
-    #                  'favorites'}.
-    def initialize(ui, input_services)
+    # ui    - The user interface to use.
+    # input - An Set of Strings representing users or file paths
+    #         paired with a service and a type on the form
+    #         user@service:type, e.g. "user1.grooveshark:favorites",
+    #         "user1:lastfm:loved".
+    def initialize(ui, input)
       @ui = ui
-      @input_services = input_services
-      ui.fail('You must supply at least two distinct services.') if @input_services.size < 2
+      @input = input
+      parseInput
       @services = Set.new
     end
 
@@ -22,7 +24,7 @@ module SyncSongs
     def diff
       @ui.verboseMessage("Preparing to diff song sets")
 
-      @input_services.each { |i| @services << Struct::Service.new(i.shift.to_sym, i.shift.to_sym, :r) }
+      @input.each { |i| @services << Struct::Service.new(i.shift.to_sym, i.shift.to_sym, :r) }
       checkSupport
 
       directionsToServices
@@ -36,7 +38,7 @@ module SyncSongs
     def sync
       @ui.verboseMessage("Preparing to sync song sets")
 
-      @directions = @ui.directions(@input_services)
+      @directions = @ui.directions(@input)
       checkSupport
 
       directionsToServices
@@ -273,6 +275,23 @@ module SyncSongs
       else
         @ui.message('Nothing done')
       end
+    end
+
+    # Internal: Parse the input from a set with elements of the form
+    # user@service:type to an array of the form [[:user1, :service,
+    # :type], [:user1, :service, :type]] and complain if the input is
+    # bad.
+    def parseInput
+      split_input = Set.new
+
+      @input.each do |s|
+        user, service, type = s.split(':')
+        split_input << [user.to_sym, service.to_sym, type.to_sym].compact if service && type && user
+      end
+
+      @ui.fail("You must supply at least two distinct services on the form #{INPUT_FORM}") if split_input.size < 2
+
+      @input = split_input
     end
   end
 end

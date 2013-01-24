@@ -7,6 +7,7 @@ module SyncSongs
   # Public: Command-line interface.
   class CLI
     QUIT_CHARACTER = 'q'
+    YN_OPTIONS_MSG = 'Enter y for yes, n for no or q to quit'
 
     # Public: Constructs a command-line interface.
     #
@@ -17,7 +18,7 @@ module SyncSongs
 
     # Public: Asks for directions to write in and return them.
     #
-    # services - A hash of services associated with types.
+    # services - An Set of services associated with types.
     #
     # Returns an array of Struct::Direction.
     def directions(services)
@@ -41,18 +42,16 @@ module SyncSongs
           say question.join(' ')
         end
 
-        directions << Struct::Direction.new([Struct::Service.new(c.first.first.to_sym,
-                                                                 c.first.last.to_sym),
-                                             Struct::Service.new(c.last.first.to_sym,
-                                                                 c.last.last.to_sym)],
+        directions << Struct::Direction.new([Struct::Service.new(*c.first),
+                                             Struct::Service.new(*c.last)],
                                             input.to_sym)
       end
       directions
     end
 
     def strict_search(service)
-      input = ask("Use strict search for #{service.name}? ") do |q|
-        q.responses[:not_valid] = 'A strict search is recommended as a wide search may generate too many hits. Enter y for yes, n for no or q to quit'
+      input = ask("Use strict search for #{service.user} #{service.name} #{service.type}? ") do |q|
+        q.responses[:not_valid] = "A strict search is recommended as a wide search may generate too many hits. #{YN_OPTIONS_MSG}"
         q.default = 'y'
         q.validate = /\A[yn#{QUIT_CHARACTER}]\Z/i
       end
@@ -63,8 +62,8 @@ module SyncSongs
     end
 
     def interactive(service)
-      input = ask("Interactive mode for #{service.name}, i.e. for every found song in #{service.name}, do you want to be asked whether to add it? ") do |q|
-        q.responses[:not_valid] = 'Interactive mode is recommended for everything but services you have direct access to, such as text files. Enter y for yes, n for no or q to quit'
+      input = ask("Interactive mode for #{service.user} #{service.name} #{service.type}? ") do |q|
+        q.responses[:not_valid] = "In interactive mode you will for every found song be asked whether to add it. Interactive mode is recommended for everything but services you have direct access to, such as text files. #{YN_OPTIONS_MSG}"
         q.default = 'y'
         q.validate = /\A[yn#{QUIT_CHARACTER}]\Z/i
       end
@@ -76,8 +75,8 @@ module SyncSongs
 
     def addSong?(song, service)
       input = ask("Add #{song} to #{service.name} #{service.type}? ") do |q|
-        q.responses[:not_valid] = 'Enter y for yes, n for no or q to quit'
-        q.default = 'y'
+        q.responses[:not_valid] = #{YN_OPTIONS_MSG}
+          q.default = 'y'
         q.validate = /\A[yn#{QUIT_CHARACTER}]\Z/i
       end
 

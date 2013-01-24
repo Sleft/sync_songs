@@ -17,9 +17,9 @@ module SyncSongs
     def initialize(service, ui)
       @service = service
       @ui = ui
-      @set = LastfmSet.new(ask('Last.fm API key? ') { |q| q.echo = false },
-                           ask('Last.fm API secret? ') { |q| q.echo = false },
-                           ask('Last.fm username? '))
+      @set = LastfmSet.new(ask("Last.fm API key for #{service.user} #{service.name} #{service.type}? ") { |q| q.echo = false },
+                           ask("Last.fm API secret for #{service.user} #{service.name} #{service.type}? ") { |q| q.echo = false },
+                           @service.user)
     end
 
     # Public: UI wrapper for library loved. Prints exceptions that the

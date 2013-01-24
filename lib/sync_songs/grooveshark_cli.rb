@@ -50,8 +50,7 @@ module SyncSongs
     # Internal: Tries to login to Grooveshark and prints and error
     # message if it fails.
     def tryLogin
-      @set = GroovesharkSet.new(ask('Grooveshark username? '),
-                                ask('Grooveshark password? ') { |q| q.echo = false })
+      @set = GroovesharkSet.new(@service.user, ask("Grooveshark password for #{@service.user}? ") { |q| q.echo = false })
       @logged_in = true
     rescue Grooveshark::InvalidAuthentication => e
       say "Grooveshark: #{e.message}"
