@@ -21,5 +21,5 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'highline'
   gem.add_runtime_dependency 'lastfm', ['>=1.14.0']
   gem.add_runtime_dependency 'launchy', ['>=2.1.2']
-  gem.add_runtime_dependency 'thor', ['>=0.16.0']
+  gem.add_runtime_dependency 'thor', ['>=0.17.0']
 end
