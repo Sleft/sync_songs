@@ -76,7 +76,7 @@ module SyncSongs
     def addSong?(song, service)
       input = ask("Add #{song} to #{service.name} #{service.type}? ") do |q|
         q.responses[:not_valid] = #{YN_OPTIONS_MSG}
-          q.default = 'y'
+        q.default = 'y'
         q.validate = /\A[yn#{QUIT_CHARACTER}]\Z/i
       end
 
