@@ -8,7 +8,6 @@ require_relative 'lastfm_set'
 module SyncSongs
   # Public: A command-line interface for Last.fm sets of songs.
   class LastfmCLI
-    attr_reader :set
 
     # Public: Construct a CLI.
     #
@@ -17,7 +16,7 @@ module SyncSongs
     def initialize(service, ui)
       @service = service
       @ui = ui
-      @set = LastfmSet.new(ask("Last.fm API key for #{service.user} #{service.name} #{service.type}? ") { |q| q.echo = false },
+      @service.set = LastfmSet.new(ask("Last.fm API key for #{service.user} #{service.name} #{service.type}? ") { |q| q.echo = false },
                            ask("Last.fm API secret for #{service.user} #{service.name} #{service.type}? ") { |q| q.echo = false },
                            @service.user)
     end
@@ -25,7 +24,7 @@ module SyncSongs
     # Public: UI wrapper for library loved. Prints exceptions that the
     # library might raise.
     def loved
-      @set.loved
+      @service.set.loved
       rescue Lastfm::ApiError => e
       @ui.fail("Last.fm: #{e.message.strip}", e)
     end
@@ -39,10 +38,10 @@ module SyncSongs
     def addToLoved(other)
       # Store token somewhere instead and only call URL if there is no
       # stored token.
-      Launchy.open(@set.authorizeURL)
+      Launchy.open(@service.set.authorizeURL)
       exit unless ask('A page asking for authorization with Last.fm should be open in your web browser. You need to approve it before proceeding. Continue? (y/n) ').casecmp('y') == 0
-      @set.authorize
-      @set.addToLoved(other)
+      @service.set.authorize
+      @service.set.addToLoved(other)
     end
 
     alias_method :addToFavorites, :addToLoved

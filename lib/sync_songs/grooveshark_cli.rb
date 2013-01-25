@@ -7,7 +7,6 @@ require_relative 'grooveshark_set'
 module SyncSongs
   # Public: A CLI for Grooveshark sets of songs.
   class GroovesharkCLI
-    attr_reader :set
 
     # Public: Construct a CLI.
     #
@@ -26,7 +25,7 @@ module SyncSongs
     # Public: UI wrapper for library favorites. Nothing needs to be
     # done here so the call is just pass on.
     def favorites
-      @set.favorites
+      @service.set.favorites
     end
 
     # Public: UI wrapper for addToFavorites in library. Nothing needs to be
@@ -36,7 +35,7 @@ module SyncSongs
     #
     # Returns an array of the songs that was added.
     def addToFavorites(other)
-      @set.addToFavorites(other)
+      @service.set.addToFavorites(other)
     end
 
     # Public: Ask for preferences of options for adding songs.
@@ -50,7 +49,7 @@ module SyncSongs
     # Internal: Tries to login to Grooveshark and prints and error
     # message if it fails.
     def tryLogin
-      @set = GroovesharkSet.new(@service.user, ask("Grooveshark password for #{@service.user}? ") { |q| q.echo = false })
+      @service.set = GroovesharkSet.new(@service.user, ask("Grooveshark password for #{@service.user}? ") { |q| q.echo = false })
       @logged_in = true
     rescue Grooveshark::InvalidAuthentication => e
       say "Grooveshark: #{e.message}"

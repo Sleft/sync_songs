@@ -232,7 +232,6 @@ module SyncSongs
       service_ui = "#{service.name.capitalize}#{@ui.class.name.split('::').last}"
       begin
         service.ui = SyncSongs.const_get(service_ui).new(service, @ui)
-        service.set = service.ui.set
       rescue NameError => e
         @ui.fail("Failed to initialize #{service_ui}.", e)
       end
