@@ -281,16 +281,21 @@ module SyncSongs
     # :type], [:user1, :service, :type]] and complain if the input is
     # bad.
     def parseInput
-      split_input = Set.new
+      parsed_input = Set.new
 
       @input.each do |s|
-        user, service, type = s.split(':')
-        split_input << [user.to_sym, service.to_sym, type.to_sym].compact if service && type && user
+        # Split the delimited input except where the delimiter is
+        # escaped and remove the escaping characters.
+        split_input = s.split(/(?<!\\):/).map { |e| e.gsub(/\\:/, ':').to_sym }
+
+        @ui.fail("You must supply services on the form #{INPUT_FORM}") if split_input.size != 3
+
+        parsed_input << split_input
       end
 
-      @ui.fail("You must supply at least two distinct services on the form #{INPUT_FORM}") if split_input.size < 2
+      @ui.fail("You must supply at least two distinct services.") if parsed_input.size < 2
 
-      @input = split_input
+      @input = parsed_input
     end
   end
 end
