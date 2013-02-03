@@ -37,7 +37,6 @@ module SyncSongs
     long_desc <<-LONGDESC
   Prints a list of the supported services.
      LONGDESC
-    method_option(*services_option)
     def supp
       CLI.supportedServices
     end
