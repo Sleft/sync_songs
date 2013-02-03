@@ -54,7 +54,7 @@ module SyncSongs
     # supported types associated with supported action.
     #
     # Examples
-    # 
+    #
     #   Controller.supportedServices
     #   # => {:grooveshark=>{:favorites=>:rw}, :lastfm=>{:loved=>:rw,
     #        :favorites=>:rw}}
@@ -269,8 +269,9 @@ module SyncSongs
       end
 
       unless v_msg.empty? && counts_msg.empty?
-        @ui.verboseMessage(v_msg.flatten.join('\n'))
-        @ui.message(counts_msg.join('\n'))
+        p v_msg
+        @ui.verboseMessage(v_msg)
+        @ui.message(counts_msg)
       else
         @ui.message('Nothing done')
       end

@@ -98,12 +98,12 @@ module SyncSongs
       exit
     end
 
-    def message(message)
-      puts message
+    def message(msg)
+      puts msg
     end
 
-    def verboseMessage(message)
-      puts message if @verbose
+    def verboseMessage(msg)
+      message(msg) if @verbose
     end
 
     # Public: Prints supported services.
@@ -118,7 +118,7 @@ module SyncSongs
         msg << "#{service}: #{type_msg.join(', ')}"
       end
 
-      puts msg.join("\n")
+      puts msg
     end
 
     private
