@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # Test suite for data classes.
 require 'test/unit'
 require_relative 'test_song'
