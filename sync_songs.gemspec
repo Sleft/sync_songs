@@ -19,7 +19,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
   gem.add_runtime_dependency 'grooveshark', ['>=0.2.7']
   gem.add_runtime_dependency 'highline'
-  gem.add_runtime_dependency 'lastfm', ['>=1.15.1']
+  gem.add_runtime_dependency 'lastfm', ['>=1.16.0']
   gem.add_runtime_dependency 'launchy', ['>=2.2.0']
   gem.add_runtime_dependency 'thor', ['>=0.17.0']
 end
