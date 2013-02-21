@@ -269,7 +269,6 @@ module SyncSongs
       end
 
       unless v_msg.empty? && counts_msg.empty?
-        p v_msg
         @ui.verboseMessage(v_msg)
         @ui.message(counts_msg)
       else
