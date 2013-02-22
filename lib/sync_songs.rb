@@ -15,10 +15,10 @@ require_relative "#{PATH}lastfm_cli"
 require_relative "#{PATH}lastfm_set"
 require_relative "#{PATH}version"
 
-# TODO document
+# Internal: A service to sync with.
 Struct.new('Service', :user, :name, :type, :action,
            :set, :ui, :strict_search, :interactive,
            :search_result, :songs_to_add, :added_songs)
 
-# TODO document
+# Internal: A sync direction.
 Struct.new('Direction', :services, :direction)
