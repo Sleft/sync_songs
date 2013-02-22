@@ -6,6 +6,9 @@ require 'highline/import'
 module SyncSongs
   # Public: Command-line interface.
   class CLI
+    # Public: A character that the user can input to quit what is
+    # currently. Sometimes quit is to quit to program, sometimes quit
+    # is merely to quit the current dialog.
     QUIT_CHARACTER = 'q'
     YN_OPTIONS_MSG = 'Enter y for yes, n for no or q to quit'
 
@@ -18,7 +21,7 @@ module SyncSongs
 
     # Public: Asks for directions to write in and return them.
     #
-    # services - An Set of services associated with types.
+    # services - A Set of services.
     #
     # Returns an array of Struct::Direction.
     def directions(services)
@@ -58,7 +61,7 @@ module SyncSongs
 
       exitOption(input)
 
-      service.strict_search = input.eql?('y') ? true : false
+      service.strict_search = input.casecmp('y') ? true : false
     end
 
     def interactive(service)
@@ -70,19 +73,25 @@ module SyncSongs
 
       exitOption(input)
 
-      service.interactive = input.eql?('y') ? true : false
+      service.interactive = input.casecmp('y') ? true : false
     end
 
-    def addSong?(song, service)
-      input = ask("Add #{song} to #{service.name} #{service.type}? ") do |q|
-        q.responses[:not_valid] = #{YN_OPTIONS_MSG}
-        q.default = 'y'
-        q.validate = /\A[yn#{QUIT_CHARACTER}]\Z/i
+    # Public: For every song in the search result of the given
+    # service, ask whether to add it and store it if the user wants to
+    # add it.
+    # 
+    # services - A Set of services.
+    def addSongs(service)
+      service.search_result.each do |s|
+        add = addSong(s, service)
+
+        if add.casecmp('y') == 0
+          service.songs_to_add << s
+        # Stop asking if the user press quit
+        elsif add.casecmp(QUIT_CHARACTER) == 0
+          break
+        end
       end
-
-      exitOption(input)
-
-      input.eql?('y')
     end
 
     # Public: Shows failure message and exit.
@@ -122,6 +131,14 @@ module SyncSongs
     end
 
     private
+
+    def addSong(song, service)
+      input = ask("Add #{song} to #{service.name} #{service.type}? ") do |q|
+        q.responses[:not_valid] = #{YN_OPTIONS_MSG}
+        q.default = 'y'
+        q.validate = /\A[yn#{QUIT_CHARACTER}]\Z/i
+      end
+    end
 
     # Internal: Exits if input is a character for quitting.
     #

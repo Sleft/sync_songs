@@ -237,7 +237,7 @@ module SyncSongs
       service.songs_to_add = SongSet.new
       @ui.message("Found #{service.search_result.size} candidates for #{service.name} #{service.type}")
 
-      service.search_result.each { |song| service.songs_to_add << song if @ui.addSong?(song, service) }
+      @ui.addSongs(service)
     end
 
     # Internal: Try to initialize the UI for the given service and get
