@@ -33,7 +33,7 @@ module SyncSongs
 
     # Public: UI wrapper for library addToLoved. Authorizes the
     # session before adding.
-    # 
+    #
     # other - A SongSet to add from.
     def addToLoved(other)
       # Store token somewhere instead and only call URL if there is no

@@ -22,7 +22,7 @@ module SyncSongs
 
     # Public: Diffs the song sets of the input services.
     def diff
-      @ui.verboseMessage("Preparing to diff song sets")
+      @ui.verboseMessage('Preparing to diff song sets')
       prepareDiff
 
       getData
@@ -31,7 +31,7 @@ module SyncSongs
 
     # Public: Syncs the song sets of the input services.
     def sync
-      @ui.verboseMessage("Preparing to sync song sets")
+      @ui.verboseMessage('Preparing to sync song sets')
       prepareSync
 
       getData
@@ -104,7 +104,7 @@ module SyncSongs
       supported_services = Controller.supportedServices
 
       @services.each do |i|
-        fail_msg = " is not supported."
+        fail_msg = ' is not supported.'
 
         # Is the service supported?
         fail_msg = "#{i.name}#{fail_msg}"
@@ -286,11 +286,11 @@ module SyncSongs
         end
       end
 
-      unless v_msg.empty? && counts_msg.empty?
+      if v_msg.empty? && counts_msg.empty?
+        @ui.message('Nothing done')
+      else
         @ui.verboseMessage(v_msg)
         @ui.message(counts_msg)
-      else
-        @ui.message('Nothing done')
       end
     end
 
@@ -311,7 +311,7 @@ module SyncSongs
         parsed_input << split_input
       end
 
-      @ui.fail("You must supply at least two distinct services.") if parsed_input.size < 2
+      @ui.fail('You must supply at least two distinct services.') if parsed_input.size < 2
 
       @input = parsed_input
     end

@@ -21,7 +21,7 @@ module SyncSongs
       @name     = name.strip
       @artist   = artist.strip
       @album    = album.strip if album
-      @duration = Time.at(duration).utc.strftime("%H:%M:%S") unless duration.zero? if duration
+      @duration = Time.at(duration).utc.strftime('%H:%M:%S') unless duration.zero? if duration
       @id       = id
 
       if @name.empty? || @artist.empty?

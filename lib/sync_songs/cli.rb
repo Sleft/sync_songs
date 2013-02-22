@@ -76,7 +76,7 @@ module SyncSongs
     # Public: For every song in the search result of the given
     # service, ask whether to add it and store it if the user wants to
     # add it.
-    # 
+    #
     # services - A Set of services.
     def addSongs(service)
       service.search_result.each do |s|

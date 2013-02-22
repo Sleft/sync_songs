@@ -32,7 +32,7 @@ module SyncSongs
     #
     # username - The username of the user to authenticate (default:
     #            @username).
-    # 
+    #
     # limit    - The maximum number of favorites to get (default:
     #            @limit).
     #
@@ -44,7 +44,7 @@ module SyncSongs
       @lastfm.user.get_loved_tracks(user: username,
                                     api_key: @api_key,
                                     limit: limit).each do |l|
-        
+
         # Get metadata for loved track.
         s = @lastfm.track.get_info(track: l['name'],
                                    artist: l['artist']['name'])
@@ -103,10 +103,11 @@ module SyncSongs
                                       limit: limit)['results']['trackmatches']['track'].compact
 
         found_songs = []
-        
-        search_result.each { |r|
+
+        search_result.each do |r|
           found_songs << @lastfm.track.get_info(track: r['name'],
-                                                artist: r['artist']) }
+                                                artist: r['artist'])
+        end
 
         unless found_songs.empty?
           found_songs.each do |f|
