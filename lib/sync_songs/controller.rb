@@ -23,12 +23,7 @@ module SyncSongs
     # Public: Diffs the song sets of the input services.
     def diff
       @ui.verboseMessage("Preparing to diff song sets")
-
-      @input.each { |i| @services << Struct::Service.new(i.shift.to_sym, i.shift.to_sym, :r) }
-      checkSupport
-
-      directionsToServices
-      @services.each { |s| initializeServiceUI(s) }
+      prepareDiff
 
       getData
       # showDifference
@@ -37,14 +32,7 @@ module SyncSongs
     # Public: Syncs the song sets of the input services.
     def sync
       @ui.verboseMessage("Preparing to sync song sets")
-
-      @directions = @ui.directions(@input)
-      checkSupport
-
-      directionsToServices
-      @services.each { |s| initializeServiceUI(s) }
-
-      addPreferences
+      prepareSync
 
       getData
       addData
@@ -78,6 +66,35 @@ module SyncSongs
     end
 
     private
+
+    # Internal: Prepare to diff song sets.
+    def prepareDiff
+      # No need to ask for directions to sync in as diffing song sets
+      # implies only reading from sevices.
+      @directions = []
+
+      @input.each { |i| @services << Struct::Service.new(i.shift.to_sym, i.shift.to_sym, :r) }
+
+      prepareServices
+    end
+
+    # Internal: Prepare to sync song sets.
+    def prepareSync
+      # Get directions to sync in.
+      @directions = @ui.directions(@input)
+
+      directionsToServices
+
+      prepareServices
+      addPreferences
+    end
+
+    # Internal: Prepare services for handling.
+    def prepareServices
+      checkSupport
+
+      @services.each { |s| initializeServiceUI(s) }
+    end
 
     # Internal: Checks if the action and the type and for the input
     # service are supported, e.g. if reading (action) from favorites
@@ -237,7 +254,8 @@ module SyncSongs
       end
     end
 
-    # Internal: Translate directions to an array of Struct::Service.
+    # Internal: Translate directions to sync in to an array of
+    # Struct::Service.
     def directionsToServices
       @directions.each do |d|
         support = []
