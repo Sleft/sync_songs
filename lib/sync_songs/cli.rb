@@ -32,11 +32,7 @@ module SyncSongs
       # Ask for the direction of every combination of services.
       services.to_a.combination(2) do |c|
         question = [c.first, '?', c.last]
-        input = ask("#{question.join(' ')} ") do |q|
-          q.responses[:not_valid] = 'Enter < for to left, > for to right, = for both directions or q to quit'
-          q.default = '='
-          q.validate = /\A[<>=#{QUIT_CHARACTER}]\Z/i
-        end
+        input = askDirection("#{question.join(' ')} ")
 
         exitOption(input)
 
@@ -45,6 +41,7 @@ module SyncSongs
           say question.join(' ')
         end
 
+        # Store input directions.
         directions << Struct::Direction.new([Struct::Service.new(*c.first),
                                              Struct::Service.new(*c.last)],
                                             input.to_sym)
@@ -107,15 +104,21 @@ module SyncSongs
       exit
     end
 
+    # Public: Prints the given message.
+    #
+    # msg - Something to print.
     def message(msg)
       puts msg
     end
 
+    # Public: Prints the given message if in verbose mode.
+    #
+    # msg - Something to print.
     def verboseMessage(msg)
       message(msg) if @verbose
     end
 
-    # Public: Prints supported services.
+    # Public: Prints the supported services.
     def self.supportedServices
       msg = []
 
@@ -132,11 +135,29 @@ module SyncSongs
 
     private
 
+    # Internal: Asks whether to add the given song to the given service.
+    #
+    # song    - A String naming a song.
+    # service - A Service.
     def addSong(song, service)
       input = ask("Add #{song} to #{service.name} #{service.type}? ") do |q|
         q.responses[:not_valid] = #{YN_OPTIONS_MSG}
         q.default = 'y'
         q.validate = /\A[yn#{QUIT_CHARACTER}]\Z/i
+      end
+    end
+
+    # Internal: Ask which direction to sync for the given services.
+    #
+    # question - A String naming a question asking for which direction
+    #            to sync in between to services.
+    #
+    # Returns a String naming the direction to sync in.
+    def askDirection(question)
+      input = ask(question) do |q|
+        q.responses[:not_valid] = 'Enter < for to left, > for to right, = for both directions or q to quit'
+        q.default = '='
+        q.validate = /\A[<>=#{QUIT_CHARACTER}]\Z/i
       end
     end
 
