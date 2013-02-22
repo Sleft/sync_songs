@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 require 'lastfm'
-require_relative 'song_set'
+require_relative '../song_set'
 
 # Public: Classes for syncing sets of songs.
 module SyncSongs
