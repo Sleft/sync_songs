@@ -17,7 +17,8 @@ module SyncSongs
     # password - The password of the user to authenticate.
     #
     # Raises Grooveshark::InvalidAuthentication if authentication
-    #   fails. Raises SocketError if network connection fails.
+    #   fails.
+    # Raises SocketError if the network connection fails.
     def initialize(username, password)
       super()
 
@@ -30,6 +31,8 @@ module SyncSongs
 
     # Public: Get the user's favorites from Grooveshark.
     #
+    # Raises Grooveshark::GeneralError if the network connection fails.
+    #
     # Returns self.
     def favorites
       @user.favorites.each { |s| add(Song.new(s.name, s.artist, s.album)) }
@@ -40,6 +43,8 @@ module SyncSongs
     # on Grooveshark.
     #
     # other - A SongSet to add from.
+    #
+    # Raises Grooveshark::GeneralError if the network connection fails.
     #
     # Returns an array of the songs that was added.
     def addToFavorites(other)
@@ -54,6 +59,9 @@ module SyncSongs
     #
     # other         - SongSet to search for.
     # strict_search - True if search should be strict (default: true).
+    #
+    # Raises Grooveshark::GeneralError if the network connection
+    #   fails.
     #
     # Returns a SongSet.
     def search(other, strict_search = true)

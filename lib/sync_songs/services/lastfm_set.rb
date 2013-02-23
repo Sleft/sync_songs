@@ -37,7 +37,9 @@ module SyncSongs
     #            @limit).
     #
     # Raises Lastfm::ApiError if the username is invalid or there is a
-    # temporary error.
+    #   temporary error.
+    # Raises SocketError if the connection fails.
+    # Raises Timeout::Error if the connection fails.
     #
     # Returns self.
     def loved(username = @username, limit = @limit)
@@ -68,6 +70,7 @@ module SyncSongs
     #
     # Raises Lastfm::ApiError if the Last.fm token has not been
     #   authorized or if the song is not recognized.
+    # Raises SocketError if the network connection fails.
     #
     # Returns an array of the songs that was added.
     def addToLoved(other)
@@ -89,6 +92,11 @@ module SyncSongs
     # limit         - Maximum limit for search results (default:
     #                 @limit).
     # strict_search - True if search should be strict (default: true).
+    #
+    # Raises ArgumentError from xml-simple some reason.
+    # Raises Errno::EINVAL if the network connection fails.
+    # Raises SocketError if the network connection fails.
+    # Raises Timeout::Error if the network connection fails.
     #
     # Returns a SongSet.
     def search(other, limit = @limit, strict_search = true)
@@ -127,6 +135,8 @@ module SyncSongs
     end
 
     # Public: Return an URL for authorizing a Last.fm session.
+    #
+    # Raises SocketError if the network connection fails.
     def authorizeURL
       @token = @lastfm.auth.get_token
       "http://www.last.fm/api/auth/?api_key=#@api_key&token=#@token"
@@ -136,6 +146,8 @@ module SyncSongs
     # Public: Authorize a Last.fm session (needed for certain calls to
     # Last.fm, such as addToLoved). Get the user to authorize via the
     # URL returned by authorizeURL before calling this method.
+    #
+    # Raises SocketError if the network connection fails.
     def authorize
       if @token
         @lastfm.session = @lastfm.auth.get_session(token: @token)['key']
