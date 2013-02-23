@@ -52,7 +52,7 @@ module SyncSongs
     end
 
     def strict_search(service)
-      input = ask("Use strict search for #{service.user} #{service.name} #{service.type}? ") do |q|
+      input = ask("Strict search for #{service.user} #{service.name} #{service.type}? ") do |q|
         q.responses[:not_valid] = "A strict search is recommended as a wide search may generate too many hits. #{YN_OPTIONS_MSG}"
         q.default = 'y'
         q.validate = /\A[yn#{QUIT_CHARACTER}]\Z/i
@@ -80,9 +80,9 @@ module SyncSongs
     # add it.
     #
     # services - A Set of services.
-    def addSongs(service)
+    def askAddSongs(service)
       service.search_result.each do |s|
-        add = addSong(s, service)
+        add = askAddSong(s, service)
 
         if add.casecmp('y') == 0
           service.songs_to_add << s
@@ -101,8 +101,7 @@ module SyncSongs
     #             details (default : 1).
     # exception - The Exception causing the failure (default: nil).
     def fail(message, exit_code = 1, exception = nil)
-      say message.strip     # Messages from Last.fm have leading spaces.
-      say 'Failed' if @verbose
+      say message.strip   # Messages from Last.fm have leading spaces.
       if @debug && exception
         p exception
         puts exception.backtrace
@@ -129,7 +128,7 @@ module SyncSongs
     #
     # object - Object to inspect.
     # msg    - Message to print, e.g. to describe program status.
-    # 
+    #
     # Examples
     #
     #   @ui.debugMessage(@services, 'Services before support check:')
@@ -161,8 +160,8 @@ module SyncSongs
     #
     # song    - A String naming a song.
     # service - A Service.
-    def addSong(song, service)
-      input = ask("Add #{song} to #{service.name} #{service.type}? ") do |q|
+    def askAddSong(song, service)
+      input = ask("Add #{song} to #{service.user} #{service.name} #{service.type}? ") do |q|
         q.responses[:not_valid] = #{YN_OPTIONS_MSG}
         q.default = 'y'
         q.validate = /\A[yn#{QUIT_CHARACTER}]\Z/i
