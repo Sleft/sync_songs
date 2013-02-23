@@ -31,8 +31,6 @@ module SyncSongs
     def directions(services)
       directions = []
 
-      say 'Enter direction to write in'
-
       # Ask for the direction of every combination of services.
       services.to_a.combination(2) do |c|
         question = [c.first, '?', c.last]
@@ -131,6 +129,7 @@ module SyncSongs
     #
     # object - Object to inspect.
     # msg    - Message to print, e.g. to describe program status.
+    # 
     # Examples
     #
     #   @ui.debugMessage(@services, 'Services before support check:')

@@ -20,22 +20,32 @@ module SyncSongs
       @services = Set.new
     end
 
-    # Public: Diffs the song sets of the input services.
-    def diff
-      @ui.verboseMessage('Preparing to diff song sets')
-      prepareDiff
-
-      getData
-      # showDifference
-    end
-
     # Public: Syncs the song sets of the input services.
     def sync
       @ui.verboseMessage('Preparing to sync song sets')
-      prepareSync
+
+      say 'Enter direction to write in'
+      prepareServices
+
+      addPreferences
 
       getData
       addData
+
+      @ui.verboseMessage('Success')
+    end
+
+    # Public: Diffs the song sets of the input services.
+    def diff
+      @ui.verboseMessage('Preparing to diff song sets')
+
+      say 'Enter direction to diff in'
+      prepareServices
+
+      getData
+      showDifference
+
+      @ui.verboseMessage('Success')
     end
 
     # Public: Returns a hash of services associated with their
@@ -67,30 +77,14 @@ module SyncSongs
 
     private
 
-    # Internal: Prepare to diff song sets.
-    def prepareDiff
-      # No need to ask for directions to sync in as diffing song sets
-      # implies only reading from sevices.
-      @directions = []
-
-      @input.each { |i| @services << Struct::Service.new(i.shift.to_sym, i.shift.to_sym, :r) }
-
-      prepareServices
-    end
-
-    # Internal: Prepare to sync song sets.
-    def prepareSync
+    # Internal: Prepare services for handling.
+    def prepareServices
       # Get directions to sync in.
       @directions = @ui.directions(@input)
 
+      # Translate directions to be able to check support.
       directionsToServices
 
-      prepareServices
-      addPreferences
-    end
-
-    # Internal: Prepare services for handling.
-    def prepareServices
       checkSupport
 
       @services.each { |s| initializeServiceUI(s) }
@@ -228,7 +222,6 @@ module SyncSongs
       threads.each { |t| t.join }
 
       sayAddedSongs
-      @ui.verboseMessage('Success')
     end
 
     # Internal: For each found missing song in a service, ask whether
@@ -238,6 +231,18 @@ module SyncSongs
       @ui.message("Found #{service.search_result.size} candidates for #{service.name} #{service.type}")
 
       @ui.addSongs(service)
+    end
+
+    # Internal: Shows the difference for the services.
+    def showDifference
+      @services.each do |service|
+        if service.search_result
+          @ui.message("#{service.search_result.size} songs missing on #{service.name} #{service.type}:")
+          service.search_result.each do |s|
+            @ui.message(s)
+          end
+        end
+      end
     end
 
     # Internal: Try to initialize the UI for the given service and get
