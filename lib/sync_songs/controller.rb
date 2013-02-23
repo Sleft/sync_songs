@@ -151,16 +151,17 @@ module SyncSongs
     # Struct::Service.
     def getSearchResults
       threads = []
+      mutex = Mutex.new
 
       @directions.each do |direction|
         threads << Thread.new(direction) do |d|
           if d.direction == :'<' || d.direction == :'='
-            search(d.services.first, d.services.last)
+            search(d.services.first, d.services.last, mutex)
           end
         end
         threads << Thread.new(direction) do |d|
           if d.direction == :'>' || d.direction == :'='
-            search(d.services.last, d.services.first)
+            search(d.services.last, d.services.first, mutex)
           end
         end
       end
@@ -174,6 +175,7 @@ module SyncSongs
     #
     # service1 - Service to search.
     # service2 - Service with songs to search for.
+    # mutex -    A Mutex for synchronizing writing of search results.
     #
     # Raises ArgumentError from xml-simple some reason (see
     #   LastfmSet).
@@ -182,19 +184,22 @@ module SyncSongs
     #   fails.
     # Raises SocketError if the network connection fails.
     # Raises Timeout::Error if the network connection fails.
-    def search(service1, service2)
-      @ui.verboseMessage("Searching #{service1.name}...")
-
-      # Is the following 6 lines thread safe?
-      unless service1.search_result
-        service1.search_result = SongSet.new
-      end
+    def search(service1, service2, mutex)
+      @ui.verboseMessage("Searching at #{service1.name} for songs from #{service2.user} #{service2.name} #{service2.type}...")
 
       begin
-        service1.search_result += service1.set.send(:search, service2.set, service1.strict_search)
+        result = service1.set.send(:search, service2.set, service1.strict_search)
       rescue ArgumentError,Errno::EINVAL, Grooveshark::GeneralError,
         SocketError, Timeout::Error => e
         @ui.fail(e.message.strip, 1, e)
+      end
+
+      # Access to search result should be synchronized.
+      mutex.synchronize do
+        unless service1.search_result
+          service1.search_result = SongSet.new
+        end
+        service1.search_result += result
       end
 
       @ui.verboseMessage("Found #{service1.search_result.size} candidates for #{service1.user} #{service1.name} #{service1.type}")
