@@ -26,7 +26,7 @@ module SyncSongs
     def loved
       @service.set.loved
       rescue Lastfm::ApiError => e
-      @ui.fail("Last.fm: #{e.message.strip}", e)
+      @ui.fail("Last.fm: #{e.message.strip}", 1, e)
     end
 
     alias_method :favorites, :loved

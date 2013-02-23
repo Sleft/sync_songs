@@ -108,17 +108,17 @@ module SyncSongs
 
         # Is the service supported?
         fail_msg = "#{i.name}#{fail_msg}"
-        @ui.fail(fail_msg) unless supported_services.key?(i.name)
+        @ui.fail(fail_msg, 1) unless supported_services.key?(i.name)
 
         # Is the type supported?
         supported_types = supported_services[i.name]
         fail_msg = "#{i.type} for #{fail_msg}"
-        @ui.fail(fail_msg) unless supported_types.key?(i.type)
+        @ui.fail(fail_msg, 1) unless supported_types.key?(i.type)
 
         # Is the action supported?
         fail_msg = "#{i.action} to #{fail_msg}"
         supported_action = supported_types[i.type]
-        @ui.fail(fail_msg) unless supported_action == i.action || supported_action == :rw
+        @ui.fail(fail_msg, 1) unless supported_action == i.action || supported_action == :rw
       end
     end
 
@@ -199,7 +199,6 @@ module SyncSongs
 
     # Internal: Gets data to be synced to each service.
     def getDataToAdd
-
       @directions.each do |d|
         d.services.each do |s|
           if s.interactive      # Add songs interactively
@@ -229,6 +228,7 @@ module SyncSongs
       threads.each { |t| t.join }
 
       sayAddedSongs
+      @ui.verboseMessage('Success')
     end
 
     # Internal: For each found missing song in a service, ask whether
@@ -250,7 +250,7 @@ module SyncSongs
       begin
         service.ui = SyncSongs.const_get(service_ui).new(service, @ui)
       rescue NameError => e
-        @ui.fail("Failed to initialize #{service_ui}.", e)
+        @ui.fail("Failed to initialize #{service_ui}.", 1, e)
       end
     end
 
@@ -306,12 +306,12 @@ module SyncSongs
         # escaped and remove the escaping characters.
         split_input = s.split(/(?<!\\):/).map { |e| e.gsub(/\\:/, ':').to_sym }
 
-        @ui.fail("You must supply services on the form #{INPUT_FORM}") if split_input.size != 3
+        @ui.fail("You must supply services on the form #{INPUT_FORM}", 2) if split_input.size != 3
 
         parsed_input << split_input
       end
 
-      @ui.fail('You must supply at least two distinct services.') if parsed_input.size < 2
+      @ui.fail('You must supply at least two distinct services.', 2) if parsed_input.size < 2
 
       @input = parsed_input
     end

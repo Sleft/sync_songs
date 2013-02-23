@@ -54,7 +54,7 @@ module SyncSongs
     rescue Grooveshark::InvalidAuthentication => e
       say "Grooveshark: #{e.message}"
     rescue SocketError => e
-      @ui.fail('Failed to connect to Grooveshark', e)
+      @ui.fail('Failed to connect to Grooveshark', 1, e)
     end
   end
 end

@@ -8,6 +8,7 @@ require_relative '../lib/sync_songs.rb'
 module SyncSongs
   class Cli < Thor
     class_option :verbose, type: :boolean, aliases: '-v', desc: 'Explain what is being done'
+    class_option :debug, type: :boolean, desc: 'Debug mode'
     services_option = [:services, {type: :array, required: true,
                          banner: Controller::INPUT_FORM,
                          desc: 'At least two users or file paths each paired with a service and a type, e.g. -s user1:grooveshark:favorites user1:lastfm:loved',
@@ -44,7 +45,8 @@ module SyncSongs
     private
 
     def setupController
-      @controller = Controller.new(CLI.new(options[:verbose]),
+      @controller = Controller.new(CLI.new(options[:verbose],
+                                           options[:debug]),
                                    options[:services])
     end
   end

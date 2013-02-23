@@ -15,8 +15,12 @@ module SyncSongs
     # Public: Constructs a command-line interface.
     #
     # verbose - True if interface is verbose (default: nil).
-    def initialize(verbose = nil)
+    # debug   - True if interface is in debug mode (default: nil),
+    #           this means e.g. that backtraces for exceptions are
+    #           printed.
+    def initialize(verbose = nil, debug = nil)
       @verbose = verbose
+      @debug   = debug
     end
 
     # Public: Asks for directions to write in and return them.
@@ -94,28 +98,47 @@ module SyncSongs
     # Public: Shows failure message and exit.
     #
     # message   - The String failure message.
+    # exit_code - Exit code to use, see
+    #             http://tldp.org/LDP/abs/html/exitcodes.html for
+    #             details (default : 1).
     # exception - The Exception causing the failure (default: nil).
-    def fail(message, exception = nil)
+    def fail(message, exit_code = 1, exception = nil)
       say message.strip     # Messages from Last.fm have leading spaces.
-      if @verbose && exception
+      say 'Failed' if @verbose
+      if @debug && exception
         p exception
         puts exception.backtrace
       end
-      exit
+      exit(exit_code)
     end
 
     # Public: Prints the given message.
     #
-    # msg - Something to print.
+    # msg - Message to print.
     def message(msg)
       puts msg
     end
 
     # Public: Prints the given message if in verbose mode.
     #
-    # msg - Something to print.
+    # msg - Message to print.
     def verboseMessage(msg)
       message(msg) if @verbose
+    end
+
+    # Public: Prints the given message if in debug mode. Can e.g. be
+    # used at different stages in the controller to debug it.
+    #
+    # object - Object to inspect.
+    # msg    - Message to print, e.g. to describe program status.
+    # Examples
+    #
+    #   @ui.debugMessage(@services, 'Services before support check:')
+    def debugMessage(object, msg = nil)
+      if @debug
+        puts msg if msg
+        p object
+      end
     end
 
     # Public: Prints the supported services.
