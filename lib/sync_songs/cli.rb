@@ -43,6 +43,10 @@ module SyncSongs
           say question.join(' ')
         end
 
+        # TODO This is logic that should be in controller. Plan on
+        # paper because each service should only be one entity, not
+        # several as .new imlies.
+
         # Store input directions.
         directions << Struct::Direction.new([Struct::Service.new(*c.first),
                                              Struct::Service.new(*c.last)],
