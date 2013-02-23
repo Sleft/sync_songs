@@ -24,6 +24,8 @@ module SyncSongs
 
     # Public: UI wrapper for library favorites. Nothing needs to be
     # done here so the call is just pass on.
+    #
+    # Raises Grooveshark::GeneralError if the network connection fails.
     def favorites
       @service.set.favorites
     end
@@ -32,6 +34,8 @@ module SyncSongs
     # done here so the call is just pass on.
     #
     # other - A SongSet to add from.
+    #
+    # Raises Grooveshark::GeneralError if the network connection fails.
     #
     # Returns an array of the songs that was added.
     def addToFavorites(other)

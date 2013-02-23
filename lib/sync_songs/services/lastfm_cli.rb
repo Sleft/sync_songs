@@ -23,10 +23,13 @@ module SyncSongs
 
     # Public: UI wrapper for library loved. Prints exceptions that the
     # library might raise.
+    #
+    # Raises Lastfm::ApiError if the username is invalid or there is a
+    #   temporary error.
+    # Raises SocketError if the connection fails.
+    # Raises Timeout::Error if the connection fails.
     def loved
       @service.set.loved
-      rescue Lastfm::ApiError => e
-      @ui.fail("Last.fm: #{e.message.strip}", 1, e)
     end
 
     alias_method :favorites, :loved
@@ -35,6 +38,8 @@ module SyncSongs
     # session before adding.
     #
     # other - A SongSet to add from.
+    #
+    # Raises SocketError if the connection fails.
     def addToLoved(other)
       # Store token somewhere instead and only call URL if there is no
       # stored token.

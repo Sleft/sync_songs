@@ -132,9 +132,14 @@ module SyncSongs
 
       @services.each do |service|
         threads << Thread.new(service) do |s|
-          @ui.verboseMessage("Downloading #{s.type} from #{s.name}...")
-          s.ui.send(s.type)
-          @ui.verboseMessage("Finished downloading #{s.type} from #{s.name}")
+          @ui.verboseMessage("Getting #{s.type} from #{s.user} #{s.name}...")
+          begin
+            s.ui.send(s.type)
+          rescue Grooveshark::GeneralError, Lastfm::ApiError,
+            SocketError, Timeout::Error => e
+            @ui.fail(e.message.strip, 1, e)
+          end
+          @ui.verboseMessage("Got #{s.set.size} #{s.type} from #{s.user} #{s.name}")
         end
       end
 
@@ -150,12 +155,12 @@ module SyncSongs
       @directions.each do |direction|
         threads << Thread.new(direction) do |d|
           if d.direction == :'<' || d.direction == :'='
-            d.services.first.search_result = search(d.services.first, d.services.last)
+            search(d.services.first, d.services.last)
           end
         end
         threads << Thread.new(direction) do |d|
           if d.direction == :'>' || d.direction == :'='
-            d.services.last.search_result = search(d.services.last, d.services.first)
+            search(d.services.last, d.services.first)
           end
         end
       end
@@ -170,13 +175,29 @@ module SyncSongs
     # service1 - Service to search.
     # service2 - Service with songs to search for.
     #
-    # Returns the result as a SongSet.
+    # Raises ArgumentError from xml-simple some reason (see
+    #   LastfmSet).
+    # Raises Errno::EINVAL if the network connection fails.
+    # Raises Grooveshark::GeneralError if the network connection
+    #   fails.
+    # Raises SocketError if the network connection fails.
+    # Raises Timeout::Error if the network connection fails.
     def search(service1, service2)
       @ui.verboseMessage("Searching #{service1.name}...")
-      result = service1.set.send(:search, service2.set, service1.strict_search)
-      @ui.verboseMessage("Finished searching #{service1.name}")
 
-      result
+      # Is the following 6 lines thread safe?
+      unless service1.search_result
+        service1.search_result = SongSet.new
+      end
+
+      begin
+        service1.search_result += service1.set.send(:search, service2.set, service1.strict_search)
+      rescue ArgumentError,Errno::EINVAL, Grooveshark::GeneralError,
+        SocketError, Timeout::Error => e
+        @ui.fail(e.message.strip, 1, e)
+      end
+
+      @ui.verboseMessage("Found #{service1.search_result.size} candidates for #{service1.user} #{service1.name} #{service1.type}")
     end
 
     # Internal: Ask for preferences of options for adding songs.
@@ -212,9 +233,9 @@ module SyncSongs
       @services.each do |service|
         threads << Thread.new(service) do |s|
           if s.songs_to_add && !s.songs_to_add.empty?
-            @ui.verboseMessage("Adding #{s.type} to #{s.name}...")
-            s.added_songs = s.ui.send("addTo#{s.type.capitalize}", s.songs_to_add)
-            @ui.verboseMessage("Finished adding #{s.type} to #{s.name}")
+            @ui.verboseMessage("Adding #{s.type} to #{s.name} #{s.user}...")
+            addSongs(s)
+            @ui.verboseMessage("Finished adding #{s.type} to #{s.name} #{s.user}")
           end
         end
       end
@@ -224,20 +245,31 @@ module SyncSongs
       sayAddedSongs
     end
 
+    # Internal: Adds songs to the given service.
+    #
+    # service - The service to add songs to.
+    def addSongs(service)
+      service.added_songs = service.ui.send("addTo#{service.type.capitalize}", service.songs_to_add)
+    rescue Grooveshark::GeneralError, SocketError => e
+      @ui.fail("Failed to add #{service.type} to #{service.name} #{s.user}\n#{e.message.strip}", 1, e)
+    end
+
     # Internal: For each found missing song in a service, ask whether
     # to add it to that service.
     def interactiveAdd(service)
       service.songs_to_add = SongSet.new
-      @ui.message("Found #{service.search_result.size} candidates for #{service.name} #{service.type}")
 
-      @ui.addSongs(service)
+      if service.search_result.size > 0
+        @ui.message("Choose whether to add the following #{service.search_result.size} songs to #{service.user} #{service.name} #{service.type}:")
+        @ui.askAddSongs(service)
+      end
     end
 
     # Internal: Shows the difference for the services.
     def showDifference
       @services.each do |service|
         if service.search_result
-          @ui.message("#{service.search_result.size} songs missing on #{service.name} #{service.type}:")
+          @ui.message("#{service.search_result.size} songs missing on #{service.user} #{service.name} #{service.type}:")
           service.search_result.each do |s|
             @ui.message(s)
           end
@@ -252,11 +284,9 @@ module SyncSongs
     # service - A Struct::Service.
     def initializeServiceUI(service)
       service_ui = "#{service.name.capitalize}#{@ui.class.name.split('::').last}"
-      begin
-        service.ui = SyncSongs.const_get(service_ui).new(service, @ui)
-      rescue NameError => e
-        @ui.fail("Failed to initialize #{service_ui}.", 1, e)
-      end
+      service.ui = SyncSongs.const_get(service_ui).new(service, @ui)
+    rescue NameError => e
+      @ui.fail("Failed to initialize #{service_ui}.", 1, e)
     end
 
     # Internal: Translate directions to sync in to an array of
@@ -286,8 +316,8 @@ module SyncSongs
 
       @services.each do |service|
         if service.added_songs
-          counts_msg << "Added #{service.added_songs.size} songs to #{service.name} #{service.type}"
-          v_msg << service.added_songs.map { |s| "Added #{s} to #{service.name} #{service.type}" }
+          counts_msg << "Added #{service.added_songs.size} songs to #{service.user} #{service.name} #{service.type}"
+          v_msg << service.added_songs.map { |s| "Added #{s} to #{service.user} #{service.name} #{service.type}" }
         end
       end
 
