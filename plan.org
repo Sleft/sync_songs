@@ -2,10 +2,10 @@
 #+title: Plan
 
 * TODO Plan
-- Move error handling to service CLIs. Controller should not have to know about services.
+- Fix diff not using strict search (strict search in Struct defaults to nil).
+- Move error handling to service controllers that calls their CLIs. Main controller should not have to know about services.
 - Complete diff.
 - Split Controller into several classes, e.g. one for sync and one for diff?
-- Make service CLIs subclasses of CLI? Would this violate [[http://en.wikipedia.org/wiki/Liskov_substitution_principle][LSP]]?
 - Rescue SocketError half way through sync/diff. Try sync/diff by disabling connecting halfway through it and see where it fails and rescue that if appropriate.
 - Add tests for all new things.
   - Add tests for songs with album.
@@ -24,6 +24,7 @@
 - Use YAML.dump and lib tmpdir to store Last.fm token?
 - Include the README in the documentation of the main class.
 - Use Rake to make tests http://stackoverflow.com/q/9017158/789593
+- Integrate with Travis CI to automate tests.
 ** Gem
 - Use Bundler and Rake (PickAxe p. 22-230) to create a gem.
 - Refer from gemspec to main test suite via =s.test_file=.
@@ -39,7 +40,6 @@
   - sudo gem install highline
 ** README
 - Reference to docs
-- Copyright and license
 - Skeleton
   #+begin_src text
     # Sync::Songs
