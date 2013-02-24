@@ -334,10 +334,10 @@ module SyncSongs
       end
     end
 
-    # Internal: Parse the input from a set with elements of the form
-    # user@service:type to an array of the form [[:user1, :service,
-    # :type], [:user1, :service, :type]] and complain if the input is
-    # bad.
+    # Internal: Parse the input from an array with elements of the
+    # form user@service:type to a set of arrays of the form [[:user1,
+    # :service, :type], [:user1, :service, :type]] and complain if the
+    # input is bad.
     def parseInput
       parsed_input = Set.new
 
