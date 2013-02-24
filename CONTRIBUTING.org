@@ -1,0 +1,14 @@
+# -*- mode:org; indent-tabs-mode:nil; tab-width:2 -*-
+
+* Contributing
+
+** Issues
+
+If you have a question, found a bug or want to make a suggestion go ahead and [[https://github.com/Sleft/sync-songs/issues/new][post it as an issue]] but make sure it is not already reported. Please be as clear as possible and provide details.
+
+** Development
+
+If you want to contribute please:
+
+- Follow the guidelines in development.org.
+- Fork the project and commit changes to topic branches which you then make a pull request for.

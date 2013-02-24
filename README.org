@@ -1,0 +1,41 @@
+# -*- mode:org; indent-tabs-mode:nil; tab-width:2 -*-
+
+* sync_songs
+
+With sync_songs you can sync sets of songs at different services. If you have one set of song at one service and another song set at another service you can use sync_songs to merge the song sets. sync_songs can also be used to backup song sets by the ability to spread them across several services.
+
+sync_songs can be used as standalone but also be integrated into other projects.
+
+** Installation
+
+If you want to use sync_songs simply to sync your songs at different services use it as as standalone.
+
+*** Standalone
+
+*** Library
+
+If you want to integrate sync_songs in your project add this line to your application's Gemfile:
+
+    gem 'sync_songs'
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install sync_songs
+
+** TODO Usage
+
+Examples of command-line and description of -h
+
+* License
+
+See LICENSE.org.
+
+* Contributing and development
+
+See CONTRIBUTING.org.
+
+
