@@ -1,7 +1,5 @@
 # -*- mode:org; indent-tabs-mode:nil; tab-width:2 -*-
 
-#+title: Development
-
 * Development
 
 sync_songs is designed to be used as standalone and also to provide a useful library for syncing songs between different services. A goal is for sync_songs to handle any number of services and for it to be easy to add support for new services.
@@ -9,7 +7,7 @@ sync_songs is designed to be used as standalone and also to provide a useful lib
 ** General guidelines
 
 - Document with [[http://tomdoc.org/][TomDoc]].
-- If possible, include tests for every new feature.
+- If possible, include tests for every feature.
 - Follow [[https://github.com/bbatsov/ruby-style-guide][The Ruby Style Guide]]. This means that [[https://github.com/bbatsov/rubocop][rubocop]] can be used to check style.
 
 ** TODO Project structure
@@ -20,6 +18,10 @@ Relation between main controller, cli and entities and service controllers, clis
 
 ** TODO Services
 
-Designed to handle any number of services.
+How a service interacts with the rest of the project.
 
 *** Adding services
+
+** Plan
+
+The plan is for sync_songs to work as pleasantly, work as expected and have as few bugs as possible. Specific plans are documented in plan.org. Also see [[https://github.com/Sleft/sync-songs/issues][issues]].
