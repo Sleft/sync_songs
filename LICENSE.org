@@ -1,0 +1,2 @@
+sync_songs is copyrighted free software and licensed under the same
+terms as Ruby, see http://www.ruby-lang.org/en/about/license.txt
