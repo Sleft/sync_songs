@@ -11,7 +11,7 @@ module SyncSongs
     # ui    - The user interface to use.
     # input - An Set of Strings representing users or file paths
     #         paired with a service and a type on the form
-    #         user@service:type, e.g. "user1.grooveshark:favorites",
+    #         user:service:type, e.g. "user1:grooveshark:favorites",
     #         "user1:lastfm:loved".
     def initialize(ui, input)
       @ui = ui
