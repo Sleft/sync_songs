@@ -28,7 +28,10 @@ module SyncSongs
       @limit = limit
     end
 
-    # Public: Get the user's loved songs from Last.fm.
+    # Public: Get the user's loved songs from Last.fm. The reason this
+    # takes ages to complete is that it first has to search tracks to
+    # find them and then get info for each found track to be able to
+    # get the album title.
     #
     # username - The username of the user to authenticate (default:
     #            @username).
@@ -85,8 +88,10 @@ module SyncSongs
 
     alias_method :addToFavorites, :addToLoved
 
-    # Public: Searches for the given song set at Last.fm.
-    #
+    # Public: Searches for the given song set at Last.fm. The reason
+    # this takes ages to complete is that it first has to search
+    # tracks to find them and then get info for each found track to be
+    # able to get the album title.
     #
     # other         - SongSet to search for.
     # limit         - Maximum limit for search results (default:
