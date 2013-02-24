@@ -28,30 +28,15 @@ module SyncSongs
     # services - A Set of services.
     #
     # Returns an array of Struct::Direction.
-    def directions(services)
-      directions = []
+    def askDirections(directions)
+      directions.each do |d|
+        d[1] = askDirection("#{d.join(' ')} ")
 
-      # Ask for the direction of every combination of services.
-      services.to_a.combination(2) do |c|
-        question = [c.first, '?', c.last]
-        input = askDirection("#{question.join(' ')} ")
+        exitOption(d[1])
 
-        exitOption(input)
-
-        if @verbose
-          question[1] = input
-          say question.join(' ')
-        end
-
-        # TODO This is logic that should be in controller. Plan on
-        # paper because each service should only be one entity, not
-        # several as .new imlies.
-
-        # Store input directions.
-        directions << Struct::Direction.new([Struct::Service.new(*c.first),
-                                             Struct::Service.new(*c.last)],
-                                            input.to_sym)
+        d.join(' ') if @verbose
       end
+
       directions
     end
 

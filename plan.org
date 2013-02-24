@@ -2,6 +2,7 @@
 #+title: Plan
 
 * TODO Plan
+- Move error handling to service CLIs. Controller should not have to know about services.
 - Complete diff.
 - Split Controller into several classes, e.g. one for sync and one for diff?
 - Make service CLIs subclasses of CLI? Would this violate [[http://en.wikipedia.org/wiki/Liskov_substitution_principle][LSP]]?

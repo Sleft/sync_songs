@@ -16,8 +16,16 @@ module SyncSongs
     def initialize(ui, input)
       @ui = ui
       @input = input
+
       parseInput
-      @services = Set.new
+
+      # Services to sync between. Stored in a hash so that directions
+      # can refer to services via a key.
+      @services = {}
+
+      # Directions to sync in. Each direction should be unique
+      # therefore they are stored in a set.
+      @directions = Set.new
     end
 
     # Public: Syncs the song sets of the input services.
@@ -80,14 +88,14 @@ module SyncSongs
     # Internal: Prepare services for handling.
     def prepareServices
       # Get directions to sync in.
-      @directions = @ui.directions(@input)
+      getDirections
 
       # Translate directions to be able to check support.
       directionsToServices
 
       checkSupport
 
-      @services.each { |s| initializeServiceUI(s) }
+      @services.each { |_, s| initializeServiceUI(s) }
     end
 
     # Internal: Checks if the action and the type and for the input
@@ -97,22 +105,22 @@ module SyncSongs
     def checkSupport
       supported_services = Controller.supportedServices
 
-      @services.each do |i|
+      @services.each do |_, s|
         fail_msg = ' is not supported.'
 
         # Is the service supported?
-        fail_msg = "#{i.name}#{fail_msg}"
-        @ui.fail(fail_msg, 1) unless supported_services.key?(i.name)
+        fail_msg = "#{s.name}#{fail_msg}"
+        @ui.fail(fail_msg, 1) unless supported_services.key?(s.name)
 
         # Is the type supported?
-        supported_types = supported_services[i.name]
-        fail_msg = "#{i.type} for #{fail_msg}"
-        @ui.fail(fail_msg, 1) unless supported_types.key?(i.type)
+        supported_types = supported_services[s.name]
+        fail_msg = "#{s.type} for #{fail_msg}"
+        @ui.fail(fail_msg, 1) unless supported_types.key?(s.type)
 
         # Is the action supported?
-        fail_msg = "#{i.action} to #{fail_msg}"
-        supported_action = supported_types[i.type]
-        @ui.fail(fail_msg, 1) unless supported_action == i.action || supported_action == :rw
+        fail_msg = "#{s.action} to #{fail_msg}"
+        supported_action = supported_types[s.type]
+        @ui.fail(fail_msg, 1) unless supported_action == s.action || supported_action == :rw
       end
     end
 
@@ -130,7 +138,7 @@ module SyncSongs
     def getCurrentData
       threads = []
 
-      @services.each do |service|
+      @services.each do |_, service|
         threads << Thread.new(service) do |s|
           @ui.verboseMessage("Getting #{s.type} from #{s.user} #{s.name}...")
           begin
@@ -156,17 +164,25 @@ module SyncSongs
       @directions.each do |direction|
         threads << Thread.new(direction) do |d|
           if d.direction == :'<' || d.direction == :'='
-            search(d.services.first, d.services.last, mutex)
+            search(@services[d.services.first],
+                   @services[d.services.last], mutex)
           end
         end
         threads << Thread.new(direction) do |d|
           if d.direction == :'>' || d.direction == :'='
-            search(d.services.last, d.services.first, mutex)
+            search(@services[d.services.last],
+                   @services[d.services.first], mutex)
           end
         end
       end
 
       threads.each { |t| t.join }
+
+      @services.each do |_, s|
+        if s.search_result
+          @ui.verboseMessage("Found #{s.search_result.size} candidates for #{s.user} #{s.name} #{s.type}")
+        end
+      end
     end
 
     # Internal: Searches for songs that are exclusive to service2 at
@@ -189,7 +205,7 @@ module SyncSongs
 
       begin
         result = service1.set.send(:search, service2.set, service1.strict_search)
-      rescue ArgumentError,Errno::EINVAL, Grooveshark::GeneralError,
+      rescue ArgumentError, Errno::EINVAL, Grooveshark::GeneralError,
         SocketError, Timeout::Error => e
         @ui.fail(e.message.strip, 1, e)
       end
@@ -201,31 +217,26 @@ module SyncSongs
         end
         service1.search_result += result
       end
-
-      @ui.verboseMessage("Found #{service1.search_result.size} candidates for #{service1.user} #{service1.name} #{service1.type}")
     end
 
     # Internal: Ask for preferences of options for adding songs.
     def addPreferences
-      @directions.each do |d|
-        if d.direction == :'<' || d.direction == :'='
-          d.services.first.ui.addPreferences
-        end
-        if d.direction == :'>' || d.direction == :'='
-          d.services.last.ui.addPreferences
+      @services.each do |_, s|
+        # Add preferences are only relevant when one is writing to a
+        # service.
+        if s.action == :w || s.action == :rw
+          s.ui.addPreferences
         end
       end
     end
 
     # Internal: Gets data to be synced to each service.
     def getDataToAdd
-      @directions.each do |d|
-        d.services.each do |s|
-          if s.interactive      # Add songs interactively
-            interactiveAdd(s)
-          else                  # or add them all without asking.
-            s.songs_to_add = s.search_result
-          end
+      @services.each do |_, s|
+        if s.interactive      # Add songs interactively
+          interactiveAdd(s)
+        else                  # or add them all without asking.
+          s.songs_to_add = s.search_result
         end
       end
     end
@@ -235,7 +246,7 @@ module SyncSongs
       @ui.message('Adding data. This might take a while.')
       threads = []
 
-      @services.each do |service|
+      @services.each do |_, service|
         threads << Thread.new(service) do |s|
           if s.songs_to_add && !s.songs_to_add.empty?
             @ui.verboseMessage("Adding #{s.type} to #{s.name} #{s.user}...")
@@ -272,9 +283,9 @@ module SyncSongs
 
     # Internal: Shows the difference for the services.
     def showDifference
-      @services.each do |service|
-        if service.search_result
-          @ui.message("#{service.search_result.size} songs missing on #{service.user} #{service.name} #{service.type}:")
+      @services.each do |_, service|
+        if service.songs_to_add
+          @ui.message("#{service.songs_to_add.size} songs missing on #{service.user} #{service.name} #{service.type}:")
           service.search_result.each do |s|
             @ui.message(s)
           end
@@ -307,8 +318,7 @@ module SyncSongs
         end
 
         d.services.each do |s|
-          s.action = support.shift
-          @services << s
+          @services[s].action = support.shift
         end
       end
     end
@@ -319,7 +329,7 @@ module SyncSongs
       counts_msg = []
       v_msg = []
 
-      @services.each do |service|
+      @services.each do |_, service|
         if service.added_songs
           counts_msg << "Added #{service.added_songs.size} songs to #{service.user} #{service.name} #{service.type}"
           v_msg << service.added_songs.map { |s| "Added #{s} to #{service.user} #{service.name} #{service.type}" }
@@ -354,6 +364,42 @@ module SyncSongs
       @ui.fail('You must supply at least two distinct services.', 2) if parsed_input.size < 2
 
       @input = parsed_input
+    end
+
+    # Internal: Get directions to sync in and store them and the
+    # related services.
+    def getDirections
+      questions = []
+
+      # Get directions for every possible combination of services.
+      @input.to_a.combination(2) do |c|
+        questions << [c.first, '?', c.last]
+      end
+
+      answers = @ui.askDirections(questions)
+
+      # Store answer.
+      answers.each do |a|
+        @directions << Struct::Direction.new([storeService(a.first),
+                                              storeService(a.last)],
+                                             a[1].to_sym)
+      end
+    end
+
+    # Internal: Store a service in the @services hash and return the
+    # key.
+    #
+    # Returns the key of the stored service.
+    def storeService(service)
+      # Only the user and service name is relevant for key.
+      key = service.join(':').to_sym
+
+      # Only store the service if it is not already stored
+      unless @services.key?(key)
+        @services[key] = Struct::Service.new(*service)
+      end
+
+      key
     end
   end
 end
