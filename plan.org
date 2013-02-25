@@ -5,6 +5,7 @@
 - Fix diff not using strict search (strict search in Struct defaults to nil).
 - Move error handling to service controllers that calls their CLIs. Main controller should not have to know about services.
 - Complete diff.
+- Create SongSet.add method that can take the parameters that the constructor of Song takes?
 - Split Controller into several classes, e.g. one for sync and one for diff?
 - Rescue SocketError half way through sync/diff. Try sync/diff by disabling connecting halfway through it and see where it fails and rescue that if appropriate.
 - Add tests for all new things.
