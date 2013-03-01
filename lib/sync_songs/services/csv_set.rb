@@ -14,12 +14,11 @@ module SyncSongs
     # Public: Constructs a CSV set.
     #
     # file_path - File to use.
-    # separator - The username of the user to authenticate (default:
-    #             nil).
-    def initialize(file_path, separator = nil)
+    # col_sep   - The column separator.
+    def initialize(file_path, col_sep = ',')
       super()
-      self.file_path = file_path
-      self.separator = separator # FIXME implement support for
+      @file_path = file_path
+      @col_sep = col_sep # FIXME implement support for
 
       # FIXME Create file if it does not exist?
     end
@@ -28,7 +27,7 @@ module SyncSongs
     #
     # Returns self.
     def library
-      CSV.foreach(file_path) { |row| add(Song.new(*row)) }
+      CSV.foreach(@file_path, {:col_sep => @col_sep}) { |row| add(Song.new(*row)) }
       self
     end
 
@@ -38,9 +37,9 @@ module SyncSongs
     # other - A SongSet to add from.
     #
     # Returns an array of the songs that was added.
-    def addToFavorites(other)
-      other.each do |s|
-        CSV.open(file_path, 'w') do |csv|
+    def addToLibrary(other)
+      CSV.open(@file_path, 'w', {:col_sep => @col_sep}) do |csv|
+        other.each do |s|
           csv << [s.name, s.artist, s.album, s.duration, s.id]
         end
       end
@@ -55,7 +54,7 @@ module SyncSongs
     # other         - SongSet to search for.
     # strict_search - True if search should be strict (default: true).
     def search(other, strict_search = true)
-      result
+      other
     end
   end
 end

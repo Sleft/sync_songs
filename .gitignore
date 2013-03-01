@@ -5,3 +5,4 @@
 .bundle
 test_lastfm_set.rb
 test_grooveshark_set.rb
+test_csvset.csv
