@@ -12,8 +12,8 @@ end
 desc 'Run tests'
 task default: :test
 
-task test: :rubocop
+# task test: :rubocop
 
 task :rubocop do
-  sh 'rubocop Gemfile'
+  sh 'rubocop'
 end
