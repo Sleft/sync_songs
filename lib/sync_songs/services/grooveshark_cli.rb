@@ -17,9 +17,7 @@ module SyncSongs
       @ui = ui
       @logged_in = false
 
-      until @logged_in
-        tryLogin
-      end
+      tryLogin until @logged_in
     end
 
     # Public: UI wrapper for library favorites. Nothing needs to be

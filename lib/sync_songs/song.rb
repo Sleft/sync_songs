@@ -37,21 +37,11 @@ module SyncSongs
     def <=>(other)
       comp = name.casecmp(other.name)
 
-      if comp == 0
-        comp = artist.casecmp(other.artist)
-      end
+      comp = artist.casecmp(other.artist) if comp == 0
 
       if comp == 0 && album && other.album
         comp = album.casecmp(other.album)
       end
-
-      # if comp == 0
-      #   if album && !other.album
-      #     comp = 1
-      #   elsif !album && other.album
-      #     comp = -1
-      #   end
-      # end
 
       comp
     end

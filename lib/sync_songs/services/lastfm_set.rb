@@ -80,7 +80,9 @@ module SyncSongs
       songsAdded = []
 
       if @lastfm.session
-        other.each { |song| songsAdded << song if @lastfm.track.love(track: song.name, artist: song.artist) }
+        other.each do |s|
+          songsAdded << s if @lastfm.track.love(track: s.name, artist: s.artist)
+        end
       end
 
       songsAdded

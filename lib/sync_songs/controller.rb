@@ -189,9 +189,9 @@ module SyncSongs
     # service1, e.g. gets the search result on Grooveshark of the
     # songs that are exclusive to Last.fm.
     #
-    # service1 - Service to search.
-    # service2 - Service with songs to search for.
-    # mutex -    A Mutex for synchronizing writing of search results.
+    # s1    - Service to search.
+    # s2    - Service with songs to search for.
+    # mutex - A Mutex for synchronizing writing of search results.
     #
     # Raises ArgumentError from xml-simple some reason (see
     #   LastfmSet).
@@ -200,11 +200,11 @@ module SyncSongs
     #   fails.
     # Raises SocketError if the network connection fails.
     # Raises Timeout::Error if the network connection fails.
-    def search(service1, service2, mutex)
-      @ui.verboseMessage("Searching at #{service1.name} for songs from #{service2.user} #{service2.name} #{service2.type}...")
+    def search(s1, s2, mutex)
+      @ui.verboseMessage("Searching at #{s1.name} for songs from #{s2.user} #{s2.name} #{s2.type}...")
 
       begin
-        result = service1.set.send(:search, service2.set, service1.strict_search)
+        result = s1.set.send(:search, s2.set, s1.strict_search)
       rescue ArgumentError, Errno::EINVAL, Grooveshark::GeneralError,
         SocketError, Timeout::Error => e
         @ui.fail(e.message.strip, 1, e)
@@ -212,10 +212,9 @@ module SyncSongs
 
       # Access to search result should be synchronized.
       mutex.synchronize do
-        unless service1.search_result
-          service1.search_result = SongSet.new
-        end
-        service1.search_result += result
+        
+        s1.search_result = SongSet.new unless s1.search_result
+        s1.search_result += result
       end
     end
 
@@ -389,14 +388,16 @@ module SyncSongs
     # Internal: Store a service in the @services hash and return the
     # key.
     #
+    # s - Service to store.
+    #
     # Returns the key of the stored service.
-    def storeService(service)
+    def storeService(s)
       # Only the user and service name is relevant for key.
-      key = service.join(':').to_sym
+      key = s.join(':').to_sym
 
       # Only store the service if it is not already stored
       unless @services.key?(key)
-        @services[key] = Struct::Service.new(*service)
+        @services[key] = Struct::Service.new(*s)
       end
 
       key

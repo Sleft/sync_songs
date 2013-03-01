@@ -50,7 +50,9 @@ module SyncSongs
     def addToFavorites(other)
       songsAdded = []
 
-      other.each { |song| songsAdded << song if song.id && @user.add_favorite(song.id) }
+      other.each do |s|
+        songsAdded << s if s.id && @user.add_favorite(s.id)
+      end
 
       songsAdded
     end
