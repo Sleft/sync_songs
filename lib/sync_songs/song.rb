@@ -21,7 +21,7 @@ module SyncSongs
       @name     = name.strip
       @artist   = artist.strip
       @album    = album.strip if album
-      @duration = Time.at(duration).utc.strftime('%H:%M:%S') unless duration.zero? if duration
+      @duration = duration
       @id       = id
 
       if @name.empty? || @artist.empty?
@@ -79,7 +79,9 @@ module SyncSongs
 
     # Public: Returns the song formatted as a string.
     def to_s
-      [artist, name, album, duration].compact.join(' - ')
+      s = [artist, name, album].compact
+      s << Time.at(duration).utc.strftime('%H:%M:%S') if duration
+      s.join(' - ')
     end
 
     # Public: Returns the song formatted as appropriately for use in a
