@@ -13,32 +13,23 @@ module SyncSongs
     # Internal: Setup a Last.fm session.
     def setup
       setupTestSongs
-      @set = CSVSet.new('test_csvset.csv')
+      @file_name = 'test_csvset.csv'
+      @set = CSVSet.new(@file_name)
     end
 
-    def test_library
-      # First write to a CSV file.
-      @set.addToLibrary(@songs)
+    def test_simple
+      # Add some songs to CSV
+      @set.addToLibrary(SongSet.new(@songs[0], @songs[8]))
+
+      assert(File.exists?(@file_name), 'Should create a file')
 
       # Then get data from it.
       l = @set.library
+      assert_not_nil(l, 'Should read something from CSV')
+      assert(l.member?(@songs[0]), 'Reading from CSV should not corrupt data')
+      assert(l.member?(@songs[8]), 'Reading from CSV should not corrupt data')
 
-      # Put the input to the CSV file in a SongSet
-      s = SongSet.new(*@songs)
-
-      # It should be the same as what is read from the CSV file.
-      diff = l.exclusiveTo(s)
-      assert(diff.empty?, 'Should not corrupt data')
+      assert_equal(l, @set.search(l), 'Should simply return what is searched for')
     end
-
-    # def test_search
-    #   other = SongSet.new(Song.new('Play With Fire', 'Dead Moon', 'Strange Pray Tell'))
-    #   result = @set.search(other)
-    #   assert(result.include?(Song.new('Play With Fire', 'Dead Moon', 'Strange Pray Tell')))
-    # end
-
-    # def test_addToLibrary
-    #   @set.addToLibrary(@songs)
-    # end
   end
 end
