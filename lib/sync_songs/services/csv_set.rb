@@ -19,15 +19,14 @@ module SyncSongs
       super()
       @file_path = file_path
       @col_sep = col_sep # FIXME implement support for
-
-      # FIXME Create file if it does not exist?
+      @options = {col_sep: @col_sep, converters: :numeric}
     end
 
     # Public: Get the user's library from the CSV file.
     #
     # Returns self.
     def library
-      CSV.foreach(@file_path, {:col_sep => @col_sep}) { |row| add(Song.new(*row)) }
+      CSV.foreach(@file_path, @options) { |row| add(Song.new(*row)) }
       self
     end
 
@@ -38,7 +37,7 @@ module SyncSongs
     #
     # Returns an array of the songs that was added.
     def addToLibrary(other)
-      CSV.open(@file_path, 'w', {:col_sep => @col_sep}) do |csv|
+      CSV.open(@file_path, 'w', @options) do |csv|
         other.each do |s|
           csv << [s.name, s.artist, s.album, s.duration, s.id]
         end
