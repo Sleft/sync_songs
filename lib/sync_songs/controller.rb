@@ -223,9 +223,7 @@ module SyncSongs
       @services.each do |_, s|
         # Add preferences are only relevant when one is writing to a
         # service.
-        if s.action == :w || s.action == :rw
-          s.ui.addPreferences
-        end
+        s.ui.addPreferences if s.action == :w || s.action == :rw
       end
     end
 

@@ -16,8 +16,8 @@ module SyncSongs
                 Song.new('  Name2 '   , 'Artist2'),     # 5
                 Song.new('Name'       , '     artist'), # 6
                 Song.new('      name ', 'Artist     '), # 7
-                Song.new("Some name", "An Artist",      # 8
-                         "The Album", 330, "qwerty")]
+                Song.new('Some name', 'An Artist',      # 8
+                         'The Album', 330, 'qwerty')]
     end
   end
 end
