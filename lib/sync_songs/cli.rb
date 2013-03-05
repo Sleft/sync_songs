@@ -90,7 +90,7 @@ module SyncSongs
     #             details (default : 1).
     # exception - The Exception causing the failure (default: nil).
     def fail(message, exit_code = 1, exception = nil)
-      say message.strip   # Messages from Last.fm have leading spaces.
+      puts message.strip   # Messages from Last.fm have leading spaces.
       if @debug && exception
         p exception
         puts exception.backtrace

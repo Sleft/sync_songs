@@ -32,7 +32,7 @@ module SyncSongs
     def sync
       @ui.verboseMessage('Preparing to sync song sets')
 
-      say 'Enter direction to write in'
+      @ui.message('Enter direction to write in')
       prepareServices
 
       addPreferences
@@ -47,7 +47,7 @@ module SyncSongs
     def diff
       @ui.verboseMessage('Preparing to diff song sets')
 
-      say 'Enter direction to diff in'
+      @ui.message('Enter direction to diff in')
       prepareServices
 
       getData
