@@ -2,6 +2,7 @@
 #+title: Plan
 
 * TODO Plan
+- Change documentation: s/constructs/creates
 - Fix diff not using strict search (strict search in Struct defaults to nil).
 - Move error handling to service controllers that calls their CLIs. Main controller should not have to know about services.
 - Complete diff.
