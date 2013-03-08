@@ -14,7 +14,7 @@ module SyncSongs
     # Public: Constructs a CSV set.
     #
     # file_path - File to use.
-    # col_sep   - The column separator.
+    # col_sep   - Column separator.
     def initialize(file_path, col_sep = ',')
       super()
       @file_path = file_path
@@ -22,7 +22,7 @@ module SyncSongs
       @options = {col_sep: @col_sep, converters: :numeric}
     end
 
-    # Public: Get the user's library from the CSV file.
+    # Public: Get the library, i.e. all songs, from the CSV file.
     #
     # Returns self.
     def library
@@ -30,8 +30,8 @@ module SyncSongs
       self
     end
 
-    # Public: Add the songs in the given set to the user's library in
-    # the CSV file.
+    # Public: Add the songs in the given set to the library in the CSV
+    # file, i.e. simply add the songs to the CSV file.
     #
     # other - A SongSet to add from.
     #
@@ -46,12 +46,13 @@ module SyncSongs
       other.to_a
     end
 
-    # Public: Searches for the given song set in the CSV file. Since
-    # any song can be stored in a CSV file no search has to
-    # made. Therefore the SongSet to search for is simply returned.
+    # Public: Searches for the given SongSet in the CSV file. Since
+    # any song can be stored in a CSV file no search has to made, thus
+    # the input SongSet is simply returned.
     #
     # other         - SongSet to search for.
-    # strict_search - True if search should be strict (default: true).
+    # strict_search - True if search should be strict (default:
+    #                 true). Has no effect. Exist for compatibility.
     def search(other, strict_search = true)
       other
     end
