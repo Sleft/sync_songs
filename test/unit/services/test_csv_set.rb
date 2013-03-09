@@ -6,11 +6,11 @@ require_relative '../sample_data/sample_data'
 
 # Public: Classes for syncing sets of songs.
 module SyncSongs
-  # Internal: Unit test for the class CSVSet.
-  class TestCSVSet < Test::Unit::TestCase
+  # Internal: Unit test for the class CsvSet.
+  class TestCsvSet < Test::Unit::TestCase
     include SampleData
 
-    # Internal: Setup CSVSets.
+    # Internal: Setup CsvSets.
     def setup
       setupTestSongs
       @file_names = []
@@ -19,11 +19,11 @@ module SyncSongs
       end
 
       @sets = []
-      @file_names.each { |n| @sets << CSVSet.new(n) }
+      @file_names.each { |n| @sets << CsvSet.new(n) }
     end
 
     def test_simple
-      # Add some songs to CSV files
+      # Add some songs to Csv files
       @sets[0].addToLibrary(SongSet.new(@songs[0], @songs[8]))
       @sets[1].addToLibrary(SongSet.new(@songs[0], @songs[7]))
 

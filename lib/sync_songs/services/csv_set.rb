@@ -6,7 +6,7 @@ require_relative '../song_set'
 # Public: Classes for syncing sets of songs.
 module SyncSongs
   # Public: A set of songs in a CSV file.
-  class CSVSet < SongSet
+  class CsvSet < SongSet
     # Public: Hash of types of services associated with what they
     # support.
     SERVICES = {library: :rw}
