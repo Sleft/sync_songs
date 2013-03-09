@@ -71,7 +71,7 @@ module SyncSongs
 
       # Search for songs that are not already in this set and return
       # them if they are sufficiently similar.
-      exclusiveTo(other).each do |song|
+      other.each do |song|
         @client.search_songs(song.to_search_term).each do |s|
           other = Song.new(s.name, s.artist, s.album,
                            Float(s.duration), s.id)

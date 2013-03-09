@@ -26,6 +26,10 @@ module SyncSongs
       # Directions to sync in. Each direction should be unique
       # therefore they are stored in a set.
       @directions = Set.new
+
+      # For synchronization of access to shared data when using
+      # threads, e.g. of writing of search results.
+      @mutex = Mutex.new
     end
 
     # Public: Syncs the song sets of the input services.
@@ -159,19 +163,18 @@ module SyncSongs
     # Struct::Service.
     def getSearchResults
       threads = []
-      mutex = Mutex.new
 
       @directions.each do |direction|
         threads << Thread.new(direction) do |d|
           if d.direction == :'<' || d.direction == :'='
             search(@services[d.services.first],
-                   @services[d.services.last], mutex)
+                   @services[d.services.last])
           end
         end
         threads << Thread.new(direction) do |d|
           if d.direction == :'>' || d.direction == :'='
             search(@services[d.services.last],
-                   @services[d.services.first], mutex)
+                   @services[d.services.first])
           end
         end
       end
@@ -191,7 +194,6 @@ module SyncSongs
     #
     # s1    - Service to search.
     # s2    - Service with songs to search for.
-    # mutex - A Mutex for synchronizing writing of search results.
     #
     # Raises ArgumentError from xml-simple some reason (see
     #   LastfmSet).
@@ -200,19 +202,19 @@ module SyncSongs
     #   fails.
     # Raises SocketError if the network connection fails.
     # Raises Timeout::Error if the network connection fails.
-    def search(s1, s2, mutex)
+    def search(s1, s2)
       @ui.verboseMessage("Searching at #{s1.name} for songs from #{s2.user} #{s2.name} #{s2.type}...")
-
+#exclusiveTo(
       begin
-        result = s1.set.send(:search, s2.set, s1.strict_search)
+        result = s1.set.search(s1.set.exclusiveTo(s2.set),
+                               s1.strict_search)
       rescue ArgumentError, Errno::EINVAL, Grooveshark::GeneralError,
         SocketError, Timeout::Error => e
         @ui.fail(e.message.strip, 1, e)
       end
 
       # Access to search result should be synchronized.
-      mutex.synchronize do
-        
+      @mutex.synchronize do
         s1.search_result = SongSet.new unless s1.search_result
         s1.search_result += result
       end

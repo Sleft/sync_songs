@@ -109,9 +109,9 @@ module SyncSongs
     def search(other, limit = @limit, strict_search = true)
       result = SongSet.new
 
-      # Search for songs that are not already in this set and return
-      # them if they are sufficiently similar.
-      exclusiveTo(other).each do |song|
+      # Search for songs and return them if they are sufficiently
+      # similar.
+      other.each do |song|
         # The optional parameter artist for track.search does not seem
         # to work so it is not used.
         search_result = @lastfm.track.search(track: song.to_search_term,
