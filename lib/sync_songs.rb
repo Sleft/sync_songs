@@ -12,13 +12,23 @@ require_relative "#{PATH}cli"
 require_relative "#{PATH}controller"
 require_relative "#{PATH}version"
 
+require_relative "#{SERVICES_PATH}csv_cli"
+require_relative "#{SERVICES_PATH}csv_set"
 require_relative "#{SERVICES_PATH}grooveshark_cli"
 require_relative "#{SERVICES_PATH}grooveshark_set"
 require_relative "#{SERVICES_PATH}lastfm_cli"
 require_relative "#{SERVICES_PATH}lastfm_set"
 
 # Internal: A service to sync with.
-Struct.new('Service', :user, :name, :type, :action,
+Struct.new('Service',
+           # Internal: A String naming the user name or the file path
+           # for the service.
+           :user,
+           # Internal: A String naming the name of the service.
+           :name,
+           # Internal: A String naming the service type.
+           :type,
+           :action,
            :set, :ui, :strict_search, :interactive,
            :search_result, :songs_to_add, :added_songs)
 
