@@ -41,8 +41,12 @@ module SyncSongs
 
     # Public: Ask for preferences of options for adding songs.
     def addPreferences
-      @ui.strict_search(@service)
       @ui.interactive(@service)
+    end
+
+    # Public: Ask for preferences of options for searching for songs.
+    def searchPreferences
+      @ui.strict_search(@service)
     end
   end
 end

@@ -39,6 +39,7 @@ module SyncSongs
       @ui.message('Enter direction to write in')
       prepareServices
 
+      searchPreferences
       addPreferences
 
       getData
@@ -53,6 +54,8 @@ module SyncSongs
 
       @ui.message('Enter direction to diff in')
       prepareServices
+
+      searchPreferences
 
       getData
       showDifference
@@ -229,6 +232,16 @@ module SyncSongs
       end
     end
 
+    # Internal: Ask for preferences of options for searching for
+    # songs.
+    def searchPreferences
+      @services.each do |_, s|
+        # Search preferences are only relevant when one is writing to
+        # a service.
+        s.ui.searchPreferences if s.action == :w || s.action == :rw
+      end
+    end
+
     # Internal: Gets data to be synced to each service.
     def getDataToAdd
       @services.each do |_, s|
@@ -285,7 +298,7 @@ module SyncSongs
       @services.each do |_, service|
         if service.songs_to_add
           @ui.message("#{service.songs_to_add.size} songs missing on #{service.user} #{service.name} #{service.type}:")
-          service.search_result.each do |s|
+          service.songs_to_add.each do |s|
             @ui.message(s)
           end
         end
