@@ -11,7 +11,7 @@ module SyncSongs
     # support.
     SERVICES = {library: :rw}
 
-    # Public: Constructs a CSV set.
+    # Public: Creates a CSV set.
     #
     # file_path - File to use.
     # col_sep   - Column separator.

@@ -12,7 +12,7 @@ module SyncSongs
     QUIT_CHARACTER = 'q'
     YN_OPTIONS_MSG = 'Enter y for yes, n for no or q to quit'
 
-    # Public: Constructs a command-line interface.
+    # Public: Creates a command-line interface.
     #
     # verbose - True if interface is verbose (default: nil).
     # debug   - True if interface is in debug mode (default: nil),

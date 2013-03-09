@@ -3,7 +3,6 @@
 
 * TODO Plan
 - Add example and documentation to Structs in sync-songs.rb
-- Change documentation: s/constructs/creates
 - Move error handling to service controllers that calls their CLIs. Main controller should not have to know about services.
 - Complete diff.
 - Create SongSet.add method that can take the parameters that the constructor of Song takes?

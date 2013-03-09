@@ -9,7 +9,7 @@ module SyncSongs
   # Public: A command-line interface for Last.fm sets of songs.
   class LastfmCLI
 
-    # Public: Construct a CLI.
+    # Public: Creates a CLI.
     #
     # service - Service for which this is a user interface.
     # ui      - General user interface to use.

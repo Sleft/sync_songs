@@ -7,11 +7,12 @@ require_relative '../song_set'
 module SyncSongs
   # Public: A set of Grooveshark songs.
   class GroovesharkSet < SongSet
-    # Public: Hash of types of services associated with what they support.
+    # Public: Hash of types of services associated with what they
+    # support.
     SERVICES = {favorites: :rw}
 
-    # Public: Constructs a Grooveshark set by logging in to
-    # Grooveshark with the given user.
+    # Public: Creates a Grooveshark set by logging in to Grooveshark
+    # with the given user.
     #
     # username - The username of the user to authenticate.
     # password - The password of the user to authenticate.

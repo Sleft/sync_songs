@@ -9,7 +9,7 @@ module SyncSongs
   # Public: A set of songs.
   class SongSet < SimpleDelegator
 
-    # Public: Constructs a new set.
+    # Public: Creates a new set.
     #
     # *songs - If songs are provided they are added to the set
     #          (default: nil).

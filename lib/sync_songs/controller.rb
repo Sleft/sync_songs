@@ -6,7 +6,7 @@ module SyncSongs
   class Controller
     INPUT_FORM = '[user|file path]:service:type'
 
-    # Public: Constructs a controller.
+    # Public: Creates a controller.
     #
     # ui    - The user interface to use.
     # input - An Set of Strings representing users or file paths

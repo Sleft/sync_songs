@@ -10,7 +10,7 @@ module SyncSongs
     # song.
     attr_reader :name, :artist, :album, :duration, :id
 
-    # Public: Constructs a song. Leading and trailing whitespace is
+    # Public: Creates a song. Leading and trailing whitespace is
     # removed as it has no semantic significance for songs.
     #
     # name     - The name of the song.

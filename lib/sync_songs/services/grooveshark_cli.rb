@@ -8,7 +8,7 @@ module SyncSongs
   # Public: A CLI for Grooveshark sets of songs.
   class GroovesharkCLI
 
-    # Public: Construct a CLI.
+    # Public: Creates a CLI.
     #
     # service - Service for which this is a user interface.
     # ui      - General user interface to use.
