@@ -24,6 +24,8 @@ module SyncSongs
 
     # Public: Get the library, i.e. all songs, from the CSV file.
     #
+    # Raises Errno::EACCES when permission is denied.
+    #
     # Returns self.
     def library
       CSV.foreach(@file_path, @options) { |row| add(Song.new(*row)) }
@@ -34,6 +36,9 @@ module SyncSongs
     # file, i.e. simply add the songs to the CSV file.
     #
     # other - A SongSet to add from.
+    #
+    # Raises Errno::EACCES if permission is denied.
+    # Raises Errno::ENOENT if the file does not exist.
     #
     # Returns an array of the songs that was added.
     def addToLibrary(other)
