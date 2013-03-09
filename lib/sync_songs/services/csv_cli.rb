@@ -17,7 +17,7 @@ module SyncSongs
       @service = service
       @ui = ui
       file_path = @service.user.to_s
-      col_sep = ask("Column separator for #{service.user} #{service.name} #{service.type}? ")
+      col_sep = ask("Column separator for #{@service.user} #{@service.name} #{@service.type}? ")
       @service.set = if col_sep.empty?
                        CsvSet.new(file_path)
                      else

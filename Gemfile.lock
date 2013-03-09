@@ -4,7 +4,7 @@ PATH
     sync_songs (0.0.0)
       grooveshark (>= 0.2.7)
       highline
-      lastfm (>= 1.16.0)
+      lastfm (>= 1.17.0)
       launchy (>= 2.2.0)
       thor (>= 0.17.0)
 
@@ -23,9 +23,9 @@ GEM
     httparty (0.10.2)
       multi_json (~> 1.0)
       multi_xml (>= 0.5.2)
-    i18n (0.6.1)
+    i18n (0.6.4)
     json (1.7.7)
-    lastfm (1.16.0)
+    lastfm (1.17.0)
       activesupport (>= 3.0.3)
       httparty
       xml-simple

@@ -16,8 +16,8 @@ module SyncSongs
     def initialize(service, ui)
       @service = service
       @ui = ui
-      @service.set = LastfmSet.new(ask("Last.fm API key for #{service.user} #{service.name} #{service.type}? ") { |q| q.echo = false },
-                           ask("Last.fm API secret for #{service.user} #{service.name} #{service.type}? ") { |q| q.echo = false },
+      @service.set = LastfmSet.new(ask("Last.fm API key for #{@service.user} #{@service.name} #{@service.type}? ") { |q| q.echo = false },
+                           ask("Last.fm API secret for #{@service.user} #{@service.name} #{@service.type}? ") { |q| q.echo = false },
                            @service.user)
     end
 
