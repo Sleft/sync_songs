@@ -160,7 +160,7 @@ module SyncSongs
       if @token
         @lastfm.session = @lastfm.auth.get_session(token: @token)['key']
       else
-        fail StandardError, "Before calling #{__method__} a token must be authorized, e.g. by calling authorizeURL and getting the user to authorize via that URL."
+        fail StandardError, "Before calling #{__method__} a token must be authorized, e.g. by calling authorizeURL and getting the user to authorize via that URL"
       end
     end
   end

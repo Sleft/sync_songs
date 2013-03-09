@@ -314,7 +314,7 @@ module SyncSongs
       service_ui = "#{service.name.capitalize}#{@ui.class.name.split('::').last}"
       service.ui = SyncSongs.const_get(service_ui).new(service, @ui)
     rescue NameError => e
-      @ui.fail("Failed to initialize #{service_ui}.", 1, e)
+      @ui.fail("Failed to initialize #{service_ui}", 1, e)
     end
 
     # Internal: Translate directions to sync in to an array of

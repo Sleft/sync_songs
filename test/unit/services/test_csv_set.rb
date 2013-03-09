@@ -23,7 +23,7 @@ module SyncSongs
     end
 
     def test_simple
-      # Add some songs to Csv files
+      # Add some songs to CSV files
       @sets[0].addToLibrary(SongSet.new(@songs[0], @songs[8]))
       @sets[1].addToLibrary(SongSet.new(@songs[0], @songs[7]))
 
