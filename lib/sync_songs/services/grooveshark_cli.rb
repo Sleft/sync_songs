@@ -17,9 +17,7 @@ module SyncSongs
       @ui = ui
       @logged_in = false
 
-      until @logged_in
-        tryLogin
-      end
+      tryLogin until @logged_in
     end
 
     # Public: UI wrapper for library favorites. Nothing needs to be
@@ -44,8 +42,12 @@ module SyncSongs
 
     # Public: Ask for preferences of options for adding songs.
     def addPreferences
-      @ui.strict_search(@service)
       @ui.interactive(@service)
+    end
+
+    # Public: Ask for preferences of options for searching for songs.
+    def searchPreferences
+      @ui.strict_search(@service)
     end
 
     private
@@ -56,7 +58,7 @@ module SyncSongs
       @service.set = GroovesharkSet.new(@service.user, ask("Grooveshark password for #{@service.user}? ") { |q| q.echo = false })
       @logged_in = true
     rescue Grooveshark::InvalidAuthentication => e
-      say "Grooveshark: #{e.message}"
+      @ui.message("Grooveshark: #{e.message}")
     rescue SocketError => e
       @ui.fail('Failed to connect to Grooveshark', 1, e)
     end

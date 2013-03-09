@@ -11,7 +11,7 @@ module SyncSongs
     class_option :debug, type: :boolean, desc: 'Debug mode'
     services_option = [:services, {type: :array, required: true,
                          banner: Controller::INPUT_FORM,
-                         desc: 'At least two users or file paths each paired with a service and a type, e.g. -s user1:grooveshark:favorites user1:lastfm:loved',
+                         desc: 'At least two users or file paths each paired with a service and a type, e.g. -s user1:grooveshark:favorites songs.csv:csv:library',
                          aliases: '-s'}]
 
     desc 'sync', 'Sync sets of songs'

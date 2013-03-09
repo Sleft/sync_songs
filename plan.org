@@ -2,7 +2,8 @@
 #+title: Plan
 
 * TODO Plan
-- Fix diff not using strict search (strict search in Struct defaults to nil).
+- Add example and documentation to Structs in sync-songs.rb
+- Change documentation: s/constructs/creates
 - Move error handling to service controllers that calls their CLIs. Main controller should not have to know about services.
 - Complete diff.
 - Create SongSet.add method that can take the parameters that the constructor of Song takes?
@@ -18,7 +19,7 @@
 - Add argument types to documentation, from Tomdoc: "The expected type (or types) of each argument SHOULD be clearly indicated in the explanation. When you specify a type, use the proper classname of the type (for instance, use 'String' instead of 'string' to refer to a String type)."
 - Write a guide for adding new services.
 - Make singleton classes that can carry API keys and passwords for a particular user so that one can check if such an instance is running and use it rather than asking the user for the same password again.
-- Add the class CSVSet and its ui CSVCLI. Use the standard CSV class.
+- Add the class CsvSet and its ui CsvCLI. Use the standard CSV class.
   - It should only have one type of data so alias getFavorites with getLibrary.
   - Test it with StringIO instead of a separate sample data file, see PickAxe p. 736.
 - Consider adding support for the following: librefm, gogoyoko, jamendo.

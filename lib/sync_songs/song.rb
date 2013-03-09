@@ -13,15 +13,19 @@ module SyncSongs
     # Public: Constructs a song. Leading and trailing whitespace is
     # removed as it has no semantic significance for songs.
     #
-    # name   - The name of the song.
-    # artist - The artist performing the song.
+    # name     - The name of the song.
+    # artist   - The artist performing the song.
+    # album    - The album the song is found on (default: nil).
+    # duration - The duration of the song in seconds (default: nil).
+    # id       - An id of for the song (default: nil). Is service
+    #            relative.
     #
     # Raises ArgumentError if the artist or the name is empty.
     def initialize(name, artist, album = nil, duration = nil, id = nil)
       @name     = name.strip
       @artist   = artist.strip
       @album    = album.strip if album
-      @duration = Time.at(duration).utc.strftime('%H:%M:%S') unless duration.zero? if duration
+      @duration = duration
       @id       = id
 
       if @name.empty? || @artist.empty?
@@ -37,21 +41,11 @@ module SyncSongs
     def <=>(other)
       comp = name.casecmp(other.name)
 
-      if comp == 0
-        comp = artist.casecmp(other.artist)
-      end
+      comp = artist.casecmp(other.artist) if comp == 0
 
       if comp == 0 && album && other.album
         comp = album.casecmp(other.album)
       end
-
-      # if comp == 0
-      #   if album && !other.album
-      #     comp = 1
-      #   elsif !album && other.album
-      #     comp = -1
-      #   end
-      # end
 
       comp
     end
@@ -89,7 +83,9 @@ module SyncSongs
 
     # Public: Returns the song formatted as a string.
     def to_s
-      [artist, name, album, duration].compact.join(' - ')
+      s = [artist, name, album].compact
+      s << Time.at(duration).utc.strftime('%H:%M:%S') if duration
+      s.join(' - ')
     end
 
     # Public: Returns the song formatted as appropriately for use in a

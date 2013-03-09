@@ -1,6 +1,6 @@
 # -*- coding: utf-8; mode: ruby -*-
 
-source :rubygems
+source 'https://rubygems.org'
 
 gemspec
 

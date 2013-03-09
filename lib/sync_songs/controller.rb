@@ -26,15 +26,20 @@ module SyncSongs
       # Directions to sync in. Each direction should be unique
       # therefore they are stored in a set.
       @directions = Set.new
+
+      # For synchronization of access to shared data when using
+      # threads, e.g. of writing of search results.
+      @mutex = Mutex.new
     end
 
     # Public: Syncs the song sets of the input services.
     def sync
       @ui.verboseMessage('Preparing to sync song sets')
 
-      say 'Enter direction to write in'
+      @ui.message('Enter direction to write in')
       prepareServices
 
+      searchPreferences
       addPreferences
 
       getData
@@ -47,8 +52,10 @@ module SyncSongs
     def diff
       @ui.verboseMessage('Preparing to diff song sets')
 
-      say 'Enter direction to diff in'
+      @ui.message('Enter direction to diff in')
       prepareServices
+
+      searchPreferences
 
       getData
       showDifference
@@ -159,19 +166,18 @@ module SyncSongs
     # Struct::Service.
     def getSearchResults
       threads = []
-      mutex = Mutex.new
 
       @directions.each do |direction|
         threads << Thread.new(direction) do |d|
           if d.direction == :'<' || d.direction == :'='
             search(@services[d.services.first],
-                   @services[d.services.last], mutex)
+                   @services[d.services.last])
           end
         end
         threads << Thread.new(direction) do |d|
           if d.direction == :'>' || d.direction == :'='
             search(@services[d.services.last],
-                   @services[d.services.first], mutex)
+                   @services[d.services.first])
           end
         end
       end
@@ -189,9 +195,8 @@ module SyncSongs
     # service1, e.g. gets the search result on Grooveshark of the
     # songs that are exclusive to Last.fm.
     #
-    # service1 - Service to search.
-    # service2 - Service with songs to search for.
-    # mutex -    A Mutex for synchronizing writing of search results.
+    # s1    - Service to search.
+    # s2    - Service with songs to search for.
     #
     # Raises ArgumentError from xml-simple some reason (see
     #   LastfmSet).
@@ -200,22 +205,21 @@ module SyncSongs
     #   fails.
     # Raises SocketError if the network connection fails.
     # Raises Timeout::Error if the network connection fails.
-    def search(service1, service2, mutex)
-      @ui.verboseMessage("Searching at #{service1.name} for songs from #{service2.user} #{service2.name} #{service2.type}...")
-
+    def search(s1, s2)
+      @ui.verboseMessage("Searching at #{s1.name} for songs from #{s2.user} #{s2.name} #{s2.type}...")
+#exclusiveTo(
       begin
-        result = service1.set.send(:search, service2.set, service1.strict_search)
+        result = s1.set.search(s1.set.exclusiveTo(s2.set),
+                               s1.strict_search)
       rescue ArgumentError, Errno::EINVAL, Grooveshark::GeneralError,
         SocketError, Timeout::Error => e
         @ui.fail(e.message.strip, 1, e)
       end
 
       # Access to search result should be synchronized.
-      mutex.synchronize do
-        unless service1.search_result
-          service1.search_result = SongSet.new
-        end
-        service1.search_result += result
+      @mutex.synchronize do
+        s1.search_result = SongSet.new unless s1.search_result
+        s1.search_result += result
       end
     end
 
@@ -224,9 +228,17 @@ module SyncSongs
       @services.each do |_, s|
         # Add preferences are only relevant when one is writing to a
         # service.
-        if s.action == :w || s.action == :rw
-          s.ui.addPreferences
-        end
+        s.ui.addPreferences if s.action == :w || s.action == :rw
+      end
+    end
+
+    # Internal: Ask for preferences of options for searching for
+    # songs.
+    def searchPreferences
+      @services.each do |_, s|
+        # Search preferences are only relevant when one is writing to
+        # a service.
+        s.ui.searchPreferences if s.action == :w || s.action == :rw
       end
     end
 
@@ -286,7 +298,7 @@ module SyncSongs
       @services.each do |_, service|
         if service.songs_to_add
           @ui.message("#{service.songs_to_add.size} songs missing on #{service.user} #{service.name} #{service.type}:")
-          service.search_result.each do |s|
+          service.songs_to_add.each do |s|
             @ui.message(s)
           end
         end
@@ -389,14 +401,16 @@ module SyncSongs
     # Internal: Store a service in the @services hash and return the
     # key.
     #
+    # s - Service to store.
+    #
     # Returns the key of the stored service.
-    def storeService(service)
+    def storeService(s)
       # Only the user and service name is relevant for key.
-      key = service.join(':').to_sym
+      key = s.join(':').to_sym
 
       # Only store the service if it is not already stored
       unless @services.key?(key)
-        @services[key] = Struct::Service.new(*service)
+        @services[key] = Struct::Service.new(*s)
       end
 
       key
