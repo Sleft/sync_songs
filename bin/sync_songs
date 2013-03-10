@@ -50,6 +50,6 @@ module SyncSongs
                                    options[:services])
     end
   end
-  
+
   Cli.start(ARGV)
 end
