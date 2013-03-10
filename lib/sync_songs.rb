@@ -12,12 +12,13 @@ require_relative "#{PATH}cli"
 require_relative "#{PATH}controller"
 require_relative "#{PATH}version"
 
-require_relative "#{SERVICES_PATH}csv_cli"
-require_relative "#{SERVICES_PATH}csv_set"
-require_relative "#{SERVICES_PATH}grooveshark_cli"
-require_relative "#{SERVICES_PATH}grooveshark_set"
-require_relative "#{SERVICES_PATH}lastfm_cli"
-require_relative "#{SERVICES_PATH}lastfm_set"
+require_relative "#{SERVICES_PATH}service_controller"
+require_relative "#{SERVICES_PATH}csv_controller"
+require_relative "#{SERVICES_PATH}grooveshark_controller"
+require_relative "#{SERVICES_PATH}lastfm_controller"
+
+# Internal: A sync direction.
+Struct.new('Direction', :services, :direction)
 
 # Internal: A service to sync with.
 Struct.new('Service',
@@ -28,9 +29,4 @@ Struct.new('Service',
            :name,
            # Internal: A String naming the service type.
            :type,
-           :action,
-           :set, :ui, :strict_search, :interactive,
-           :search_result, :songs_to_add, :added_songs)
-
-# Internal: A sync direction.
-Struct.new('Direction', :services, :direction)
+           :action)

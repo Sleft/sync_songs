@@ -19,18 +19,14 @@ module SyncSongs
 
     # Public: Asks for a String naming a Last.fm API key and returns
     # it.
-    #
-    # s - Service for which this is a CLI.
-    def apiKey(s)
-      ask("Last.fm API key for #{s.user} #{s.name} #{s.type}? ") { |q| q.echo = false }
+    def apiKey
+      ask("Last.fm API key for #{@controller.user}? ") { |q| q.echo = false }
     end
 
     # Public: Asks for a String naming a Last.fm API key and returns
     # it.
-    #
-    # s - Service for which this is a CLI.
-    def apiSecret(s)
-      ask("Last.fm API secret for #{s.user} #{s.name} #{s.type}? ") { |q| q.echo = false }
+    def apiSecret
+      ask("Last.fm API secret for #{@controller.user}? ") { |q| q.echo = false }
     end
 
     # Public: Asks the user to authorize this tool with Last.fm and

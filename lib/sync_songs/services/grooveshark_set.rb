@@ -7,27 +7,24 @@ require_relative '../song_set'
 module SyncSongs
   # Public: A set of Grooveshark songs.
   class GroovesharkSet < SongSet
-    # Public: Hash of types of services associated with what they
-    # support.
-    SERVICES = {favorites: :rw}
 
     # Public: Creates a Grooveshark set by logging in to Grooveshark
     # with the given user.
     #
-    # username - The username of the user to authenticate.
-    # password - The password of the user to authenticate.
+    # user     - A String naming a Grooveshark user.
+    # password - A String naming the password of the user.
     #
     # Raises Grooveshark::InvalidAuthentication if authentication
     #   fails.
     # Raises SocketError if the network connection fails.
-    def initialize(username, password)
+    def initialize(user, password)
       super()
 
       # Setup a Grooveshark session.
       @client = Grooveshark::Client.new
       @session = @client.session
 
-      login(username, password)
+      login(user, password)
     end
 
     # Public: Get the user's favorites from Grooveshark.
@@ -92,13 +89,13 @@ module SyncSongs
 
     # Internal: Tries to login to Grooveshark with the given user.
     #
-    # username - The username of the user to authenticate.
-    # password - The password of the user to authenticate.
+    # user     - A String naming a Grooveshark user.
+    # password - A String naming the password of the user.
     #
     # Raises Grooveshark::InvalidAuthentication if authentication
     #   fails.
-    def login(username, password)
-      @user = @client.login(username, password)
+    def login(user, password)
+      @user = @client.login(user, password)
     rescue Grooveshark::InvalidAuthentication => e
       raise Grooveshark::InvalidAuthentication, "#{e.message} An authenticated user is required for getting data from Grooveshark"
       raise

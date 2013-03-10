@@ -27,7 +27,8 @@ module SyncSongs
     #
     # services - A Set of services.
     #
-    # Returns an array of Struct::Direction.
+    # Returns an two dimensional array of where each element is an
+    # array containing user/file name, type and action.
     def askDirections(directions)
       directions.each do |d|
         d[1] = askDirection("#{d.join(' ')} ")
@@ -150,7 +151,7 @@ module SyncSongs
     # song    - A String naming a song.
     # service - A Service.
     def askAddSong(song, service)
-      input = ask("Add #{song} to #{service.user} #{service.name} #{service.type}? ") do |q|
+      ask("Add #{song} to #{service.user} #{service.name} #{service.type}? ") do |q|
         q.responses[:not_valid] = #{YN_OPTIONS_MSG}
         q.default = 'y'
         q.validate = /\A[yn#{QUIT_CHARACTER}]\Z/i
@@ -164,7 +165,7 @@ module SyncSongs
     #
     # Returns a String naming the direction to sync in.
     def askDirection(question)
-      input = ask(question) do |q|
+      ask(question) do |q|
         q.responses[:not_valid] = 'Enter < for to left, > for to right, = for both directions or q to quit'
         q.default = '='
         q.validate = /\A[<>=#{QUIT_CHARACTER}]\Z/i

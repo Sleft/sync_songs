@@ -7,11 +7,11 @@ require_relative '../song_set'
 module SyncSongs
   # Public: A set of Grooveshark songs.
   class LastfmSet < SongSet
-    # Public: Hash of types of services associated with what they
-    # support.
-    SERVICES = {loved: :rw, favorites: :rw}
+
     # Public: Default limit for API calls.
     DEFAULT_LIMIT = 1_000_000
+
+    attr_reader :limit
 
     # Public: Creates a Last.fm set by logging in to Last.fm with the
     # specified user.

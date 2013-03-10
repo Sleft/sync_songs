@@ -2,11 +2,10 @@
 #+title: Plan
 
 * TODO Plan
-- Add search to service controllers.
-- Change controller so that it only communicates with service controllers.
-- Add reference to controller in cli.
-- Add example and documentation to Structs in sync-songs.rb
 - Move error handling to service controllers that calls their CLIs. Main controller should not have to know about services.
+- Document all methods in CLI.
+- Go through all public methods and check interface before release.
+- Add example and documentation to Structs in sync-songs.rb
 - Split Controller into several classes, e.g. one for sync and one for diff?
 - Add tests for all new things.
   - Add tests for songs with album.

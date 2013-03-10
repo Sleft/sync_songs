@@ -19,9 +19,8 @@ module SyncSongs
 
       parseInput
 
-      # Services to sync between. Stored in a hash so that directions
-      # can refer to services via a key.
-      @services = {}
+      # Services to sync between.
+      @services = Set.new
 
       # Directions to sync in. Each direction should be unique
       # therefore they are stored in a set.
@@ -75,14 +74,14 @@ module SyncSongs
       services = {}
 
       # Get the classes that extends SongSet.
-      classes = ObjectSpace.each_object(Class).select { |klass| klass < SongSet }
+      classes = ObjectSpace.each_object(Class).select { |klass| klass < ServiceController }
 
       # Associate the class name with its supported services.
       classes.each do |klass|
         class_name = klass.name.split('::').last
 
-        # Only accept classes that ends with 'Set'.
-        if match = class_name.match(/(\w+)Set\Z/)
+        # Only accept classes that ends with 'Controller'.
+        if match = class_name.match(/(\w+)Controller\Z/)
           services[match[1].downcase.to_sym] = klass::SERVICES
         end
       end
@@ -101,8 +100,6 @@ module SyncSongs
       directionsToServices
 
       checkSupport
-
-      @services.each { |_, s| initializeServiceUI(s) }
     end
 
     # Internal: Checks if the action and the type and for the input
@@ -112,7 +109,7 @@ module SyncSongs
     def checkSupport
       supported_services = Controller.supportedServices
 
-      @services.each do |_, s|
+      @services.each do |s|
         fail_msg = ' is not supported.'
 
         # Is the service supported?
@@ -145,11 +142,11 @@ module SyncSongs
     def getCurrentData
       threads = []
 
-      @services.each do |_, service|
+      @services.each do |service|
         threads << Thread.new(service) do |s|
           @ui.verboseMessage("Getting #{s.type} from #{s.user} #{s.name}...")
           begin
-            s.ui.send(s.type)
+            s.send(s.type)
           rescue Grooveshark::GeneralError, Lastfm::ApiError,
             SocketError, Timeout::Error => e
             @ui.fail(e.message.strip, 1, e)
@@ -170,21 +167,21 @@ module SyncSongs
       @directions.each do |direction|
         threads << Thread.new(direction) do |d|
           if d.direction == :'<' || d.direction == :'='
-            search(@services[d.services.first],
-                   @services[d.services.last])
+            search(d.services.first,
+                   d.services.last)
           end
         end
         threads << Thread.new(direction) do |d|
           if d.direction == :'>' || d.direction == :'='
-            search(@services[d.services.last],
-                   @services[d.services.first])
+            search(d.services.last,
+                   d.services.first)
           end
         end
       end
 
       threads.each { |t| t.join }
 
-      @services.each do |_, s|
+      @services.each do |s|
         if s.search_result
           @ui.verboseMessage("Found #{s.search_result.size} candidates for #{s.user} #{s.name} #{s.type}")
         end
@@ -207,10 +204,9 @@ module SyncSongs
     # Raises Timeout::Error if the network connection fails.
     def search(s1, s2)
       @ui.verboseMessage("Searching at #{s1.name} for songs from #{s2.user} #{s2.name} #{s2.type}...")
-#exclusiveTo(
       begin
-        result = s1.set.search(s1.set.exclusiveTo(s2.set),
-                               s1.strict_search)
+        result = s1.search(s1.set.exclusiveTo(s2.set),
+                           s1.strict_search)
       rescue ArgumentError, Errno::EINVAL, Grooveshark::GeneralError,
         SocketError, Timeout::Error => e
         @ui.fail(e.message.strip, 1, e)
@@ -225,26 +221,26 @@ module SyncSongs
 
     # Internal: Ask for preferences of options for adding songs.
     def addPreferences
-      @services.each do |_, s|
+      @services.each do |s|
         # Add preferences are only relevant when one is writing to a
         # service.
-        s.ui.addPreferences if s.action == :w || s.action == :rw
+        s.addPreferences if s.action == :w || s.action == :rw
       end
     end
 
     # Internal: Ask for preferences of options for searching for
     # songs.
     def searchPreferences
-      @services.each do |_, s|
+      @services.each do |s|
         # Search preferences are only relevant when one is writing to
         # a service.
-        s.ui.searchPreferences if s.action == :w || s.action == :rw
+        s.searchPreferences if s.action == :w || s.action == :rw
       end
     end
 
     # Internal: Gets data to be synced to each service.
     def getDataToAdd
-      @services.each do |_, s|
+      @services.each do |s|
         if s.interactive      # Add songs interactively
           interactiveAdd(s)
         else                  # or add them all without asking.
@@ -258,7 +254,7 @@ module SyncSongs
       @ui.message('Adding data. This might take a while.')
       threads = []
 
-      @services.each do |_, service|
+      @services.each do |service|
         threads << Thread.new(service) do |s|
           if s.songs_to_add && !s.songs_to_add.empty?
             @ui.verboseMessage("Adding #{s.type} to #{s.name} #{s.user}...")
@@ -277,7 +273,8 @@ module SyncSongs
     #
     # service - The service to add songs to.
     def addSongs(service)
-      service.added_songs = service.ui.send("addTo#{service.type.capitalize}", service.songs_to_add)
+      service.added_songs = service.send("addTo#{service.type.capitalize}",
+                                         service.songs_to_add)
     rescue Grooveshark::GeneralError, SocketError => e
       @ui.fail("Failed to add #{service.type} to #{service.name} #{s.user}\n#{e.message.strip}", 1, e)
     end
@@ -295,7 +292,7 @@ module SyncSongs
 
     # Internal: Shows the difference for the services.
     def showDifference
-      @services.each do |_, service|
+      @services.each do |service|
         if service.songs_to_add
           @ui.message("#{service.songs_to_add.size} songs missing on #{service.user} #{service.name} #{service.type}:")
           service.songs_to_add.each do |s|
@@ -303,18 +300,6 @@ module SyncSongs
           end
         end
       end
-    end
-
-    # Internal: Try to initialize the UI for the given service and get
-    # a reference to its song set which is then stored in the
-    # Struct::Service.
-    #
-    # service - A Struct::Service.
-    def initializeServiceUI(service)
-      service_ui = "#{service.name.capitalize}#{@ui.class.name.split('::').last}"
-      service.ui = SyncSongs.const_get(service_ui).new(service, @ui)
-    rescue NameError => e
-      @ui.fail("Failed to initialize #{service_ui}", 1, e)
     end
 
     # Internal: Translate directions to sync in to an array of
@@ -330,7 +315,7 @@ module SyncSongs
         end
 
         d.services.each do |s|
-          @services[s].action = support.shift
+          s.action = support.shift
         end
       end
     end
@@ -341,7 +326,7 @@ module SyncSongs
       counts_msg = []
       v_msg = []
 
-      @services.each do |_, service|
+      @services.each do |service|
         if service.added_songs
           counts_msg << "Added #{service.added_songs.size} songs to #{service.user} #{service.name} #{service.type}"
           v_msg << service.added_songs.map { |s| "Added #{s} to #{service.user} #{service.name} #{service.type}" }
@@ -398,22 +383,29 @@ module SyncSongs
       end
     end
 
-    # Internal: Store a service in the @services hash and return the
-    # key.
+    # Internal: Initializes and stores a service in @services and
+    # returns its reference.
     #
-    # s - Service to store.
+    # s - An array containing user/file name, type and action.
     #
-    # Returns the key of the stored service.
+    # Returns a reference to the stored service.
     def storeService(s)
-      # Only the user and service name is relevant for key.
-      key = s.join(':').to_sym
+      service = initializeService(s)
+      @services << service
 
-      # Only store the service if it is not already stored
-      unless @services.key?(key)
-        @services[key] = Struct::Service.new(*s)
-      end
+      service
+    end
 
-      key
+    # Internal: Try to initialize the given service and return a
+    # reference to it.
+    #
+    # s - An array containing user/file name, type and action.
+    #
+    # Returns a reference to a service.
+    def initializeService(s)
+      SyncSongs.const_get("#{s[1].capitalize}Controller").new(*s, @ui)
+    rescue NameError => e
+      @ui.fail("#{s[1]} is not supported.", 1, e)
     end
   end
 end

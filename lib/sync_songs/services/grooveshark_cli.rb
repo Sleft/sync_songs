@@ -16,11 +16,10 @@ module SyncSongs
       @ui = ui
     end
 
-    # Asks for a String naming a Grooveshark password and returns it.
-    #
-    # s - Service for which this is a CLI.
-    def password(s)
-      ask("Grooveshark password for #{s.user}? ") { |q| q.echo = false }
+    # Public: Asks for a String naming a Grooveshark password and
+    # returns it.
+    def password
+      ask("Grooveshark password for #{@controller.user}? ") { |q| q.echo = false }
     end
   end
 end

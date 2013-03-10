@@ -1,23 +1,31 @@
 # -*- coding: utf-8 -*-
 
+require_relative 'lastfm_cli'
 require_relative 'lastfm_set'
 
 # Public: Classes for syncing sets of songs.
 module SyncSongs
   # Public: Controller for a Last.fm set of songs.
-  class LastfmController
+  class LastfmController < ServiceController
+
+    # Public: Hash of types of services associated with what they
+    # support.
+    SERVICES = {loved: :rw, favorites: :rw}
 
     # Public: Creates a controller.
     #
-    # service - Service for which this is a controller.
-    # ui      - General user interface to use.
-    def initialize(service, ui)
-      @service = service
-      @ui = ui
+    # user   - A String naming the user name or the file path for the
+    #          service.
+    # name   - A String naming the name of the service.
+    # type   - A String naming the service type.
+    # ui     - General user interface to use.
+    def initialize(user, name, type, ui)
+      super(user, name, type, ui)
+
       @service_ui = LastfmCLI.new(self, @ui)
-      @service.set = LastfmSet.new(@service_ui.apiKey,
-                                   @service_ui.apiSecret,
-                                   @service.user)
+      @set = LastfmSet.new(@service_ui.apiKey,
+                           @service_ui.apiSecret,
+                           @user)
     end
 
     # Public: Wrapper for Last.fm loved songs.
@@ -27,7 +35,7 @@ module SyncSongs
     # Raises SocketError if the connection fails.
     # Raises Timeout::Error if the connection fails.
     def loved
-      @service.set.loved
+      @set.loved
       # EXCEPTION HANDLING!!!
     end
 
@@ -38,26 +46,45 @@ module SyncSongs
     #
     # other - A SongSet to add from.
     #
+    # RESCUE!
     # Raises SocketError if the connection fails.
     def addToLoved(other)
       # Store token somewhere instead and only call URL if there is no
       # stored token.
-      exit unless @service_ui.authorize(@service.set.authorizeURL)
-      @service.set.authorizeSession
-      @service.set.addToLoved(other)
+      exit unless @service_ui.authorize(@set.authorizeURL)
+      @set.authorizeSession
+      @set.addToLoved(other)
       # EXCEPTION HANDLING!!!
     end
 
     alias_method :addToFavorites, :addToLoved
 
+    # Public: Wrapper for searching for the given song set at Last.fm.
+    #
+    # other         - SongSet to search for.
+    # limit         - Maximum limit for search results (default:
+    #                 @set.limit).
+    # strict_search - True if search should be strict (default: true).
+    #
+    # RESCUE THESE!
+    # Raises ArgumentError from xml-simple some reason.
+    # Raises Errno::EINVAL if the network connection fails.
+    # Raises SocketError if the network connection fails.
+    # Raises Timeout::Error if the network connection fails.
+    #
+    # Returns a SongSet.
+    def search(other, limit = @set.limit, strict_search = true)
+      @set.search(other, limit, strict_search)
+    end
+
     # Public: Ask for preferences of options for adding songs.
     def addPreferences
-      @ui.interactive(@service)
+      @ui.interactive(self)
     end
 
     # Public: Ask for preferences of options for searching for songs.
     def searchPreferences
-      @ui.strict_search(@service)
+      @ui.strict_search(self)
     end
   end
 end

@@ -17,10 +17,8 @@ module SyncSongs
     end
 
     # Asks for a String naming a column separator and returns it.
-    #
-    # s - Service for which this is a CLI.
-    def column_separator(s)
-      ask("Column separator for #{s.user} #{s.name} #{s.type}? ")
+    def column_separator
+      ask("Column separator for #{@controller.user} #{@controller.name} #{@controller.type}? ") { |q| q.default = ',' }
     end
   end
 end
