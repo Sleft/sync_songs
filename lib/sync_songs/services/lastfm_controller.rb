@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-require 'highline/import'
-require 'launchy'
 require_relative 'lastfm_set'
 
 # Public: Classes for syncing sets of songs.
@@ -16,10 +14,10 @@ module SyncSongs
     def initialize(service, ui)
       @service = service
       @ui = ui
-      # PUT IN CLI!!!!
-      @service.set = LastfmSet.new(ask("Last.fm API key for #{@service.user} #{@service.name} #{@service.type}? ") { |q| q.echo = false },
-                           ask("Last.fm API secret for #{@service.user} #{@service.name} #{@service.type}? ") { |q| q.echo = false },
-                           @service.user)
+      @service_ui = LastfmCLI.new(self, @ui)
+      @service.set = LastfmSet.new(@service_ui.apiKey,
+                                   @service_ui.apiSecret,
+                                   @service.user)
     end
 
     # Public: Wrapper for Last.fm loved songs.
@@ -36,7 +34,7 @@ module SyncSongs
     alias_method :favorites, :loved
 
     # Public: Wrapper for adding to Last.fm loved songs. Authorizes
-    # the session before adding.
+    # the session before adding songs.
     #
     # other - A SongSet to add from.
     #
@@ -44,10 +42,8 @@ module SyncSongs
     def addToLoved(other)
       # Store token somewhere instead and only call URL if there is no
       # stored token.
-      # MOVE TO CLI!!!
-      Launchy.open(@service.set.authorizeURL)
-      exit unless ask('A page asking for authorization with Last.fm should be open in your web browser. You need to approve it before proceeding. Continue? (y/n) ').casecmp('y') == 0
-      @service.set.authorize
+      exit unless @service_ui.authorize(@service.set.authorizeURL)
+      @service.set.authorizeSession
       @service.set.addToLoved(other)
       # EXCEPTION HANDLING!!!
     end

@@ -156,7 +156,7 @@ module SyncSongs
     # URL returned by authorizeURL before calling this method.
     #
     # Raises SocketError if the network connection fails.
-    def authorize
+    def authorizeSession
       if @token
         @lastfm.session = @lastfm.auth.get_session(token: @token)['key']
       else

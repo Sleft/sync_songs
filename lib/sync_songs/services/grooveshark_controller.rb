@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-require 'highline/import'
 require_relative 'grooveshark_set'
 
 # Public: Classes for syncing sets of songs.
@@ -15,8 +14,9 @@ module SyncSongs
     def initialize(service, ui)
       @service = service
       @ui = ui
-      @logged_in = false
+      @service_ui = GroovesharkCLI.new(self, @ui)
 
+      @logged_in = false
       tryLogin until @logged_in
     end
 
@@ -55,8 +55,7 @@ module SyncSongs
     # Internal: Tries to login to Grooveshark and prints and error
     # message if it fails.
     def tryLogin
-      # MOVE QUESTION TO CLI!!!
-      @service.set = GroovesharkSet.new(@service.user, ask("Grooveshark password for #{@service.user}? ") { |q| q.echo = false })
+      @service.set = GroovesharkSet.new(@service.user, @service_ui.password)
       @logged_in = true
     rescue Grooveshark::InvalidAuthentication => e
       @ui.message("Grooveshark: #{e.message}")
