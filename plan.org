@@ -4,6 +4,7 @@
 * TODO Plan
 - Move error handling to service controllers that calls their CLIs. Main controller should not have to know about services.
 - Document all methods in CLI.
+- Go through all documentation and fix it.
 - Go through all public methods and check interface before release.
 - Add example and documentation to Structs in sync-songs.rb
 - Split Controller into several classes, e.g. one for sync and one for diff?
@@ -11,7 +12,6 @@
   - Add tests for songs with album.
 - Use watir for testing last.fm auth.
 - Use safe version operators in gemspec.
-- Go through all documentation and fix it.
 - Follow https://github.com/bbatsov/ruby-style-guide and https://github.com/styleguide/ruby , also TomDoc for comments.
 - Add examples to documentation as in Tomdoc specification?
 - Add argument types to documentation, from Tomdoc: "The expected type (or types) of each argument SHOULD be clearly indicated in the explanation. When you specify a type, use the proper classname of the type (for instance, use 'String' instead of 'string' to refer to a String type)."

@@ -19,14 +19,3 @@ require_relative "#{SERVICES_PATH}lastfm_controller"
 
 # Internal: A sync direction.
 Struct.new('Direction', :services, :direction)
-
-# Internal: A service to sync with.
-Struct.new('Service',
-           # Internal: A String naming the user name or the file path
-           # for the service.
-           :user,
-           # Internal: A String naming the name of the service.
-           :name,
-           # Internal: A String naming the service type.
-           :type,
-           :action)
