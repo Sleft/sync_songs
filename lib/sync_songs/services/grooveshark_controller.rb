@@ -5,12 +5,12 @@ require_relative 'grooveshark_set'
 
 # Public: Classes for syncing sets of songs.
 module SyncSongs
-  # Public: A CLI for Grooveshark sets of songs.
-  class GroovesharkCLI
+  # Public: Controller for a Grooveshark set of songs.
+  class GroovesharkController
 
-    # Public: Creates a CLI.
+    # Public: Creates a controller.
     #
-    # service - Service for which this is a user interface.
+    # service - Service for which this is a controller.
     # ui      - General user interface to use.
     def initialize(service, ui)
       @service = service
@@ -20,20 +20,20 @@ module SyncSongs
       tryLogin until @logged_in
     end
 
-    # Public: UI wrapper for library favorites. Nothing needs to be
-    # done here so the call is just pass on.
+    # Public: Wrapper for Grooveshark favorites.
     #
     # Raises Grooveshark::GeneralError if the network connection fails.
     def favorites
       @service.set.favorites
+      # EXCEPTION HANDLING!!!
     end
 
-    # Public: UI wrapper for addToFavorites in library. Nothing needs to be
-    # done here so the call is just pass on.
+    # Public: Wrapper for adding to Grooveshark favorites.
     #
     # other - A SongSet to add from.
     #
-    # Raises Grooveshark::GeneralError if the network connection fails.
+    # Raises Grooveshark::GeneralError if the network connection
+    #   fails.
     #
     # Returns an array of the songs that was added.
     def addToFavorites(other)
@@ -55,6 +55,7 @@ module SyncSongs
     # Internal: Tries to login to Grooveshark and prints and error
     # message if it fails.
     def tryLogin
+      # MOVE QUESTION TO CLI!!!
       @service.set = GroovesharkSet.new(@service.user, ask("Grooveshark password for #{@service.user}? ") { |q| q.echo = false })
       @logged_in = true
     rescue Grooveshark::InvalidAuthentication => e

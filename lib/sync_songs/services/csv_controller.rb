@@ -6,8 +6,8 @@ require_relative 'csv_set'
 
 # Public: Classes for syncing sets of songs.
 module SyncSongs
-  # Public: A command-line interface for a set of songs in a CSV file.
-  class CsvCLI
+  # Public: Controller for a set of songs in a CSV file.
+  class CsvController
 
     # Public: Creates a CLI.
     #
