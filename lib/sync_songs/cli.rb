@@ -22,9 +22,20 @@ module SyncSongs
     # debug   - True if interface is in debug mode (default: nil),
     #           this means e.g. that backtraces for exceptions are
     #           printed.
-    def initialize(verbose = nil, debug = nil)
+    def initialize(verbose = nil, debug = nil, color = false)
       @verbose = verbose
       @debug   = debug
+      HighLine::use_color = color
+
+      HighLine.color_scheme = HighLine::ColorScheme.new do |cs|
+        cs[:verbose]           = [:blue]
+        cs[:verbose_direction] = [:cyan, :bold]
+        cs[:horizontal_line]   = [:red, :bold]
+        cs[:even_row]          = [:green]
+        cs[:odd_row]           = [:magenta]
+       end
+
+      @row = true         # To track even and odd rows for colorizing.
     end
 
     # Public: Asks for directions to write in and return them.
@@ -40,7 +51,11 @@ module SyncSongs
 
         exitOption(d[1])
 
-        verboseMessage(d.join(' '))
+        if @verbose
+          say("<%= color('#{d.first.join(' ')}', :verbose) %> "\
+              "<%= color('#{d[1]}', :verbose_direction) %> "\
+              "<%= color('#{d.last.join(' ')}', :verbose) %>")
+        end
       end
 
       directions
@@ -181,10 +196,14 @@ module SyncSongs
     # song    - A String naming a song.
     # service - A Service.
     def askAddSong(song, service)
-      ask("Add #{song} to #{service.user} #{service.name} "\
-          "#{service.type}? ") do |q|
-        q.responses[:not_valid] = #{YN_OPTIONS_MSG}
-          q.default = YES_ANSWER
+      question = "<%= color('Add #{song} to #{service.user} "\
+      "#{service.name} #{service.type}?', "
+      question << (@row ? ':even_row' : ':odd_row')
+      @row = !@row
+
+      ask("#{question}) %> ") do |q|
+        q.responses[:not_valid] = YN_OPTIONS_MSG
+        q.default = YES_ANSWER
         q.validate = /\A[yn#{QUIT_ANSWER}]\Z/i
       end
     end

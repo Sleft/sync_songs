@@ -20,7 +20,8 @@ require_relative "#{SERVICES_PATH}lastfm_controller"
 
 # Internal: A sync direction.
 Struct.new('Direction',
-           # Internal: An array of two services to sync between.
+           # Internal: An array of two keys two services to sync
+           # between.
            :services,
            # Internal: The direction to sync in.
            :direction)

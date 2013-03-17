@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+require_relative '../song_set'
+
 # Public: Classes for syncing sets of songs.
 module SyncSongs
   # Public: Controller for a service.
@@ -22,6 +24,30 @@ module SyncSongs
       @type = type
       @action = action
       @ui = ui
+
+      @search_result = SongSet.new
+      @songs_to_add = SongSet.new
+    end
+
+    # Public: Returns true if this service controller is equal to the
+    # compared service controller. This method and hash are defined so
+    # that Sets of service controllers behave reasonably, i.e. service
+    # controller for the same user/file, name and type should be
+    # treated as equal.
+    #
+    # other - Service controller that this song is compared with.
+    def eql?(other)
+      user.casecmp(other.user) == 0 &&
+        name.casecmp(other.name) == 0 &&
+        type.casecmp(other.type) == 0
+    end
+
+    # Public: Makes a hash value for this object and returns it. This
+    # method and eql? are defined so that Sets of service controllers
+    # behave reasonably, i.e. service controller for the same
+    # user/file, name and type should be treated as equal.
+    def hash
+      [user, name, type].join('').downcase.hash
     end
   end
 end

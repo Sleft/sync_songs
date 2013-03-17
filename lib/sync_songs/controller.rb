@@ -19,11 +19,14 @@ module SyncSongs
 
       parseInput
 
-      # Services to sync between.
-      @services = Set.new
+      # Services to sync between. Stored in a hash so that one one may
+      # check if a service is already stored and if that is the case
+      # get a key to it. That way @directions can store keys to
+      # @services.
+      @services = {}
 
-      # Directions to sync in. Each direction should be unique
-      # therefore they are stored in a set.
+      # A Set of Struct::Direction (see sync_songs.rb). Each direction
+      # should be unique therefore they are stored in a set.
       @directions = Set.new
 
       # For synchronization of access to shared data when using
@@ -109,7 +112,7 @@ module SyncSongs
     def checkSupport
       supp_services = Controller.supportedServices
 
-      @services.each do |s|
+      @services.each do |_, s|
         msg = ' is not supported'
 
         # Is the service supported?
@@ -143,12 +146,16 @@ module SyncSongs
     def getCurrentData
       threads = []
 
-      @services.each do |service|
+      @services.each do |_, service|
         threads << Thread.new(service) do |s|
-          @ui.verboseMessage("Getting #{s.type} from #{s.user} #{s.name}...")
+          @mutex.synchronize do
+            @ui.verboseMessage("Getting #{s.type} from #{s.user} #{s.name}...")
+          end
           s.send(s.type)
-          @ui.verboseMessage("Got #{s.set.size} songs from "\
-                             "#{s.user} #{s.name} #{s.type}")
+          @mutex.synchronize do
+            @ui.verboseMessage("Got #{s.set.size} songs from "\
+                               "#{s.user} #{s.name} #{s.type}")
+          end
         end
       end
 
@@ -164,21 +171,21 @@ module SyncSongs
       @directions.each do |direction|
         threads << Thread.new(direction) do |d|
           if d.direction == :'<' || d.direction == :'='
-            search(d.services.first,
-                   d.services.last)
+            search(@services[d.services.first],
+                   @services[d.services.last])
           end
         end
         threads << Thread.new(direction) do |d|
           if d.direction == :'>' || d.direction == :'='
-            search(d.services.last,
-                   d.services.first)
+            search(@services[d.services.last],
+                   @services[d.services.first])
           end
         end
       end
 
       threads.each { |t| t.join }
 
-      @services.each do |s|
+      @services.each do |_, s|
         if s.search_result
           @ui.verboseMessage("Found #{s.search_result.size} candidates "\
                              "for #{s.user} #{s.name} #{s.type}")
@@ -191,24 +198,25 @@ module SyncSongs
     # songs that are exclusive to Last.fm. Exceptions for services
     # should not be handled here but in each service controller.
     #
-    # s1    - Service to search.
-    # s2    - Service with songs to search for.
+    # s1    - Key to a service to search at.
+    # s2    - Key to a service with songs to search for.
     def search(s1, s2)
-      @ui.verboseMessage("Searching at #{s1.name} for songs from "\
+      @mutex.synchronize do
+        @ui.verboseMessage("Searching at #{s1.name} for songs from "\
                          "#{s2.user} #{s2.name} #{s2.type}...")
+      end
       result = s1.search(s1.set.exclusiveTo(s2.set),
                            s1.strict_search)
 
       # Access to search result should be synchronized.
       @mutex.synchronize do
-        s1.search_result = SongSet.new unless s1.search_result
-        s1.search_result += result
+        s1.search_result.merge(result)
       end
     end
 
     # Internal: Ask for preferences of options for adding songs.
     def addPreferences
-      @services.each do |s|
+      @services.each do |_, s|
         # Add preferences are only relevant when one is writing to a
         # service.
         s.addPreferences if s.action == :w || s.action == :rw
@@ -218,7 +226,7 @@ module SyncSongs
     # Internal: Ask for preferences of options for searching for
     # songs.
     def searchPreferences
-      @services.each do |s|
+      @services.each do |_, s|
         # Search preferences are only relevant when one is writing to
         # a service.
         s.searchPreferences if s.action == :w || s.action == :rw
@@ -227,7 +235,7 @@ module SyncSongs
 
     # Internal: Gets data to be synced to each service.
     def getDataToAdd
-      @services.each do |s|
+      @services.each do |_, s|
         if s.interactive      # Add songs interactively
           interactiveAdd(s)
         else                  # or add them all without asking.
@@ -241,13 +249,17 @@ module SyncSongs
       @ui.message('Adding data. This might take a while.')
       threads = []
 
-      @services.each do |service|
+      @services.each do |_, service|
         threads << Thread.new(service) do |s|
           if s.songs_to_add && !s.songs_to_add.empty?
-            @ui.verboseMessage("Adding #{s.type} to #{s.name} #{s.user}...")
+            @mutex.synchronize do
+              @ui.verboseMessage("Adding #{s.type} to #{s.name} #{s.user}...")
+            end
             addSongs(s)
-            @ui.verboseMessage("Finished adding #{s.type} to "\
-                               "#{s.name} #{s.user}")
+            @mutex.synchronize do
+              @ui.verboseMessage("Finished adding #{s.type} to "\
+                                 "#{s.name} #{s.user}")
+            end
           end
         end
       end
@@ -271,8 +283,6 @@ module SyncSongs
     #
     # s - The service to add songs to.
     def interactiveAdd(s)
-      s.songs_to_add = SongSet.new
-
       if s.search_result.size > 0
         @ui.message('Choose whether to add the following '\
                     "#{s.search_result.size} songs to "\
@@ -283,7 +293,7 @@ module SyncSongs
 
     # Internal: Shows the difference for the services.
     def showDifference
-      @services.each do |s|
+      @services.each do |_, s|
         if s.songs_to_add
           @ui.message("#{s.songs_to_add.size} songs missing on "\
                       "#{s.user} #{s.name} #{s.type}:")
@@ -306,7 +316,7 @@ module SyncSongs
         end
 
         d.services.each do |s|
-          s.action = support.shift
+          @services[s].action = support.shift
         end
       end
     end
@@ -316,7 +326,7 @@ module SyncSongs
       counts_msg = []
       v_msg = []
 
-      @services.each do |s|
+      @services.each do |_, s|
         if s.added_songs
           counts_msg << "Added #{s.added_songs.size} songs to "\
           "#{s.user} #{s.name} #{s.type}"
@@ -377,16 +387,18 @@ module SyncSongs
     end
 
     # Internal: Initializes and stores a service in @services and
-    # returns its reference.
+    # returns its key.
     #
     # s - An array containing user/file name, type and action.
     #
     # Returns a reference to the stored service.
     def storeService(s)
-      service = initializeService(s)
-      @services << service
+      key = s.join.to_sym
 
-      service
+      # Only initialize the service if it is not already initialized.
+      @services[key] = initializeService(s) if not @services[key]
+
+      key
     end
 
     # Internal: Try to initialize the given service and return a

@@ -28,7 +28,7 @@ module SyncSongs
     #
     # Returns self.
     def library
-      CSV.foreach(@file_path, @options) { |row| add(Song.new(*row)) }
+      CSV.foreach(@file_path, @options) { |row| add(Song.new(*row)) unless row.empty? }
       self
     end
 

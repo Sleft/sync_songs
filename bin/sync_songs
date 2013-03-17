@@ -9,6 +9,7 @@ module SyncSongs
   class Cli < Thor
     class_option :verbose, type: :boolean, aliases: '-v', desc: 'Explain what is being done'
     class_option :debug, type: :boolean, desc: 'Debug mode'
+    class_option :color, type: :boolean, desc: 'Color mode'
     services_option = [:services, {type: :array, required: true,
                          banner: Controller::INPUT_FORM,
                          desc: 'At least two users or file paths each paired with a service and a type, e.g. -s user1:grooveshark:favorites songs.csv:csv:library',
@@ -46,7 +47,8 @@ module SyncSongs
 
     def setupController
       @controller = Controller.new(CLI.new(options[:verbose],
-                                           options[:debug]),
+                                           options[:debug],
+                                           options[:color]),
                                    options[:services])
     end
   end
