@@ -13,8 +13,10 @@ module SyncSongs
     # altogether, sometimes it means to merely to quit the current
     # dialog.
     QUIT_ANSWER = 'q'
-    # Internal: Message asking for yes, no or quit.
+    # Public: Message asking for yes, no or quit.
     YN_OPTIONS_MSG = 'Enter y for yes, n for no or q to quit'
+    # Public: Validator for yes, no or quit questions.
+    YN_VALIDATOR = /\A[yn#{QUIT_ANSWER}]/i
 
     # Public: Creates a command-line interface.
     #
@@ -71,7 +73,7 @@ module SyncSongs
         'as a wide search may generate too many hits. '\
         "#{YN_OPTIONS_MSG}"
         q.default = YES_ANSWER
-        q.validate = /\A[yn#{QUIT_ANSWER}]\Z/i
+        q.validate = YN_VALIDATOR
       end
 
       exitOption(input)
@@ -95,7 +97,7 @@ module SyncSongs
         'mode is recommended for everything but services you have '\
         "direct access to, such as text files. #{YN_OPTIONS_MSG}"
         q.default = YES_ANSWER
-        q.validate = /\A[yn#{QUIT_ANSWER}]\Z/i
+        q.validate = YN_VALIDATOR
       end
 
       exitOption(input)
@@ -204,7 +206,7 @@ module SyncSongs
       ask("#{question}) %> ") do |q|
         q.responses[:not_valid] = YN_OPTIONS_MSG
         q.default = YES_ANSWER
-        q.validate = /\A[yn#{QUIT_ANSWER}]\Z/i
+        q.validate = YN_VALIDATOR
       end
     end
 
@@ -219,7 +221,7 @@ module SyncSongs
         q.responses[:not_valid] = 'Enter < for to left, > for to '\
         'right, = for both directions or q to quit'
         q.default = '='
-        q.validate = /\A[<>=#{QUIT_ANSWER}]\Z/i
+        q.validate = /\A[<>=#{QUIT_ANSWER}]/i
       end
     end
 
