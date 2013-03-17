@@ -57,13 +57,14 @@ sync_songs help
 
 The most common way of using sync_songs is probably to sync between two services by issuing a command of the following form:
 #+BEGIN_EXAMPLE
-./sync_songs sync -vs user1:service1:favorites user2:service2:favorites
+./sync_songs sync --color -vs user1:service1:favorites user2:service2:favorites
 #+END_EXAMPLE
-Note that fetching song data from services may take some time due to limitations of bandwidth and of particular services. One way to 
+Note that fetching song data from services may take some time due to limitations of bandwidth and of particular services.
 
-
-o
- ~/buffer.csv:csv:library
+If one repeatedly syncs between two particular services one may reduce the time it takes somewhat by using a local buffer via a csv file:
+#+BEGIN_EXAMPLE
+./sync_songs sync --color -vs user1:service1:favorites user2:service2:favorites file_path:csv:library
+#+END_EXAMPLE
 
 *** Library
 
@@ -79,7 +80,7 @@ You can then install dependencies via the following command (if you do not alrea
 #+BEGIN_EXAMPLE
 bundle
 #+END_EXAMPLE
-Now you can =require sync_songs= and use it in your application.
+Then you should be able to =require sync_songs=.
 
 * License
 
