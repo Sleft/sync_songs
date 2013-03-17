@@ -40,6 +40,7 @@ module SyncSongs
     # limit    - The maximum number of favorites to get (default:
     #            @limit).
     #
+    # Raises ArgumentError from xml-simple some reason.
     # Raises Lastfm::ApiError if the username is invalid or there is a
     #   temporary error.
     # Raises SocketError if the connection fails.
