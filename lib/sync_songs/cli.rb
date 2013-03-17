@@ -40,7 +40,7 @@ module SyncSongs
 
         exitOption(d[1])
 
-        puts d.join(' ') if @verbose
+        verboseMessage(d.join(' '))
       end
 
       directions
@@ -117,7 +117,7 @@ module SyncSongs
     #             details (default: 1).
     # exception - The Exception causing the failure (default: nil).
     def fail(msg, exit_code = 1, exception = nil)
-      puts msg.strip      # Messages from Last.fm have leading spaces.
+      failMessage(msg)
       if @debug && exception
         p exception
         puts exception.backtrace
@@ -127,31 +127,22 @@ module SyncSongs
 
     # Public: Shows the given message.
     #
-    # msg - A String naming a message.
+    # msg - A String or an Enumerable naming a message.
     def message(msg)
       puts msg
     end
 
     # Public: Prints the given message if in verbose mode.
     #
-    # msg - A String naming a verbose message.
+    # msg - A String or an an Enumerable of Strings naming a verbose
+    # message.
     def verboseMessage(msg)
-      message(msg) if @verbose
-    end
-
-    # Public: Shows the given message if in debug mode. Can e.g. be
-    # used at different stages to describe program status.
-    #
-    # object - Object to inspect.
-    # msg    - A String naming a debug message.
-    #
-    # Examples
-    #
-    #   @ui.debugMessage(@services, 'Services before support check:')
-    def debugMessage(object, msg = nil)
-      if @debug
-        puts msg if msg
-        p object
+      if @verbose
+        if msg.respond_to? :each
+          msg.each { |m| verboseMessage(m) }
+        else
+          say("<%= color('" + msg + "', BLUE) %>")
+        end
       end
     end
 
@@ -167,10 +158,22 @@ module SyncSongs
         msg << "#{service}: #{type_msg.join(', ')}"
       end
 
-      puts msg
+      message(msg)
     end
 
     private
+
+    # Internal: Shows the given fail message.
+    #
+    # msg - A String or an Enumerable naming a message.
+    def failMessage(msg)
+      if msg.respond_to? :each
+        msg.each { |m| failMessage(m) }
+      else
+        # Messages from Last.fm have leading spaces.
+        say("<%= color('" + msg.strip + "', RED + BOLD) %>")
+      end
+    end
 
     # Internal: Asks whether to add the given song to the given
     # service.
@@ -181,7 +184,7 @@ module SyncSongs
       ask("Add #{song} to #{service.user} #{service.name} "\
           "#{service.type}? ") do |q|
         q.responses[:not_valid] = #{YN_OPTIONS_MSG}
-        q.default = YES_ANSWER
+          q.default = YES_ANSWER
         q.validate = /\A[yn#{QUIT_ANSWER}]\Z/i
       end
     end
