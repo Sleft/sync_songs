@@ -62,6 +62,7 @@ module SyncSongs
     #
     # Raises Grooveshark::GeneralError if the network connection
     #   fails.
+    # Raises Grooveshark::ApiError if token is invalid.
     #
     # Returns a SongSet.
     def search(other, strict_search = true)

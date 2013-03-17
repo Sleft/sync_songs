@@ -57,7 +57,7 @@ module SyncSongs
     # Returns a SongSet.
     def search(other, strict_search = true)
       @set.search(other, strict_search = true)
-    rescue Grooveshark::GeneralError  => e
+    rescue Grooveshark::ApiError, Grooveshark::GeneralError  => e
       @ui.fail("Failed to search #{name} #{user}\n#{e.message.strip}", 1, e)
     end
 
