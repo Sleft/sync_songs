@@ -9,9 +9,9 @@ module SyncSongs
     # Public: Creates a controller.
     #
     # ui    - The user interface to use.
-    # input - An Set of Strings representing users or file paths
-    #         paired with a service and a type on the form
-    #         user:service:type, e.g. "user1:grooveshark:favorites",
+    # input - A Set of Strings representing users or file paths paired
+    #         with a service and a type on the form user:service:type,
+    #         e.g. "user1:grooveshark:favorites",
     #         "user1:lastfm:loved".
     def initialize(ui, input)
       @ui = ui
@@ -73,16 +73,16 @@ module SyncSongs
     def self.supportedServices
       services = {}
 
-      # Get the classes that extends SongSet.
-      classes = ObjectSpace.each_object(Class).select { |klass| klass < ServiceController }
+      # Get the classes that extends ServiceController.
+      classes = ObjectSpace.each_object(Class).select { |c| c < ServiceController }
 
       # Associate the class name with its supported services.
-      classes.each do |klass|
-        class_name = klass.name.split('::').last
+      classes.each do |c|
+        class_name = c.name.split('::').last
 
         # Only accept classes that ends with 'Controller'.
         if match = class_name.match(/(\w+)Controller\Z/)
-          services[match[1].downcase.to_sym] = klass::SERVICES
+          services[match[1].downcase.to_sym] = c::SERVICES
         end
       end
 
@@ -104,13 +104,13 @@ module SyncSongs
 
     # Internal: Checks if the action and the type and for the input
     # service are supported, e.g. if reading (action) from favorites
-    # (type) at Grooveshark (service) is supported. Fails via UI if
-    # something is not supported.
+    # (type) at Grooveshark (service) is supported. Fails if something
+    # is not supported.
     def checkSupport
       supported_services = Controller.supportedServices
 
       @services.each do |s|
-        fail_msg = ' is not supported.'
+        fail_msg = ' is not supported'
 
         # Is the service supported?
         fail_msg = "#{s.name}#{fail_msg}"
@@ -137,8 +137,9 @@ module SyncSongs
     end
 
     # Internal: Gets the current data from each service, e.g. the
-    # current favorites from Grooveshark and Last.fm. The data is not
-    # returned but stored in the set of the each service.
+    # current favorites from Grooveshark and Last.fm. The data is
+    # stored in each service controller. Exceptions for services
+    # should not be handled here but in each service controller.
     def getCurrentData
       threads = []
 
@@ -155,7 +156,7 @@ module SyncSongs
 
     # Internal: Gets the search result from the services that should
     # be synced to. The data is stored in the search_result of each
-    # Struct::Service.
+    # service controller.
     def getSearchResults
       threads = []
 
@@ -185,7 +186,8 @@ module SyncSongs
 
     # Internal: Searches for songs that are exclusive to service2 at
     # service1, e.g. gets the search result on Grooveshark of the
-    # songs that are exclusive to Last.fm.
+    # songs that are exclusive to Last.fm. Exceptions for services
+    # should not be handled here but in each service controller.
     #
     # s1    - Service to search.
     # s2    - Service with songs to search for.
@@ -251,7 +253,8 @@ module SyncSongs
       sayAddedSongs
     end
 
-    # Internal: Adds songs to the given service.
+    # Internal: Adds songs to the given service. Exceptions should not
+    # be handled here but in each service controller.
     #
     # service - The service to add songs to.
     def addSongs(service)
@@ -282,8 +285,7 @@ module SyncSongs
       end
     end
 
-    # Internal: Translate directions to sync in to an array of
-    # Struct::Service.
+    # Internal: Store directions to sync in each service controller.
     def directionsToServices
       @directions.each do |d|
         support = []
@@ -300,8 +302,7 @@ module SyncSongs
       end
     end
 
-    # Internal: Sends a message of which songs that was added to the
-    # UI.
+    # Internal: Shows a message of which songs that was added.
     def sayAddedSongs
       counts_msg = []
       v_msg = []
@@ -355,7 +356,7 @@ module SyncSongs
 
       answers = @ui.askDirections(questions)
 
-      # Store answer.
+      # Store the given answer.
       answers.each do |a|
         @directions << Struct::Direction.new([storeService(a.first),
                                               storeService(a.last)],
