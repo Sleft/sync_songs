@@ -23,6 +23,8 @@ module SyncSongs
     # Public: Get the library, i.e. all songs, from the CSV file.
     #
     # Raises Errno::EACCES when permission is denied.
+    # Raises ArgumentError when a column separator not reflecting the
+    #   one used in the given file is given.
     #
     # Returns self.
     def library

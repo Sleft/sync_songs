@@ -36,7 +36,7 @@ module SyncSongs
     # Public: Wrapper for CSV library.
     def library
       @set.library
-    rescue Errno::EACCES, Errno::ENOENT => e
+    rescue ArgumentError, Errno::EACCES, Errno::ENOENT => e
       @ui.fail("Failed to get #{type} from #{name} #{user}\n#{e.message.strip}", 1, e)
     end
 
