@@ -2,7 +2,6 @@
 #+title: Plan
 
 * TODO Plan
-- Colorize terminal output.
 - Go through all documentation and fix it.
 - Go through all public methods and check interface before release.
 - Split Controller into several classes, e.g. one for sync and one for diff?

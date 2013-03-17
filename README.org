@@ -8,27 +8,78 @@ sync_songs can be used as standalone but also be integrated into other projects.
 
 ** Installation
 
-If you want to use sync_songs simply to sync your songs at different services use it as as standalone.
+To use sync_songs one has to have [[http://www.ruby-lang.org][Ruby]] installed. The easiest way to install Ruby is to use a package management system. If you are on a Debian-based distribution you can issue the following terminal command to install Ruby:
+#+BEGIN_EXAMPLE
+sudo apt-get install ruby
+#+END_EXAMPLE
+
+The following describes three ways of obtaining and installing.
+
+*** Gem
+
+This is the best method to install for most purposes. It requires RubyGems which on Debian-based distributions can be installed via the following command:
+#+BEGIN_EXAMPLE
+sudo apt-get install rubygems
+#+END_EXAMPLE
+
+Then you can install sync_songs via the following command:
+#+BEGIN_EXAMPLE
+sudo gem install sync_songs
+#+END_EXAMPLE
+
+*** Git
+
+This method is good if you want to help develop sync_songs. It requires [[http://git-scm.com/][Git]] which on Debian-based distributions can be installed via the following command:
+#+BEGIN_EXAMPLE
+sudo apt-get install git
+#+END_EXAMPLE
+
+=cd= to the directory you want to install in and do
+#+BEGIN_EXAMPLE
+git clone https://github.com/Sleft/sync_songs.git .
+#+END_EXAMPLE
+to clone the git repository into that directory. You can use the same command when you want to update it.
+
+*** Archive
+
+This method is not recommended but good if you for some reason cannot use RubyGems or Git. [[https://github.com/Sleft/sync_songs/archive/master.zip][Download]] an archive and extract to the directory you want to install in. Install the dependencies listed in the [[https://github.com/Sleft/sync_songs/blob/master/sync_songs.gemspec][gemspec]].
+
+** Usage
+
+If you want to use sync_songs simply to sync your songs at different services use it as standalone.
 
 *** Standalone
 
+Issue the following command to learn about how to use sync_songs:
+#+BEGIN_EXAMPLE
+sync_songs help
+#+END_EXAMPLE
+
+The most common way of using sync_songs is probably to sync between two services by issuing a command of the following form:
+#+BEGIN_EXAMPLE
+./sync_songs sync -vs user1:service1:favorites user2:service2:favorites
+#+END_EXAMPLE
+Note that fetching song data from services may take some time due to limitations of bandwidth and of particular services. One way to 
+
+
+o
+ ~/buffer.csv:csv:library
+
 *** Library
 
-If you want to integrate sync_songs in your project add this line to your application's Gemfile:
-
-    gem 'sync_songs'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install sync_songs
-
-** TODO Usage
-
-Examples of command-line and description of -h
+If you want to integrate sync_songs in your project add the following line to your application's gemspec:
+#+BEGIN_EXAMPLE
+gem.add_runtime_dependency 'sync_songs'
+#+END_EXAMPLE
+Alternatively add the following line to your Gemfile:
+#+BEGIN_EXAMPLE
+gem 'sync_songs'
+#+END_EXAMPLE
+You can then install dependencies via the following command (if you do not already have bundler installed do =sudo gem install bundler= first):
+#+BEGIN_EXAMPLE
+bundle
+#+END_EXAMPLE
+Now you can =require sync_songs= and use it in your application.
 
 * License
 
