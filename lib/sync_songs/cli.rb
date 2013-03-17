@@ -52,9 +52,9 @@ module SyncSongs
         exitOption(d[1])
 
         if @verbose
-          say("<%= color('#{d.first.join(' ')}', :verbose) %> "\
-              "<%= color('#{d[1]}', :verbose_direction) %> "\
-              "<%= color('#{d.last.join(' ')}', :verbose) %>")
+          say("<%= color(%q{#{d.first.join(' ')}}, :verbose) %> "\
+              "<%= color(%q{#{d[1]}}, :verbose_direction) %> "\
+              "<%= color(%q{#{d.last.join(' ')}}, :verbose) %>")
         end
       end
 
@@ -156,7 +156,7 @@ module SyncSongs
         if msg.respond_to? :each
           msg.each { |m| verboseMessage(m) }
         else
-          say("<%= color('" + msg + "', BLUE) %>")
+          say('<%= color(%q{' + msg + '}, BLUE) %>')
         end
       end
     end
@@ -186,7 +186,7 @@ module SyncSongs
         msg.each { |m| failMessage(m) }
       else
         # Messages from Last.fm have leading spaces.
-        say("<%= color('" + msg.strip + "', RED + BOLD) %>")
+        say('<%= color(%q{' + msg.strip + '}, RED + BOLD) %>')
       end
     end
 
@@ -196,8 +196,8 @@ module SyncSongs
     # song    - A String naming a song.
     # service - A Service.
     def askAddSong(song, service)
-      question = "<%= color('Add #{song} to #{service.user} "\
-      "#{service.name} #{service.type}?', "
+      question = "<%= color(%q{Add #{song} to #{service.user} "\
+      "#{service.name} #{service.type}?}, "
       question << (@row ? ':even_row' : ':odd_row')
       @row = !@row
 
