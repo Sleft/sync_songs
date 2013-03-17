@@ -6,10 +6,14 @@ require 'highline/import'
 module SyncSongs
   # Public: Command-line interface.
   class CLI
+    # Public: A character for answering yes to a question.
+    YES_ANSWER = 'y'
     # Public: A character that the user can input to quit what is
-    # currently. Sometimes quit is to quit to program, sometimes quit
-    # is merely to quit the current dialog.
-    QUIT_CHARACTER = 'q'
+    # currently happening. Sometimes it means to quit to program
+    # altogether, sometimes it means to merely to quit the current
+    # dialog.
+    QUIT_ANSWER = 'q'
+    # Internal: Message asking for yes, no or quit.
     YN_OPTIONS_MSG = 'Enter y for yes, n for no or q to quit'
 
     # Public: Creates a command-line interface.
@@ -25,44 +29,61 @@ module SyncSongs
 
     # Public: Asks for directions to write in and return them.
     #
-    # services - A Set of services.
+    # directions - A two dimensional array where each element is of
+    #              the form ['service1', '?', 'service2'].
     #
-    # Returns an two dimensional array of where each element is an
-    # array containing user/file name, type and action.
+    # Returns an two dimensional array where each element is of the
+    #   form ['service1', '</=/>', 'service2'].
     def askDirections(directions)
       directions.each do |d|
         d[1] = askDirection("#{d.join(' ')} ")
 
         exitOption(d[1])
 
-        d.join(' ') if @verbose
+        puts d.join(' ') if @verbose
       end
 
       directions
     end
 
+    # Public: Asks if strict search should be used for the given
+    # service.
+    #
+    # service - A Service to decide search method for.
     def strict_search(service)
       input = ask("Strict search for #{service.user} #{service.name} #{service.type}? ") do |q|
         q.responses[:not_valid] = "A strict search is recommended as a wide search may generate too many hits. #{YN_OPTIONS_MSG}"
-        q.default = 'y'
-        q.validate = /\A[yn#{QUIT_CHARACTER}]\Z/i
+        q.default = YES_ANSWER
+        q.validate = /\A[yn#{QUIT_ANSWER}]\Z/i
       end
 
       exitOption(input)
 
-      service.strict_search = input.casecmp('y') ? true : false
+      service.strict_search = if input.casecmp(YES_ANSWER) == 0
+                                true
+                              else
+                                false
+                              end
     end
 
+    # Public: Asks if interactive mode should be used for the given
+    # service and stores the answer in the service.
+    #
+    # service - A Service to decide interactive mode for.
     def interactive(service)
       input = ask("Interactive mode for #{service.user} #{service.name} #{service.type}? ") do |q|
         q.responses[:not_valid] = "In interactive mode you will for every found song be asked whether to add it. Interactive mode is recommended for everything but services you have direct access to, such as text files. #{YN_OPTIONS_MSG}"
-        q.default = 'y'
-        q.validate = /\A[yn#{QUIT_CHARACTER}]\Z/i
+        q.default = YES_ANSWER
+        q.validate = /\A[yn#{QUIT_ANSWER}]\Z/i
       end
 
       exitOption(input)
 
-      service.interactive = input.casecmp('y') ? true : false
+      service.interactive = if input.casecmp(YES_ANSWER) == 0
+                              true
+                            else
+                              false
+                            end
     end
 
     # Public: For every song in the search result of the given
@@ -74,24 +95,23 @@ module SyncSongs
       service.search_result.each do |s|
         add = askAddSong(s, service)
 
-        if add.casecmp('y') == 0
-          service.songs_to_add << s
         # Stop asking if the user press quit
-        elsif add.casecmp(QUIT_CHARACTER) == 0
-          break
-        end
+        break if add.casecmp(QUIT_ANSWER) == 0
+
+        service.songs_to_add << s if add.casecmp(YES_ANSWER) == 0
       end
     end
 
-    # Public: Shows failure message and exit.
+    # Public: Shows the given message and exits with the given exit
+    # code.
     #
-    # message   - The String failure message.
+    # msg       - A String naming a failure message.
     # exit_code - Exit code to use, see
     #             http://tldp.org/LDP/abs/html/exitcodes.html for
-    #             details (default : 1).
+    #             details (default: 1).
     # exception - The Exception causing the failure (default: nil).
-    def fail(message, exit_code = 1, exception = nil)
-      puts message.strip   # Messages from Last.fm have leading spaces.
+    def fail(msg, exit_code = 1, exception = nil)
+      puts msg.strip      # Messages from Last.fm have leading spaces.
       if @debug && exception
         p exception
         puts exception.backtrace
@@ -99,25 +119,25 @@ module SyncSongs
       exit(exit_code)
     end
 
-    # Public: Prints the given message.
+    # Public: Shows the given message.
     #
-    # msg - Message to print.
+    # msg - A String naming a message.
     def message(msg)
       puts msg
     end
 
     # Public: Prints the given message if in verbose mode.
     #
-    # msg - Message to print.
+    # msg - A String naming a verbose message.
     def verboseMessage(msg)
       message(msg) if @verbose
     end
 
-    # Public: Prints the given message if in debug mode. Can e.g. be
-    # used at different stages in the controller to debug it.
+    # Public: Shows the given message if in debug mode. Can e.g. be
+    # used at different stages to describe program status.
     #
     # object - Object to inspect.
-    # msg    - Message to print, e.g. to describe program status.
+    # msg    - A String naming a debug message.
     #
     # Examples
     #
@@ -129,7 +149,7 @@ module SyncSongs
       end
     end
 
-    # Public: Prints the supported services.
+    # Public: Shows the supported services.
     def self.supportedServices
       msg = []
 
@@ -146,15 +166,16 @@ module SyncSongs
 
     private
 
-    # Internal: Asks whether to add the given song to the given service.
+    # Internal: Asks whether to add the given song to the given
+    # service.
     #
     # song    - A String naming a song.
     # service - A Service.
     def askAddSong(song, service)
       ask("Add #{song} to #{service.user} #{service.name} #{service.type}? ") do |q|
         q.responses[:not_valid] = #{YN_OPTIONS_MSG}
-        q.default = 'y'
-        q.validate = /\A[yn#{QUIT_CHARACTER}]\Z/i
+        q.default = YES_ANSWER
+        q.validate = /\A[yn#{QUIT_ANSWER}]\Z/i
       end
     end
 
@@ -168,7 +189,7 @@ module SyncSongs
       ask(question) do |q|
         q.responses[:not_valid] = 'Enter < for to left, > for to right, = for both directions or q to quit'
         q.default = '='
-        q.validate = /\A[<>=#{QUIT_CHARACTER}]\Z/i
+        q.validate = /\A[<>=#{QUIT_ANSWER}]\Z/i
       end
     end
 
@@ -176,7 +197,7 @@ module SyncSongs
     #
     # input - Input String from user.
     def exitOption(input)
-      exit if input.casecmp(QUIT_CHARACTER) == 0
+      exit if input.casecmp(QUIT_ANSWER) == 0
     end
   end
 end

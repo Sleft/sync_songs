@@ -2,7 +2,7 @@
 #+title: Plan
 
 * TODO Plan
-- Document all methods in CLI.
+- Colorize terminal output.
 - Go through all documentation and fix it.
 - Go through all public methods and check interface before release.
 - Add example and documentation to Structs in sync-songs.rb
