@@ -82,7 +82,8 @@ module SyncSongs
 
       if @lastfm.session
         other.each do |s|
-          songsAdded << s if @lastfm.track.love(track: s.name, artist: s.artist)
+          songsAdded << s if @lastfm.track.love(track: s.name,
+                                                artist: s.artist)
         end
       end
 
