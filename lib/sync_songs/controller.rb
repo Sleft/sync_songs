@@ -169,14 +169,14 @@ module SyncSongs
       threads = []
 
       @directions.each do |direction|
-        threads << Thread.new(direction) do |d|
-          if d.direction == :'<' || d.direction == :'='
+        if direction.direction == :'<' || direction.direction == :'='
+          threads << Thread.new(direction) do |d|
             search(@services[d.services.first],
                    @services[d.services.last])
           end
         end
-        threads << Thread.new(direction) do |d|
-          if d.direction == :'>' || d.direction == :'='
+        if direction.direction == :'>' || direction.direction == :'='
+          threads << Thread.new(direction) do |d|
             search(@services[d.services.last],
                    @services[d.services.first])
           end
@@ -184,13 +184,6 @@ module SyncSongs
       end
 
       threads.each { |t| t.join }
-
-      @services.each do |_, s|
-        if s.search_result
-          @ui.verboseMessage("Found #{s.search_result.size} candidates "\
-                             "for #{s.user} #{s.name} #{s.type}")
-        end
-      end
     end
 
     # Internal: Searches for songs that are exclusive to service2 at
@@ -203,7 +196,7 @@ module SyncSongs
     def search(s1, s2)
       @mutex.synchronize do
         @ui.verboseMessage("Searching at #{s1.name} for songs from "\
-                         "#{s2.user} #{s2.name} #{s2.type}...")
+                           "#{s2.user} #{s2.name} #{s2.type}...")
       end
       result = s1.search(s1.set.exclusiveTo(s2.set),
                            s1.strict_search)
@@ -211,6 +204,9 @@ module SyncSongs
       # Access to search result should be synchronized.
       @mutex.synchronize do
         s1.search_result.merge(result)
+        @ui.verboseMessage("Found #{s1.search_result.size} "\
+                           "candidates from #{s2.user} #{s2.name} "\
+                           "#{s2.type} at #{s1.name}")
       end
     end
 
