@@ -29,14 +29,10 @@ module SyncSongs
     end
 
     # Public: Wrapper for Last.fm loved songs.
-    #
-    # Raises Lastfm::ApiError if the username is invalid or there is a
-    #   temporary error.
-    # Raises SocketError if the connection fails.
-    # Raises Timeout::Error if the connection fails.
     def loved
       @set.loved
-      # EXCEPTION HANDLING!!!
+    rescue Lastfm::ApiError, SocketError, Timeout::Error => e
+      @ui.fail("Failed to get #{type} from #{name} #{user}\n#{e.message.strip}", 1, e)
     end
 
     alias_method :favorites, :loved
@@ -45,16 +41,14 @@ module SyncSongs
     # the session before adding songs.
     #
     # other - A SongSet to add from.
-    #
-    # RESCUE!
-    # Raises SocketError if the connection fails.
     def addToLoved(other)
       # Store token somewhere instead and only call URL if there is no
       # stored token.
       exit unless @service_ui.authorize(@set.authorizeURL)
       @set.authorizeSession
       @set.addToLoved(other)
-      # EXCEPTION HANDLING!!!
+    rescue Lastfm::ApiError, SocketError => e
+      @ui.fail("Failed to add #{type} to #{name} #{user}\n#{e.message.strip}", 1, e)
     end
 
     alias_method :addToFavorites, :addToLoved
@@ -66,15 +60,11 @@ module SyncSongs
     #                 @set.limit).
     # strict_search - True if search should be strict (default: true).
     #
-    # RESCUE THESE!
-    # Raises ArgumentError from xml-simple some reason.
-    # Raises Errno::EINVAL if the network connection fails.
-    # Raises SocketError if the network connection fails.
-    # Raises Timeout::Error if the network connection fails.
-    #
     # Returns a SongSet.
     def search(other, limit = @set.limit, strict_search = true)
       @set.search(other, limit, strict_search)
+    rescue ArgumentError, Errno::EINVAL, SocketError, Timeout::Error  => e
+      @ui.fail("Failed to search #{name} #{user}\n#{e.message.strip}", 1, e)
     end
 
     # Public: Ask for preferences of options for adding songs.

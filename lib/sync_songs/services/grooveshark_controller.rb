@@ -29,24 +29,21 @@ module SyncSongs
     end
 
     # Public: Wrapper for Grooveshark favorites.
-    #
-    # Raises Grooveshark::GeneralError if the network connection fails.
     def favorites
       @set.favorites
-      # EXCEPTION HANDLING!!!
+    rescue Grooveshark::GeneralError => e
+      @ui.fail("Failed to get #{type} from #{name} #{user}\n#{e.message.strip}", 1, e)
     end
 
     # Public: Wrapper for adding to Grooveshark favorites.
     #
     # other - A SongSet to add from.
     #
-    # RESCUE
-    # Raises Grooveshark::GeneralError if the network connection
-    #   fails.
-    #
     # Returns an array of the songs that was added.
     def addToFavorites(other)
       @set.addToFavorites(other)
+    rescue Grooveshark::GeneralError  => e
+      @ui.fail("Failed to add #{type} to #{name} #{user}\n#{e.message.strip}", 1, e)
     end
 
     # Public: Wrapper for searching for the given song set at
@@ -55,12 +52,11 @@ module SyncSongs
     # other         - SongSet to search for.
     # strict_search - True if search should be strict (default: true).
     #
-    # Raises Grooveshark::GeneralError if the network connection
-    #   fails.
-    #
     # Returns a SongSet.
     def search(other, strict_search = true)
       @set.search(other, strict_search = true)
+    rescue Grooveshark::GeneralError  => e
+      @ui.fail("Failed to search #{name} #{user}\n#{e.message.strip}", 1, e)
     end
 
     # Public: Ask for preferences of options for adding songs.

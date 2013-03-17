@@ -2,7 +2,6 @@
 #+title: Plan
 
 * TODO Plan
-- Move error handling to service controllers that calls their CLIs. Main controller should not have to know about services.
 - Document all methods in CLI.
 - Go through all documentation and fix it.
 - Go through all public methods and check interface before release.

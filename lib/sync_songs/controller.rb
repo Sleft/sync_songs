@@ -145,12 +145,7 @@ module SyncSongs
       @services.each do |service|
         threads << Thread.new(service) do |s|
           @ui.verboseMessage("Getting #{s.type} from #{s.user} #{s.name}...")
-          begin
-            s.send(s.type)
-          rescue Grooveshark::GeneralError, Lastfm::ApiError,
-            SocketError, Timeout::Error => e
-            @ui.fail(e.message.strip, 1, e)
-          end
+          s.send(s.type)
           @ui.verboseMessage("Got #{s.set.size} #{s.type} from #{s.user} #{s.name}")
         end
       end
@@ -194,23 +189,10 @@ module SyncSongs
     #
     # s1    - Service to search.
     # s2    - Service with songs to search for.
-    #
-    # Raises ArgumentError from xml-simple some reason (see
-    #   LastfmSet).
-    # Raises Errno::EINVAL if the network connection fails.
-    # Raises Grooveshark::GeneralError if the network connection
-    #   fails.
-    # Raises SocketError if the network connection fails.
-    # Raises Timeout::Error if the network connection fails.
     def search(s1, s2)
       @ui.verboseMessage("Searching at #{s1.name} for songs from #{s2.user} #{s2.name} #{s2.type}...")
-      begin
-        result = s1.search(s1.set.exclusiveTo(s2.set),
+      result = s1.search(s1.set.exclusiveTo(s2.set),
                            s1.strict_search)
-      rescue ArgumentError, Errno::EINVAL, Grooveshark::GeneralError,
-        SocketError, Timeout::Error => e
-        @ui.fail(e.message.strip, 1, e)
-      end
 
       # Access to search result should be synchronized.
       @mutex.synchronize do
@@ -275,8 +257,6 @@ module SyncSongs
     def addSongs(service)
       service.added_songs = service.send("addTo#{service.type.capitalize}",
                                          service.songs_to_add)
-    rescue Grooveshark::GeneralError, SocketError => e
-      @ui.fail("Failed to add #{service.type} to #{service.name} #{s.user}\n#{e.message.strip}", 1, e)
     end
 
     # Internal: For each found missing song in a service, ask whether
