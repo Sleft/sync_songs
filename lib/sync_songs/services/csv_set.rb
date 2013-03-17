@@ -10,13 +10,14 @@ module SyncSongs
 
     # Public: Creates a CSV set.
     #
-    # file_path - File to use.
-    # col_sep   - Column separator.
+    # file_path - A String naming a path to a file to treat as a song
+    #             set.
+    # col_sep   - A String naming a column separator to use.
     def initialize(file_path, col_sep = ',')
       super()
       @file_path = file_path
-      @col_sep = col_sep # FIXME implement support for
-      @options = {col_sep: @col_sep, converters: :numeric}
+      @col_sep = col_sep
+      @options = {col_sep: @col_sep}
     end
 
     # Public: Get the library, i.e. all songs, from the CSV file.
