@@ -25,7 +25,8 @@ module SyncSongs
 
     def test_strip
       lead_trail_ws = /(^\s+)|(\s+$)/
-      strip_msg = 'Songs should be stripped from leading and trailing whitespace'
+      strip_msg = 'Songs should be stripped from leading and '\
+      'trailing whitespace'
       @songs.each do |song|
         assert_nil(lead_trail_ws.match(song.name), strip_msg)
         assert_nil(lead_trail_ws.match(song.artist), strip_msg)
@@ -75,7 +76,8 @@ module SyncSongs
       assert(!@songs[0].eql?(@songs[1]) && !@songs[1].eql?(@songs[0]),
              'Non-equality for songs is symmetrical')
 
-      both_fields_equality_msg = 'Only the fields name and artist affect equality'
+      both_fields_equality_msg = 'Only the fields name and artist '\
+      'affect equality'
       assert(!@songs[1].eql?(@songs[2]), both_fields_equality_msg)
       assert(!@songs[2].eql?(@songs[3]), both_fields_equality_msg)
       assert(!@songs[3].eql?(@songs[4]), both_fields_equality_msg)
@@ -115,11 +117,13 @@ module SyncSongs
     end
 
     def to_search_term
-      assert_equal(@songs[0].to_search_term, 'name1 artist1', 'Search term is in correct form')
+      assert_equal(@songs[0].to_search_term, 'name1 artist1',
+                   'Search term is in correct form')
     end
 
     def test_to_s
-      assert_equal(@songs[0].to_s, 'Artist1 - Name1', 'String is in correct form')
+      assert_equal(@songs[0].to_s, 'Artist1 - Name1',
+                   'String is in correct form')
     end
   end
 end

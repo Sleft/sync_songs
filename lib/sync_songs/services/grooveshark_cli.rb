@@ -19,7 +19,8 @@ module SyncSongs
     # Public: Asks for a String naming a Grooveshark password and
     # returns it.
     def password
-      ask("Grooveshark password for #{@controller.user}? ") { |q| q.echo = false }
+      ask('Grooveshark password for '\
+          "#{@controller.user}? ") { |q| q.echo = false }
     end
   end
 end

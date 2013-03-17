@@ -32,7 +32,8 @@ module SyncSongs
     def favorites
       @set.favorites
     rescue Grooveshark::GeneralError => e
-      @ui.fail("Failed to get #{type} from #{name} #{user}\n#{e.message.strip}", 1, e)
+      @ui.fail("Failed to get #{type} from #{name} #{user}\n"\
+               "#{e.message.strip}", 1, e)
     end
 
     # Public: Wrapper for adding to Grooveshark favorites.
@@ -43,7 +44,8 @@ module SyncSongs
     def addToFavorites(other)
       @set.addToFavorites(other)
     rescue Grooveshark::GeneralError  => e
-      @ui.fail("Failed to add #{type} to #{name} #{user}\n#{e.message.strip}", 1, e)
+      @ui.fail("Failed to add #{type} to #{name} #{user}\n"\
+               "#{e.message.strip}", 1, e)
     end
 
     # Public: Wrapper for searching for the given song set at

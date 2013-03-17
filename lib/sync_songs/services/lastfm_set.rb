@@ -57,7 +57,8 @@ module SyncSongs
 
         add(Song.new(s['name'], s['artist']['name'],
                      # Not all Last.fm tracks belong to an album.
-                     s.key?('album') ? s['album']['title'] : nil))
+                     s.key?('album') ? s['album']['title'] : nil,
+                     Float(s['duration']) / 1_000, s['id']))
       end
 
       self
@@ -129,8 +130,9 @@ module SyncSongs
         unless found_songs.empty?
           found_songs.each do |f|
             other = Song.new(f['name'], f['artist']['name'],
-                              f.key?('album') ? f['album']['title'] : nil,
-                              Float(f['duration']) / 1_000)
+                             # Not all Last.fm tracks belong to an album.
+                             f.key?('album') ? f['album']['title'] : nil,
+                             Float(f['duration']) / 1_000, f['id'])
             if strict_search
               next unless song.eql?(other)
             else
@@ -161,7 +163,9 @@ module SyncSongs
       if @token
         @lastfm.session = @lastfm.auth.get_session(token: @token)['key']
       else
-        fail StandardError, "Before calling #{__method__} a token must be authorized, e.g. by calling authorizeURL and getting the user to authorize via that URL"
+        fail StandardError, "Before calling #{__method__} a token "\
+        'must be authorized, e.g. by calling authorizeURL and '\
+        'getting the user to authorize via that URL'
       end
     end
   end

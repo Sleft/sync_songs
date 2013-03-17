@@ -49,41 +49,47 @@ module SyncSongs
     # Public: Asks if strict search should be used for the given
     # service.
     #
-    # service - A Service to decide search method for.
-    def strict_search(service)
-      input = ask("Strict search for #{service.user} #{service.name} #{service.type}? ") do |q|
-        q.responses[:not_valid] = "A strict search is recommended as a wide search may generate too many hits. #{YN_OPTIONS_MSG}"
+    # s - A Service to decide search method for.
+    def strict_search(s)
+      input = ask("Strict search for #{s.user} #{s.name} #{s.type}? ") do |q|
+        q.responses[:not_valid] = 'A strict search is recommended '\
+        'as a wide search may generate too many hits. '\
+        "#{YN_OPTIONS_MSG}"
         q.default = YES_ANSWER
         q.validate = /\A[yn#{QUIT_ANSWER}]\Z/i
       end
 
       exitOption(input)
 
-      service.strict_search = if input.casecmp(YES_ANSWER) == 0
-                                true
-                              else
-                                false
-                              end
+      s.strict_search = if input.casecmp(YES_ANSWER) == 0
+                          true
+                        else
+                          false
+                        end
     end
 
     # Public: Asks if interactive mode should be used for the given
     # service and stores the answer in the service.
     #
-    # service - A Service to decide interactive mode for.
-    def interactive(service)
-      input = ask("Interactive mode for #{service.user} #{service.name} #{service.type}? ") do |q|
-        q.responses[:not_valid] = "In interactive mode you will for every found song be asked whether to add it. Interactive mode is recommended for everything but services you have direct access to, such as text files. #{YN_OPTIONS_MSG}"
+    # s - A Service to decide interactive mode for.
+    def interactive(s)
+      input = ask("Interactive mode for #{s.user} #{s.name} "\
+                  "#{s.type}? ") do |q|
+        q.responses[:not_valid] = 'In interactive mode you will for '\
+        'every found song be asked whether to add it. Interactive '\
+        'mode is recommended for everything but services you have '\
+        "direct access to, such as text files. #{YN_OPTIONS_MSG}"
         q.default = YES_ANSWER
         q.validate = /\A[yn#{QUIT_ANSWER}]\Z/i
       end
 
       exitOption(input)
 
-      service.interactive = if input.casecmp(YES_ANSWER) == 0
-                              true
-                            else
-                              false
-                            end
+      s.interactive = if input.casecmp(YES_ANSWER) == 0
+                        true
+                      else
+                        false
+                      end
     end
 
     # Public: For every song in the search result of the given
@@ -172,7 +178,8 @@ module SyncSongs
     # song    - A String naming a song.
     # service - A Service.
     def askAddSong(song, service)
-      ask("Add #{song} to #{service.user} #{service.name} #{service.type}? ") do |q|
+      ask("Add #{song} to #{service.user} #{service.name} "\
+          "#{service.type}? ") do |q|
         q.responses[:not_valid] = #{YN_OPTIONS_MSG}
         q.default = YES_ANSWER
         q.validate = /\A[yn#{QUIT_ANSWER}]\Z/i
@@ -187,7 +194,8 @@ module SyncSongs
     # Returns a String naming the direction to sync in.
     def askDirection(question)
       ask(question) do |q|
-        q.responses[:not_valid] = 'Enter < for to left, > for to right, = for both directions or q to quit'
+        q.responses[:not_valid] = 'Enter < for to left, > for to '\
+        'right, = for both directions or q to quit'
         q.default = '='
         q.validate = /\A[<>=#{QUIT_ANSWER}]\Z/i
       end

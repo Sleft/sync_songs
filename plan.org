@@ -5,21 +5,18 @@
 - Colorize terminal output.
 - Go through all documentation and fix it.
 - Go through all public methods and check interface before release.
-- Add example and documentation to Structs in sync-songs.rb
 - Split Controller into several classes, e.g. one for sync and one for diff?
 - Add tests for all new things.
   - Add tests for songs with album.
 - Use watir for testing last.fm auth.
 - Use safe version operators in gemspec.
-- Follow https://github.com/bbatsov/ruby-style-guide and https://github.com/styleguide/ruby , also TomDoc for comments.
-- Add examples to documentation as in Tomdoc specification?
+- Add examples to documentation as in the Tomdoc specification.
 - Add argument types to documentation, from Tomdoc: "The expected type (or types) of each argument SHOULD be clearly indicated in the explanation. When you specify a type, use the proper classname of the type (for instance, use 'String' instead of 'string' to refer to a String type)."
 - Write a guide for adding new services.
 - Make singleton classes that can carry API keys and passwords for a particular user so that one can check if such an instance is running and use it rather than asking the user for the same password again.
 - Consider adding support for the following: librefm, gogoyoko, jamendo.
 - Use YAML.dump and lib tmpdir to store Last.fm token?
 - Include the README in the documentation of the main class.
-- Use Rake to make tests http://stackoverflow.com/q/9017158/789593
 - Integrate with Travis CI to automate tests.
 ** Gem
 - Use Bundler and Rake (PickAxe p. 22-230) to create a gem.

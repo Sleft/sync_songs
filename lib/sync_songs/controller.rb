@@ -107,24 +107,24 @@ module SyncSongs
     # (type) at Grooveshark (service) is supported. Fails if something
     # is not supported.
     def checkSupport
-      supported_services = Controller.supportedServices
+      supp_services = Controller.supportedServices
 
       @services.each do |s|
-        fail_msg = ' is not supported'
+        msg = ' is not supported'
 
         # Is the service supported?
-        fail_msg = "#{s.name}#{fail_msg}"
-        @ui.fail(fail_msg, 1) unless supported_services.key?(s.name)
+        msg = "#{s.name}#{msg}"
+        @ui.fail(msg, 1) unless supp_services.key?(s.name)
 
         # Is the type supported?
-        supported_types = supported_services[s.name]
-        fail_msg = "#{s.type} for #{fail_msg}"
-        @ui.fail(fail_msg, 1) unless supported_types.key?(s.type)
+        supp_types = supp_services[s.name]
+        msg = "#{s.type} for #{msg}"
+        @ui.fail(msg, 1) unless supp_types.key?(s.type)
 
         # Is the action supported?
-        fail_msg = "#{s.action} to #{fail_msg}"
-        supported_action = supported_types[s.type]
-        @ui.fail(fail_msg, 1) unless supported_action == s.action || supported_action == :rw
+        msg = "#{s.action} to #{msg}"
+        supp_action = supp_types[s.type]
+        @ui.fail(msg, 1) unless supp_action == s.action || supp_action == :rw
       end
     end
 
@@ -147,7 +147,8 @@ module SyncSongs
         threads << Thread.new(service) do |s|
           @ui.verboseMessage("Getting #{s.type} from #{s.user} #{s.name}...")
           s.send(s.type)
-          @ui.verboseMessage("Got #{s.set.size} #{s.type} from #{s.user} #{s.name}")
+          @ui.verboseMessage("Got #{s.set.size} songs from "\
+                             "#{s.user} #{s.name} #{s.type}")
         end
       end
 
@@ -179,7 +180,8 @@ module SyncSongs
 
       @services.each do |s|
         if s.search_result
-          @ui.verboseMessage("Found #{s.search_result.size} candidates for #{s.user} #{s.name} #{s.type}")
+          @ui.verboseMessage("Found #{s.search_result.size} candidates "\
+                             "for #{s.user} #{s.name} #{s.type}")
         end
       end
     end
@@ -192,7 +194,8 @@ module SyncSongs
     # s1    - Service to search.
     # s2    - Service with songs to search for.
     def search(s1, s2)
-      @ui.verboseMessage("Searching at #{s1.name} for songs from #{s2.user} #{s2.name} #{s2.type}...")
+      @ui.verboseMessage("Searching at #{s1.name} for songs from "\
+                         "#{s2.user} #{s2.name} #{s2.type}...")
       result = s1.search(s1.set.exclusiveTo(s2.set),
                            s1.strict_search)
 
@@ -243,7 +246,8 @@ module SyncSongs
           if s.songs_to_add && !s.songs_to_add.empty?
             @ui.verboseMessage("Adding #{s.type} to #{s.name} #{s.user}...")
             addSongs(s)
-            @ui.verboseMessage("Finished adding #{s.type} to #{s.name} #{s.user}")
+            @ui.verboseMessage("Finished adding #{s.type} to "\
+                               "#{s.name} #{s.user}")
           end
         end
       end
@@ -256,30 +260,35 @@ module SyncSongs
     # Internal: Adds songs to the given service. Exceptions should not
     # be handled here but in each service controller.
     #
-    # service - The service to add songs to.
-    def addSongs(service)
-      service.added_songs = service.send("addTo#{service.type.capitalize}",
-                                         service.songs_to_add)
+    # s - The service to add songs to.
+    def addSongs(s)
+      s.added_songs = s.send("addTo#{s.type.capitalize}",
+                             s.songs_to_add)
     end
 
     # Internal: For each found missing song in a service, ask whether
     # to add it to that service.
-    def interactiveAdd(service)
-      service.songs_to_add = SongSet.new
+    #
+    # s - The service to add songs to.
+    def interactiveAdd(s)
+      s.songs_to_add = SongSet.new
 
-      if service.search_result.size > 0
-        @ui.message("Choose whether to add the following #{service.search_result.size} songs to #{service.user} #{service.name} #{service.type}:")
-        @ui.askAddSongs(service)
+      if s.search_result.size > 0
+        @ui.message('Choose whether to add the following '\
+                    "#{s.search_result.size} songs to "\
+                    "#{s.user} #{s.name} #{s.type}:")
+        @ui.askAddSongs(s)
       end
     end
 
     # Internal: Shows the difference for the services.
     def showDifference
-      @services.each do |service|
-        if service.songs_to_add
-          @ui.message("#{service.songs_to_add.size} songs missing on #{service.user} #{service.name} #{service.type}:")
-          service.songs_to_add.each do |s|
-            @ui.message(s)
+      @services.each do |s|
+        if s.songs_to_add
+          @ui.message("#{s.songs_to_add.size} songs missing on "\
+                      "#{s.user} #{s.name} #{s.type}:")
+          s.songs_to_add.each do |song|
+            @ui.message(song)
           end
         end
       end
@@ -307,10 +316,11 @@ module SyncSongs
       counts_msg = []
       v_msg = []
 
-      @services.each do |service|
-        if service.added_songs
-          counts_msg << "Added #{service.added_songs.size} songs to #{service.user} #{service.name} #{service.type}"
-          v_msg << service.added_songs.map { |s| "Added #{s} to #{service.user} #{service.name} #{service.type}" }
+      @services.each do |s|
+        if s.added_songs
+          counts_msg << "Added #{s.added_songs.size} songs to "\
+          "#{s.user} #{s.name} #{s.type}"
+          v_msg << s.added_songs.map { |song| "Added #{song} to #{s.user} #{s.name} #{s.type}" }
         end
       end
 
@@ -334,12 +344,14 @@ module SyncSongs
         # escaped and remove the escaping characters.
         split_input = s.split(/(?<!\\):/).map { |e| e.gsub(/\\:/, ':').to_sym }
 
-        @ui.fail("You must supply services on the form #{INPUT_FORM}", 2) if split_input.size != 3
+        @ui.fail('You must supply services on the form '\
+                 "#{INPUT_FORM}", 2) if split_input.size != 3
 
         parsed_input << split_input
       end
 
-      @ui.fail('You must supply at least two distinct services.', 2) if parsed_input.size < 2
+      @ui.fail('You must supply at least two distinct'\
+               ' services.', 2) if parsed_input.size < 2
 
       @input = parsed_input
     end

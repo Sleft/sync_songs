@@ -32,7 +32,8 @@ module SyncSongs
     def loved
       @set.loved
     rescue Lastfm::ApiError, SocketError, Timeout::Error => e
-      @ui.fail("Failed to get #{type} from #{name} #{user}\n#{e.message.strip}", 1, e)
+      @ui.fail("Failed to get #{type} from #{name} #{user}\n"\
+               "#{e.message.strip}", 1, e)
     end
 
     alias_method :favorites, :loved
@@ -48,7 +49,8 @@ module SyncSongs
       @set.authorizeSession
       @set.addToLoved(other)
     rescue Lastfm::ApiError, SocketError => e
-      @ui.fail("Failed to add #{type} to #{name} #{user}\n#{e.message.strip}", 1, e)
+      @ui.fail("Failed to add #{type} to #{name} #{user}\n"\
+               "#{e.message.strip}", 1, e)
     end
 
     alias_method :addToFavorites, :addToLoved

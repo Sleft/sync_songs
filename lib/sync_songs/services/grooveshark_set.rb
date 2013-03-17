@@ -97,7 +97,9 @@ module SyncSongs
     def login(user, password)
       @user = @client.login(user, password)
     rescue Grooveshark::InvalidAuthentication => e
-      raise Grooveshark::InvalidAuthentication, "#{e.message} An authenticated user is required for getting data from Grooveshark"
+      raise Grooveshark::InvalidAuthentication, "#{e.message} An "\
+      'authenticated user is required for getting data from '\
+      'Grooveshark'
       raise
     end
   end

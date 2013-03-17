@@ -13,19 +13,20 @@ module SyncSongs
     # Public: Creates a song. Leading and trailing whitespace is
     # removed as it has no semantic significance for songs.
     #
-    # name     - The name of the song.
-    # artist   - The artist performing the song.
-    # album    - The album the song is found on (default: nil).
-    # duration - The duration of the song in seconds (default: nil).
-    # id       - An id of for the song (default: nil). Is service
-    #            relative.
+    # name     - The String name of the song.
+    # artist   - The String artist performing the song.
+    # album    - The String album the song is found on (default: nil).
+    # duration - The Float duration of the song in seconds (default:
+    #            nil).
+    # id       - An String id of for the song (default: nil).
+    #            Is service relative.
     #
     # Raises ArgumentError if the artist or the name is empty.
     def initialize(name, artist, album = nil, duration = nil, id = nil)
       @name     = name.strip
       @artist   = artist.strip
       @album    = album.strip if album
-      @duration = duration
+      @duration = Float(duration) if duration
       @id       = id
 
       if @name.empty? || @artist.empty?

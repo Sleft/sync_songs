@@ -18,7 +18,9 @@ module SyncSongs
 
     # Asks for a String naming a column separator and returns it.
     def column_separator
-      ask("Column separator for #{@controller.user} #{@controller.name} #{@controller.type}? ") { |q| q.default = ',' }
+      ask("Column separator for #{@controller.user} "\
+          "#{@controller.name} "\
+          "#{@controller.type}? ") { |q| q.default = ',' }
     end
   end
 end

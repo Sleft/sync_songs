@@ -52,13 +52,15 @@ module SyncSongs
     def test_difference
       sets = [SongSet.new(@songs[0]), SongSet.new(@songs[0])]
 
-      diff_eql_msg = 'There is no difference between sets with the same members'
+      diff_eql_msg = 'There is no difference between sets with the '\
+      'same members'
       assert(sets[0].difference(sets[1]).empty?, diff_eql_msg)
       assert(sets[1].difference(sets[0]).empty?, diff_eql_msg)
 
       sets[0].add(@songs[1])  # sets[0] = {@songs[0], @songs[1]}
       sets[1].add(@songs[2])  # sets[1] = {@songs[0], @songs[2]}
-      assert(!(sets[0] - sets[1]).member?(@songs[0]), 'The difference is not the shared element')
+      assert(!(sets[0] - sets[1]).member?(@songs[0]),
+             'The difference is not the shared element')
 
       diff_msg = 'The difference is the non-shared element in the receiver'
       assert((sets[0] - sets[1]).member?(@songs[1]), diff_msg)
@@ -69,8 +71,11 @@ module SyncSongs
 
       sets[2] = SongSet.new(@songs[0], @songs[1], @songs[2])
       sets[3] = SongSet.new(@songs[2], @songs[0], @songs[1])
-      assert((sets[2] - sets[3]).empty?, 'There is no difference between sets with the same members that has been added in different order')
-      assert((sets[2] - sets[3]).empty?, 'The alias - for difference should work')
+      assert((sets[2] - sets[3]).empty?,
+             'There is no difference between sets with the same '\
+             'members that has been added in different order')
+      assert((sets[2] - sets[3]).empty?,
+             'The alias - for difference should work')
 
       sets[2].add(@songs[0])
       sets[3].add(@songs[2])
@@ -78,7 +83,8 @@ module SyncSongs
 
       sets[2].add(@songs[6])
       sets[3].add(@songs[7])
-      assert((sets[2] - sets[3]).empty?, 'Case should not matter for the difference')
+      assert((sets[2] - sets[3]).empty?,
+             'Case should not matter for the difference')
     end
 
     def test_empty?
@@ -93,9 +99,12 @@ module SyncSongs
       sets = [SongSet.new(@songs[0], @songs[1]),
                SongSet.new(@songs[1], @songs[2])]
 
-      exclusiveTo_msg = 'The songs to add are those that are in the given set but not in this set'
-      assert(sets[0].exclusiveTo(sets[1]).first.eql?(@songs[2]), exclusiveTo_msg)
-      assert(sets[1].exclusiveTo(sets[0]).first.eql?(@songs[0]), exclusiveTo_msg)
+      exclusiveTo_msg = 'The songs to add are those that are in the '\
+      'given set but not in this set'
+      assert(sets[0].exclusiveTo(sets[1]).first.eql?(@songs[2]),
+             exclusiveTo_msg)
+      assert(sets[1].exclusiveTo(sets[0]).first.eql?(@songs[0]),
+             exclusiveTo_msg)
     end
 
     def test_inspect

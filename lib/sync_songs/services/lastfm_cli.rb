@@ -26,7 +26,8 @@ module SyncSongs
     # Public: Asks for a String naming a Last.fm API key and returns
     # it.
     def apiSecret
-      ask("Last.fm API secret for #{@controller.user}? ") { |q| q.echo = false }
+      ask('Last.fm API secret for '\
+          "#{@controller.user}? ") { |q| q.echo = false }
     end
 
     # Public: Asks the user to authorize this tool with Last.fm and
@@ -35,7 +36,15 @@ module SyncSongs
     # url - A String naming a URL to use for authorization.
     def authorize(url)
       Launchy.open(url)
-      ask('A page asking for authorization with Last.fm should be open in your web browser. You need to approve it before proceeding. Continue? (y/n) ')
+      a = ask('A page asking for authorization with Last.fm should '\
+              'be open in your web browser. You need to approve it '\
+              'before proceeding. Continue? (y/n) ') do |q|
+        q.responses[:not_valid] = 'Enter y for yes or n for no'
+        q.default = CLI::YES_ANSWER
+        q.validate = /\A[yn]\Z/i
+      end
+
+      a.casecmp(CLI::YES_ANSWER) == 0
     end
   end
 end
