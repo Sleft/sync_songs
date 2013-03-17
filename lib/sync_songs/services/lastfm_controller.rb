@@ -31,7 +31,7 @@ module SyncSongs
     # Public: Wrapper for Last.fm loved songs.
     def loved
       @set.loved
-    rescue Lastfm::ApiError, SocketError, Timeout::Error => e
+    rescue ArgumentError, Lastfm::ApiError, SocketError, Timeout::Error => e
       @ui.fail("Failed to get #{type} from #{name} #{user}\n"\
                "#{e.message.strip}", 1, e)
     end
@@ -45,12 +45,15 @@ module SyncSongs
     def addToLoved(other)
       # Store token somewhere instead and only call URL if there is no
       # stored token.
-      exit unless @service_ui.authorize(@set.authorizeURL)
-      @set.authorizeSession
-      @set.addToLoved(other)
-    rescue Lastfm::ApiError, SocketError => e
-      @ui.fail("Failed to add #{type} to #{name} #{user}\n"\
-               "#{e.message.strip}", 1, e)
+      if @service_ui.authorize(@set.authorizeURL)
+        begin
+          @set.authorizeSession
+          @set.addToLoved(other)
+        rescue Lastfm::ApiError, SocketError => e
+        @ui.fail("Failed to add #{type} to #{name} #{user}\n"\
+                 "#{e.message.strip}", 1, e)
+        end
+      end
     end
 
     alias_method :addToFavorites, :addToLoved
