@@ -11,4 +11,4 @@ If you have a question, found a bug or want to make a suggestion go ahead and [[
 If you want to contribute please:
 
 - Follow the guidelines in development.org.
-- Fork the project and commit changes to topic branches which you then make a pull request for.
+- Fork the project and commit changes to an aptly named topic branch which you then make a pull request for.

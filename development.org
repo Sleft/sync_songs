@@ -26,4 +26,4 @@ A service (set) should handle its exceptions.
 
 ** Plan
 
-The plan is for sync_songs to work as pleasantly, work as expected and have as few bugs as possible. Specific plans are documented in plan.org. Also see [[https://github.com/Sleft/sync-songs/issues][issues]].
+The plan is for sync_songs to work work as expected and have as few bugs as possible. Specific plans are documented in plan.org. Also see [[https://github.com/Sleft/sync-songs/issues][issues]].
