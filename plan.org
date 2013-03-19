@@ -2,7 +2,6 @@
 #+title: Plan
 
 * TODO Plan
-- Make it possible to see version via thor.
 - Add the ability to not sync in a direction.
 - Go through all documentation and fix it.
 - Fix all warnings upstream.

@@ -43,6 +43,14 @@ module SyncSongs
       CLI.supportedServices
     end
 
+    desc 'version', "Shows the version number"
+    long_desc <<-LONGDESC
+  Prints the version number. Please include this in bug reports.
+     LONGDESC
+    def version
+      puts "#{$PROGRAM_NAME} #{VERSION}"
+    end
+
     private
 
     def setupController
