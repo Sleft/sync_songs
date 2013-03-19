@@ -2,6 +2,7 @@
 #+title: Plan
 
 * TODO Plan
+- Write descriptions in thor.
 - Add the ability to not sync in a direction.
 - Go through all documentation and fix it.
 - Fix all warnings upstream.

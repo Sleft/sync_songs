@@ -7,12 +7,16 @@ require_relative '../lib/sync_songs.rb'
 # Public: Classes for syncing sets of songs.
 module SyncSongs
   class Cli < Thor
-    class_option :verbose, type: :boolean, aliases: '-v', desc: 'Explain what is being done'
+    class_option :verbose, type: :boolean, aliases: '-v',
+    desc: 'Explain what is being done'
     class_option :debug, type: :boolean, desc: 'Debug mode'
     class_option :color, type: :boolean, desc: 'Color mode'
     services_option = [:services, {type: :array, required: true,
                          banner: Controller::INPUT_FORM,
-                         desc: 'At least two users or file paths each paired with a service and a type, e.g. -s user1:grooveshark:favorites songs.csv:csv:library',
+                         desc: 'At least two users or file paths '\
+                         'each paired with a service and a type, '\
+                         'e.g. -s user1:grooveshark:favorites '\
+                         'songs.csv:csv:library',
                          aliases: '-s'}]
 
     desc 'sync', 'Sync sets of songs'
@@ -43,7 +47,7 @@ module SyncSongs
       CLI.supportedServices
     end
 
-    desc 'version', "Shows the version number"
+    desc 'version', 'Shows the version number'
     long_desc <<-LONGDESC
   Prints the version number. Please include this in bug reports.
      LONGDESC
