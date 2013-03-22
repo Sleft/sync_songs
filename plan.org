@@ -2,6 +2,7 @@
 #+title: Plan
 
 * TODO Plan
+- Read http://wynnnetherland.com/journal/a-stylesheet-author-s-guide-to-terminal-colors and think more about colorizing
 - Write descriptions in thor.
 - Add the ability to not sync in a direction.
 - Go through all documentation and fix it.
