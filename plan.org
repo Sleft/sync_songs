@@ -2,6 +2,15 @@
 #+title: Plan
 
 * TODO Plan
+- Bug in lastfm_set if loved are empty?
+  #+begin_src ruby
+ /home/repabil/aktuell/sync_songs/lib/sync_songs/services/lastfm_set.rb:56:in `[]': can't convert String into Integer (TypeError)
+             from /home/repabil/aktuell/sync_songs/lib/sync_songs/services/lastfm_set.rb:56:in `block in loved'
+             from /home/repabil/aktuell/sync_songs/lib/sync_songs/services/lastfm_set.rb:51:in `each'
+    from /home/repabil/aktuell/sync_songs/lib/sync_songs/services/lastfm_set.rb:51:in `loved'
+             from /home/repabil/aktuell/sync_songs/lib/sync_songs/services/lastfm_controller.rb:33:in `loved'
+             from /home/repabil/aktuell/sync_songs/lib/sync_songs/controller.rb:154:in `block (2 levels) in getCurrentData'
+  #+end_src
 - Read http://wynnnetherland.com/journal/a-stylesheet-author-s-guide-to-terminal-colors and think more about colorizing
 - Write descriptions in thor.
 - Add the ability to not sync in a direction.
