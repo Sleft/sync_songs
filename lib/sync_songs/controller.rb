@@ -211,7 +211,7 @@ module SyncSongs
       @mutex.synchronize do
         s1.search_result.merge(result)
         @ui.verboseMessage("Found #{s1.search_result.size} "\
-                           "candidates from #{s2.user} #{s2.name} "\
+                           "candidates for #{s2.user} #{s2.name} "\
                            "#{s2.type} at #{s1.name}")
       end
     end
