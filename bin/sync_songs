@@ -44,7 +44,11 @@ module SyncSongs
   Prints a list of the supported services.
      LONGDESC
     def supp
-      CLI.supportedServices
+      @controller = Controller.new(CLI.new(options[:verbose],
+                                           options[:debug],
+                                           options[:color]),
+                                   nil)
+      @controller.showSupportedServices
     end
 
     desc 'version', 'Shows the version number'

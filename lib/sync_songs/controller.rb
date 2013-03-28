@@ -12,12 +12,12 @@ module SyncSongs
     # input - A Set of Strings representing users or file paths paired
     #         with a service and a type on the form user:service:type,
     #         e.g. "user1:grooveshark:favorites",
-    #         "user1:lastfm:loved".
-    def initialize(ui, input)
+    #         "user1:lastfm:loved" (default: nil).
+    def initialize(ui, input = nil)
       @ui = ui
       @input = input
 
-      parseInput
+      parseInput if @input
 
       # Services to sync between. Stored in a hash so that one one may
       # check if a service is already stored and if that is the case
@@ -64,6 +64,12 @@ module SyncSongs
 
       @ui.verboseMessage('Success')
     end
+
+    # Public: Shows supported services.
+    def showSupportedServices
+      @ui.supportedServices
+    end
+
 
     # Public: Returns a hash of services associated with their
     # supported types associated with supported action.

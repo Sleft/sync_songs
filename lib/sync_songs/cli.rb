@@ -164,18 +164,18 @@ module SyncSongs
     end
 
     # Public: Shows the supported services.
-    def self.supportedServices
+    def supportedServices
       msg = []
 
       Controller.supportedServices.each do |service, type_action|
         type_msg = []
         type_action.each do |type, action|
-          type_msg << "#{type} #{action}"
+          type_msg << "#{type} <%= color('#{action}', :even_row) %>"
         end
-        msg << "#{service}: #{type_msg.join(', ')}"
+        msg << "<%= color('#{service}', BOLD) %>: #{type_msg.join(', ')}"
       end
 
-      message(msg)
+      say(msg.join("\n"))
     end
 
     private
