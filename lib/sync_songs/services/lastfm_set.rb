@@ -48,18 +48,24 @@ module SyncSongs
     #
     # Returns self.
     def loved(username = @username, limit = @limit)
-      @lastfm.user.get_loved_tracks(user: username,
-                                    api_key: @api_key,
-                                    limit: limit).each do |l|
+      lov = @lastfm.user.get_loved_tracks(user: username,
+                                          api_key: @api_key,
+                                          limit: limit)
 
-        # Get metadata for loved track.
-        s = @lastfm.track.get_info(track: l['name'],
-                                   artist: l['artist']['name'])
+      if lov                                # Remove if API is fixed.
+        lov = [lov] unless lov.is_a?(Array) # Remove if API is fixed.
 
-        add(Song.new(s['name'], s['artist']['name'],
-                     # Not all Last.fm tracks belong to an album.
-                     s.key?('album') ? s['album']['title'] : nil,
-                     Float(s['duration']) / 1_000, s['id']))
+        lov.each do |l|
+
+          # Get metadata for loved track.
+          s = @lastfm.track.get_info(track: l['name'],
+                                     artist: l['artist']['name'])
+
+          add(Song.new(s['name'], s['artist']['name'],
+                       # Not all Last.fm tracks belong to an album.
+                       s.key?('album') ? s['album']['title'] : nil,
+                       Float(s['duration']) / 1_000, s['id']))
+        end
       end
 
       self
