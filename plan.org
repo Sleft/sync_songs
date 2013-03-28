@@ -2,6 +2,8 @@
 #+title: Plan
 
 * TODO Plan
+- Make sure the the UI does /not/ know anything about entities. Kill any requires.
+- Use https://gist.github.com/fnichol/1912050
 - Bug in lastfm_set if loved are empty?
   #+begin_src ruby
  /home/repabil/aktuell/sync_songs/lib/sync_songs/services/lastfm_set.rb:56:in `[]': can't convert String into Integer (TypeError)
