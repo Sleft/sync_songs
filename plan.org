@@ -2,17 +2,11 @@
 #+title: Plan
 
 * TODO Plan
+- Add color to questions about stricts search and interactive mode.
+- Use color in service clis, e.g. for grooveshark login fail. Get color schema from main ui!
 - Make sure the the UI does /not/ know anything about entities. Kill any requires.
 - Use https://gist.github.com/fnichol/1912050
-- Bug in lastfm_set if loved are empty?
-  #+begin_src ruby
- /home/repabil/aktuell/sync_songs/lib/sync_songs/services/lastfm_set.rb:56:in `[]': can't convert String into Integer (TypeError)
-             from /home/repabil/aktuell/sync_songs/lib/sync_songs/services/lastfm_set.rb:56:in `block in loved'
-             from /home/repabil/aktuell/sync_songs/lib/sync_songs/services/lastfm_set.rb:51:in `each'
-    from /home/repabil/aktuell/sync_songs/lib/sync_songs/services/lastfm_set.rb:51:in `loved'
-             from /home/repabil/aktuell/sync_songs/lib/sync_songs/services/lastfm_controller.rb:33:in `loved'
-             from /home/repabil/aktuell/sync_songs/lib/sync_songs/controller.rb:154:in `block (2 levels) in getCurrentData'
-  #+end_src
+- Remove =lov = [lov] unless lov.is_a?(Array)= from last_fm_set.rb if https://github.com/youpy/ruby-lastfm/issues/52 is fixed.
 - Read http://wynnnetherland.com/journal/a-stylesheet-author-s-guide-to-terminal-colors and think more about colorizing
 - Write descriptions in thor.
 - Add the ability to not sync in a direction.

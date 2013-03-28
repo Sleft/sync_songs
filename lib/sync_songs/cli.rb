@@ -18,6 +18,8 @@ module SyncSongs
     # Public: Validator for yes, no or quit questions.
     YN_VALIDATOR = /\A[yn#{QUIT_ANSWER}]/i
 
+    attr_reader :color
+
     # Public: Creates a command-line interface.
     #
     # verbose - True if interface is verbose (default: nil).
