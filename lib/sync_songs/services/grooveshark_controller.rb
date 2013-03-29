@@ -79,7 +79,7 @@ module SyncSongs
       @set = GroovesharkSet.new(@user, @service_ui.password)
       @logged_in = true
     rescue Grooveshark::InvalidAuthentication => e
-      @ui.message("Grooveshark: #{e.message}")
+      @ui.failMessage("Grooveshark: #{e.message}")
     rescue SocketError => e
       @ui.fail('Failed to connect to Grooveshark', 1, e)
     end
