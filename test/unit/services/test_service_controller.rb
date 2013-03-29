@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 require 'test/unit'
+require_relative '../../../lib/sync_songs/controller'
+require_relative '../../../lib/sync_songs/cli'
 require_relative '../../../lib/sync_songs/services/service_controller'
 
 # Public: Classes for syncing sets of songs.
@@ -9,8 +11,9 @@ module SyncSongs
   class TestLastfmSet < Test::Unit::TestCase
 
     def test_simple
-      ca = [ServiceController.new('user', 'name', 'type', 'ui'),
-           ServiceController.new('USER', 'NAME', 'TYPE', 'UI')]
+      c = Controller.new(CLI.new())
+      ca = [ServiceController.new(c, 'user', 'name', 'type'),
+            ServiceController.new(c, 'USER', 'NAME', 'TYPE')]
 
       eql_msg = 'Service controllers with the same user, name and '\
       'type are equal'
