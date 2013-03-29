@@ -40,7 +40,6 @@ module SyncSongs
             'open in your web browser. You need to approve it '\
             'before proceeding. Continue? (y/n) ') do |q|
         q.responses[:not_valid] = 'Enter y for yes, n for no or q to quit'
-        q.default = CLI::YES_ANSWER
       end
     end
   end
