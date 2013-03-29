@@ -39,7 +39,7 @@ module SyncSongs
       agree('A page asking for authorization with Last.fm should be '\
             'open in your web browser. You need to approve it '\
             'before proceeding. Continue? (y/n) ') do |q|
-        q.responses[:not_valid] = 'Enter y for yes, n for no or q to quit'
+        q.responses[:not_valid] = 'Enter y for yes or n for no'
       end
     end
   end
