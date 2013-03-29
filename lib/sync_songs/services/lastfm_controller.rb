@@ -43,9 +43,15 @@ module SyncSongs
     #
     # other - A SongSet to add from.
     def addToLoved(other)
-      # Store token somewhere instead and only call URL if there is no
+      # TODO Store token somewhere instead and only call URL if there is no
       # stored token.
-      if @service_ui.authorize(@set.authorizeURL)
+      authorized = nil
+
+      @mutex.synchronize do
+        authorized = @service_ui.authorize(@set.authorizeURL)
+      end
+
+      if authorized
         begin
           @set.authorizeSession
           @set.addToLoved(other)
@@ -68,7 +74,8 @@ module SyncSongs
     # Returns a SongSet.
     def search(other, limit = @set.limit, strict_search = true)
       @set.search(other, limit, strict_search)
-    rescue ArgumentError, Errno::EINVAL, SocketError, Timeout::Error  => e
+    rescue ArgumentError, EOFError, Errno::EINVAL, SocketError,
+      Timeout::Error  => e
       @ui.fail("Failed to search #{name} #{user}\n#{e.message.strip}", 1, e)
     end
 

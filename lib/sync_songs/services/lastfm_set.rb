@@ -111,6 +111,7 @@ module SyncSongs
     # strict_search - True if search should be strict (default: true).
     #
     # Raises ArgumentError from xml-simple some reason.
+    # Raises EOFError when end of file is reached.
     # Raises Errno::EINVAL if the network connection fails.
     # Raises SocketError if the network connection fails.
     # Raises Timeout::Error if the network connection fails.

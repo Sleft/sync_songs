@@ -13,17 +13,19 @@ module SyncSongs
 
     # Public: Create a service controller.
     #
-    # user   - A String naming the user name or the file path for the
-    #          service.
-    # name   - A String naming the name of the service.
-    # type   - A String naming the service type.
-    # ui     - General user interface to use.
-    def initialize(user, name, type, ui)
+    # controller - The main controller.
+    # user       - A String naming the user name or the file path for
+    #              the service.
+    # name       - A String naming the name of the service.
+    # type       - A String naming the service type.
+    def initialize(controller, user, name, type)
+      @controller = controller
       @user = user
       @name = name
       @type = type
       @action = action
-      @ui = ui
+      @ui = @controller.ui      # General user interface to use.
+      @mutex = @controller.mutex
 
       @search_result = SongSet.new
       @songs_to_add = SongSet.new

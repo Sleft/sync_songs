@@ -12,6 +12,8 @@ module SyncSongs
     # The form for the input parameter of the constructor.
     INPUT_FORM = '[user|file path]:service:type'
 
+    attr_reader :ui, :mutex
+
     # Public: Creates a controller.
     #
     # ui    - The user interface to use.
@@ -418,7 +420,7 @@ module SyncSongs
     #
     # Returns a reference to a service.
     def initializeService(s)
-      SyncSongs.const_get("#{s[1].capitalize}Controller").new(*s, @ui)
+      SyncSongs.const_get("#{s[1].capitalize}Controller").new(self, *s)
     rescue NameError => e
       @ui.fail("#{s[1]} is not supported.", 1, e)
     end
