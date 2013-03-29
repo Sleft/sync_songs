@@ -29,7 +29,7 @@ module SyncSongs
     #                       backtraces for exceptions are printed.
     # color               - True if color formatted output should be
     #                       used (default: nil).
-    # possible_directions - An hash of possible sync directions
+    # possible_directions - A hash of possible sync directions
     #                       between two given services mapped to
     #                       descriptions of those directions (default:
     #                       nil).
@@ -44,12 +44,13 @@ module SyncSongs
       
 
       HighLine.color_scheme = HighLine::ColorScheme.new do |cs|
+        cs[:em]                = [:bold]
         cs[:verbose]           = [:blue]
         cs[:verbose_direction] = [:cyan, :bold]
-        cs[:horizontal_line]   = [:red, :bold]
+        cs[:error]             = [:red, :bold]
         cs[:even_row]          = [:green]
         cs[:odd_row]           = [:magenta]
-       end
+      end
 
       @row = true         # To track even and odd rows for colorizing.
     end
@@ -68,9 +69,9 @@ module SyncSongs
         exitOption(d[1])
 
         if @verbose
-          say("<%= color(%q{#{d.first.join(' ')}}, :verbose) %> "\
-              "<%= color(%q{#{d[1]}}, :verbose_direction) %> "\
-              "<%= color(%q{#{d.last.join(' ')}}, :verbose) %>")
+          say("<%= color(%q(#{d.first.join(' ')}), :verbose) %> "\
+              "<%= color(%q(#{d[1]}), :verbose_direction) %> "\
+              "<%= color(%q(#{d.last.join(' ')}), :verbose) %>")
         end
       end
 
@@ -82,7 +83,7 @@ module SyncSongs
     #
     # s - A Service to decide search method for.
     def strict_search(s)
-      input = ask("Strict search for #{s.user} #{s.name} #{s.type}? ") do |q|
+      input = ask("<%= color(%q(Strict search), :em) %> for #{s.user} #{s.name} #{s.type}? ") do |q|
         q.responses[:not_valid] = 'A strict search is recommended '\
         'as a wide search may generate too many hits. '\
         "#{YN_OPTIONS_MSG}"
@@ -104,7 +105,7 @@ module SyncSongs
     #
     # s - A Service to decide interactive mode for.
     def interactive(s)
-      input = ask("Interactive mode for #{s.user} #{s.name} "\
+      input = ask("<%= color(%q(Interactive mode), :em) %> for #{s.user} #{s.name} "\
                   "#{s.type}? ") do |q|
         q.responses[:not_valid] = 'In interactive mode you will for '\
         'every found song be asked whether to add it. Interactive '\
@@ -163,18 +164,26 @@ module SyncSongs
       puts msg
     end
 
+    # Public: Shows the given message.
+    #
+    # msg - A String or an Enumerable naming a message.
+    def emMessage(msg)
+      styleMessage(msg, :em)
+    end
+
     # Public: Prints the given message if in verbose mode.
     #
     # msg - A String or an an Enumerable of Strings naming a verbose
     # message.
     def verboseMessage(msg)
-      if @verbose
-        if msg.respond_to? :each
-          msg.each { |m| verboseMessage(m) }
-        else
-          say('<%= color(%q{' + msg + '}, BLUE) %>')
-        end
-      end
+      styleMessage(msg, :verbose) if @verbose
+    end
+
+    # Public: Shows the given fail message.
+    #
+    # msg - A String or an Enumerable naming a message.
+    def failMessage(msg)
+      styleMessage(msg, :error)
     end
 
     # Public: Shows the supported services.
@@ -184,14 +193,18 @@ module SyncSongs
       Controller.supportedServices.each do |service, type_action|
         type_msg = []
         type_action.each do |type, action|
-          type_msg << "#{type} <%= color('#{action}', :even_row) %>"
+          type_msg << "#{type} <%= color(%q(#{action}), :even_row) %>"
         end
-        msg << "<%= color('#{service}', BOLD) %>: #{type_msg.join(', ')}"
+        msg << "<%= color(%q(#{service}), :em) %>: #{type_msg.join(', ')}"
       end
 
       say(msg.join("\n"))
     end
     
+    # Public: Sets the possible directions.
+    #
+    # val - A hash of possible sync directions between two given
+    #       services mapped to descriptions of those directions.
     def possible_directions=(val)
       @possible_directions = val
       directionsMessage
@@ -199,15 +212,18 @@ module SyncSongs
 
     private
 
-    # Internal: Shows the given fail message.
+    # Internal: Prints the given message with the given style.
     #
-    # msg - A String or an Enumerable naming a message.
-    def failMessage(msg)
-      if msg.respond_to? :each
-        msg.each { |m| failMessage(m) }
-      else
-        # Messages from Last.fm have leading spaces.
-        say('<%= color(%q{' + msg.strip + '}, RED + BOLD) %>')
+    # msg   - A String or an an Enumerable of Strings naming a
+    #         message.
+    # color - A Symbol representing an ERB style.
+    def styleMessage(msg, style)
+      if @verbose
+        if msg.respond_to? :each
+          msg.each { |m| styleMessage(m, style) }
+        else
+          say("<%= color(%q(#{msg}), '#{style}') %>")
+        end
       end
     end
 
@@ -217,12 +233,12 @@ module SyncSongs
     # song    - A String naming a song.
     # service - A Service.
     def askAddSong(song, service)
-      question = "<%= color(%q{Add #{song} to #{service.user} "\
-      "#{service.name} #{service.type}?}, "
+      question = "Add <%= color(%q{#{song} to #{service.user} "\
+      "#{service.name} #{service.type}}, "
       question << (@row ? ':even_row' : ':odd_row')
       @row = !@row
 
-      ask("#{question}) %> ") do |q|
+      ask("#{question}) %>? ") do |q|
         q.responses[:not_valid] = YN_OPTIONS_MSG
         q.default = YES_ANSWER
         q.validate = YN_VALIDATOR
@@ -253,9 +269,9 @@ module SyncSongs
     # Internal: Create a message describing what sync directions the
     # user can choose for any two services.
     def directionsMessage
-      @DIRECTIONS_MSG = @possible_directions.map { |k, v| "<%= color('#{k}', :verbose_direction) %> for #{v}" }
+      @DIRECTIONS_MSG = @possible_directions.map { |k, v| "<%= color(%q(#{k}), :verbose_direction) %> for #{v}" }
       @DIRECTIONS_MSG = "Enter #{@DIRECTIONS_MSG.join(", ")}"
-      @DIRECTIONS_MSG << " or <%= color('#{QUIT_ANSWER}', :verbose_direction) %> to quit"
+      @DIRECTIONS_MSG << " or <%= color(%q(#{QUIT_ANSWER}), :verbose_direction) %> to quit"
     end
   end
 end
