@@ -45,7 +45,7 @@ module SyncSongs
 
       HighLine.color_scheme = HighLine::ColorScheme.new do |cs|
         cs[:verbose]           = [:blue]
-        cs[:verbose_direction] = [:blue, :bold]
+        cs[:verbose_direction] = [:cyan, :bold]
         cs[:horizontal_line]   = [:red, :bold]
         cs[:even_row]          = [:green]
         cs[:odd_row]           = [:magenta]
@@ -191,7 +191,7 @@ module SyncSongs
 
       say(msg.join("\n"))
     end
-
+    
     def possible_directions=(val)
       @possible_directions = val
       directionsMessage
@@ -250,7 +250,8 @@ module SyncSongs
       exit if input.casecmp(QUIT_ANSWER) == 0
     end
 
-    # Internal: Co
+    # Internal: Create a message describing what sync directions the
+    # user can choose for any two services.
     def directionsMessage
       @DIRECTIONS_MSG = @possible_directions.map { |k, v| "<%= color('#{k}', :verbose_direction) %> for #{v}" }
       @DIRECTIONS_MSG = "Enter #{@DIRECTIONS_MSG.join(", ")}"
