@@ -26,7 +26,7 @@ module SyncSongs
     #                       nil).
     # debug               - True if interface is in debug mode
     #                       (default: nil), this means e.g. that
-    #                       backtraces for exceptions are printed.
+    #                       stack traces for exceptions are printed.
     # color               - True if color formatted output should be
     #                       used (default: nil).
     # possible_directions - A hash of possible sync directions
@@ -120,20 +120,26 @@ module SyncSongs
       input.casecmp(YES_ANSWER) == 0
     end
 
-    # Public: For every song in the search result of the given
-    # service, ask whether to add it and store it if the user wants to
-    # add it.
+    # Public: For every of the given songs, ask whether to add it and
+    # return an array of songs to add.
     #
-    # services - A Set of services.
-    def askAddSongs(service)
-      service.search_result.each do |s|
+    # service - A String naming a service.
+    # songs   - An Array of songs to ask about.
+    #
+    # Return an Array of songs to add.
+    def askAddSongs(service, songs)
+      songs_to_add = []
+
+      songs.each do |s|
         add = askAddSong(s, service)
 
         # Stop asking if the user press quit
         break if add.casecmp(QUIT_ANSWER) == 0
 
-        service.songs_to_add << s if add.casecmp(YES_ANSWER) == 0
+        songs_to_add << s if add.casecmp(YES_ANSWER) == 0
       end
+
+      songs_to_add
     end
 
     # Public: Shows the given message and exits with the given exit
@@ -146,10 +152,12 @@ module SyncSongs
     # exception - The Exception causing the failure (default: nil).
     def fail(msg, exit_code = 1, exception = nil)
       failMessage(msg)
+
       if @debug && exception
         p exception
         puts exception.backtrace
       end
+
       exit(exit_code)
     end
 
@@ -227,10 +235,9 @@ module SyncSongs
     # service.
     #
     # song    - A String naming a song.
-    # service - A Service.
+    # service - A String naming a service.
     def askAddSong(song, service)
-      question = "Add <%= color(%q{#{song} to #{service.user} "\
-      "#{service.name} #{service.type}}, "
+      question = "Add <%= color(%q(#{song} to #{service}), "
       question << (@row ? ':even_row' : ':odd_row')
       @row = !@row
 

@@ -4,12 +4,12 @@
 module SyncSongs
   # Public: Controls syncing and diffing of sets of songs.
   class Controller
-    # Directions for sync between two services.
+    # Public: Directions for sync between two services.
     DIRECTIONS = {:'<' => 'write from right to left',
       :'>' => 'write from left to right',
       :'=' => 'write both ways',
       :'|' => 'do not write in any way'}
-    # The form for the input parameter of the constructor.
+    # Public: The form for the input parameter of the constructor.
     INPUT_FORM = '[user|file path]:service:type'
 
     attr_reader :ui, :mutex
@@ -299,11 +299,14 @@ module SyncSongs
     #
     # s - The service to add songs to.
     def interactiveAdd(s)
+      service_desc = "#{s.user} #{s.name} #{s.type}"
+
       if s.search_result.size > 0
         @ui.emMessage('Choose whether to add the following '\
-                    "#{s.search_result.size} songs to "\
-                    "#{s.user} #{s.name} #{s.type}:")
-        @ui.askAddSongs(s)
+                      "#{s.search_result.size} songs to "\
+                      "#{service_desc}:")
+        s.songs_to_add = @ui.askAddSongs(service_desc,
+                                         s.search_result)
       end
     end
 
