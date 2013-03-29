@@ -41,7 +41,6 @@ module SyncSongs
       HighLine::use_color  = color
 
       directionsMessage if @possible_directions
-      
 
       HighLine.color_scheme = HighLine::ColorScheme.new do |cs|
         cs[:em]                = [:bold]
@@ -79,11 +78,14 @@ module SyncSongs
     end
 
     # Public: Asks if strict search should be used for the given
-    # service.
+    # service and returns the answer.
     #
-    # s - A Service to decide search method for.
+    # s - A String describing a service
+    #
+    # Returns true if the user answer that strict search should be
+    #   used for the given service.
     def strict_search(s)
-      input = ask("<%= color(%q(Strict search), :em) %> for #{s.user} #{s.name} #{s.type}? ") do |q|
+      input = ask("<%= color(%q(Strict search), :em) %> for #{s}? ") do |q|
         q.responses[:not_valid] = 'A strict search is recommended '\
         'as a wide search may generate too many hits. '\
         "#{YN_OPTIONS_MSG}"
@@ -93,20 +95,18 @@ module SyncSongs
 
       exitOption(input)
 
-      s.strict_search = if input.casecmp(YES_ANSWER) == 0
-                          true
-                        else
-                          false
-                        end
+      input.casecmp(YES_ANSWER) == 0
     end
 
     # Public: Asks if interactive mode should be used for the given
-    # service and stores the answer in the service.
+    # service and returns the answer.
     #
-    # s - A Service to decide interactive mode for.
+    # s - A String describing a service
+    #
+    # Returns true if the user answer that interactive mode should be
+    #   used for the given service.
     def interactive(s)
-      input = ask("<%= color(%q(Interactive mode), :em) %> for #{s.user} #{s.name} "\
-                  "#{s.type}? ") do |q|
+      input = ask("<%= color(%q(Interactive mode), :em) %> for #{s}? ") do |q|
         q.responses[:not_valid] = 'In interactive mode you will for '\
         'every found song be asked whether to add it. Interactive '\
         'mode is recommended for everything but services you have '\
@@ -117,11 +117,7 @@ module SyncSongs
 
       exitOption(input)
 
-      s.interactive = if input.casecmp(YES_ANSWER) == 0
-                        true
-                      else
-                        false
-                      end
+      input.casecmp(YES_ANSWER) == 0
     end
 
     # Public: For every song in the search result of the given
@@ -200,7 +196,7 @@ module SyncSongs
 
       say(msg.join("\n"))
     end
-    
+
     # Public: Sets the possible directions.
     #
     # val - A hash of possible sync directions between two given

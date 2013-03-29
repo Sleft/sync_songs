@@ -2,8 +2,6 @@
 #+title: Plan
 
 * TODO Plan
-- Add color to questions about stricts search and interactive mode.
-- Use color in service clis, e.g. for grooveshark login fail. Get color schema from main ui!
 - Make sure the the UI does /not/ know anything about entities. Kill any requires.
 - Use https://gist.github.com/fnichol/1912050
 - Remove =lov = [lov] unless lov.is_a?(Array)= from last_fm_set.rb if https://github.com/youpy/ruby-lastfm/issues/52 is fixed.

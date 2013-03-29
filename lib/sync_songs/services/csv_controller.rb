@@ -60,16 +60,5 @@ module SyncSongs
     def search(other, strict_search = true)
       @set.search(other, strict_search = true)
     end
-
-
-    # Public: Ask for preferences of options for adding songs.
-    def addPreferences
-      @ui.interactive(self)
-    end
-
-    # Public: Ask for preferences of options for searching for songs.
-    def searchPreferences
-      @ui.strict_search(self)
-    end
   end
 end

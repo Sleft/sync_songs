@@ -231,7 +231,9 @@ module SyncSongs
       @services.each do |_, s|
         # Add preferences are only relevant when one is writing to a
         # service.
-        s.addPreferences if s.action == :w || s.action == :rw
+        if s.action == :w || s.action == :rw
+          s.interactive = @ui.interactive("#{s.user} #{s.name} #{s.type}")
+        end
       end
     end
 
@@ -241,16 +243,18 @@ module SyncSongs
       @services.each do |_, s|
         # Search preferences are only relevant when one is writing to
         # a service.
-        s.searchPreferences if s.action == :w || s.action == :rw
+        if s.action == :w || s.action == :rw
+          s.strict_search = @ui.strict_search("#{s.user} #{s.name} #{s.type}")
+        end
       end
     end
 
     # Internal: Gets data to be synced to each service.
     def getDataToAdd
       @services.each do |_, s|
-        if s.interactive      # Add songs interactively
+        if s.interactive        # Add songs interactively
           interactiveAdd(s)
-        else                  # or add them all without asking.
+        else                    # or add them all without asking.
           s.songs_to_add = s.search_result
         end
       end

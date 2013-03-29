@@ -61,16 +61,6 @@ module SyncSongs
       @ui.fail("Failed to search #{name} #{user}\n#{e.message.strip}", 1, e)
     end
 
-    # Public: Ask for preferences of options for adding songs.
-    def addPreferences
-      @ui.interactive(self)
-    end
-
-    # Public: Ask for preferences of options for searching for songs.
-    def searchPreferences
-      @ui.strict_search(self)
-    end
-
     private
 
     # Internal: Tries to login to Grooveshark and prints and error
