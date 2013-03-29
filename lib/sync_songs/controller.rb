@@ -296,7 +296,7 @@ module SyncSongs
     # s - The service to add songs to.
     def interactiveAdd(s)
       if s.search_result.size > 0
-        @ui.message('Choose whether to add the following '\
+        @ui.emMessage('Choose whether to add the following '\
                     "#{s.search_result.size} songs to "\
                     "#{s.user} #{s.name} #{s.type}:")
         @ui.askAddSongs(s)
