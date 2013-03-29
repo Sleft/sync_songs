@@ -2,10 +2,8 @@
 #+title: Plan
 
 * TODO Plan
-- Make sure the the UI does /not/ know anything about entities. Kill any requires.
 - Use https://gist.github.com/fnichol/1912050
 - Remove =lov = [lov] unless lov.is_a?(Array)= from last_fm_set.rb if https://github.com/youpy/ruby-lastfm/issues/52 is fixed.
-- Write descriptions in thor.
 - Go through all documentation and fix it.
 - Fix all warnings upstream.
 - Go through all public methods and check interface before release.

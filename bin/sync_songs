@@ -20,9 +20,7 @@ module SyncSongs
                          aliases: '-s'}]
 
     desc 'sync', 'Sync sets of songs'
-    long_desc <<-LONGDESC
-    WRITE!!!
-   LONGDESC
+    long_desc 'Syncs sets of songs between the given services.'
     method_option(*services_option)
     def sync
       setupController
@@ -30,9 +28,7 @@ module SyncSongs
     end
 
     desc 'diff', 'Diff sets of songs'
-    long_desc <<-LONGDESC
-    #   WRITE!!!
-     LONGDESC
+    long_desc 'Diffs sets of songs between the given services.'
     method_option(*services_option)
     def diff
       setupController
@@ -41,7 +37,7 @@ module SyncSongs
 
     desc 'supp', 'List supported services'
     long_desc <<-LONGDESC
-  Prints a list of the supported services.
+    Prints a list of the supported services.
      LONGDESC
     def supp
       @controller = Controller.new(CLI.new(options[:verbose],
@@ -52,9 +48,9 @@ module SyncSongs
     end
 
     desc 'version', 'Shows the version number'
-    long_desc <<-LONGDESC
-  Prints the version number. Please include this in bug reports.
-     LONGDESC
+    long_desc 'Shows the version number. Please include the version'\
+    'in bug reports. If there is an error please produce it with the'\
+    'debug option and include the output from it in the bug report.'
     def version
       puts "#{$PROGRAM_NAME} #{VERSION}"
     end
