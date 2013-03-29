@@ -4,6 +4,12 @@
 module SyncSongs
   # Public: Controls syncing and diffing of sets of songs.
   class Controller
+    # Directions for sync between two services.
+    DIRECTIONS = {:'<' => 'write from right to left',
+      :'>' => 'write from left to right',
+      :'=' => 'write both ways',
+      :'|' => 'do not write in any way'}
+    # The form for the input parameter of the constructor.
     INPUT_FORM = '[user|file path]:service:type'
 
     # Public: Creates a controller.
@@ -16,6 +22,8 @@ module SyncSongs
     def initialize(ui, input = nil)
       @ui = ui
       @input = input
+
+      @ui.possible_directions = DIRECTIONS
 
       parseInput if @input
 
@@ -313,8 +321,8 @@ module SyncSongs
 
         case d.direction
         when :'<' then support << :w << :r
-        when :'=' then support << :rw << :rw
         when :'>' then support << :r << :w
+        when :'=' then support << :rw << :rw
         end
 
         d.services.each do |s|

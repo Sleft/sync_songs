@@ -22,18 +22,30 @@ module SyncSongs
 
     # Public: Creates a command-line interface.
     #
-    # verbose - True if interface is verbose (default: nil).
-    # debug   - True if interface is in debug mode (default: nil),
-    #           this means e.g. that backtraces for exceptions are
-    #           printed.
-    def initialize(verbose = nil, debug = nil, color = false)
-      @verbose = verbose
-      @debug   = debug
-      HighLine::use_color = color
+    # verbose             - True if interface is verbose (default:
+    #                       nil).
+    # debug               - True if interface is in debug mode
+    #                       (default: nil), this means e.g. that
+    #                       backtraces for exceptions are printed.
+    # color               - True if color formatted output should be
+    #                       used (default: nil).
+    # possible_directions - An hash of possible sync directions
+    #                       between two given services mapped to
+    #                       descriptions of those directions (default:
+    #                       nil).
+    def initialize(verbose = nil, debug = nil, color = nil,
+                   possible_directions = nil)
+      @verbose             = verbose
+      @debug               = debug
+      @possible_directions = possible_directions
+      HighLine::use_color  = color
+
+      directionsMessage if @possible_directions
+      
 
       HighLine.color_scheme = HighLine::ColorScheme.new do |cs|
         cs[:verbose]           = [:blue]
-        cs[:verbose_direction] = [:cyan, :bold]
+        cs[:verbose_direction] = [:blue, :bold]
         cs[:horizontal_line]   = [:red, :bold]
         cs[:even_row]          = [:green]
         cs[:odd_row]           = [:magenta]
@@ -180,6 +192,11 @@ module SyncSongs
       say(msg.join("\n"))
     end
 
+    def possible_directions=(val)
+      @possible_directions = val
+      directionsMessage
+    end
+
     private
 
     # Internal: Shows the given fail message.
@@ -220,10 +237,9 @@ module SyncSongs
     # Returns a String naming the direction to sync in.
     def askDirection(question)
       ask(question) do |q|
-        q.responses[:not_valid] = 'Enter < for to left, > for to '\
-        'right, = for both directions or q to quit'
+        q.responses[:not_valid] = @DIRECTIONS_MSG
         q.default = '='
-        q.validate = /\A[<>=#{QUIT_ANSWER}]/i
+        q.validate = lambda { |a| @possible_directions.key?(a.to_sym) || a == QUIT_ANSWER }
       end
     end
 
@@ -232,6 +248,13 @@ module SyncSongs
     # input - Input String from user.
     def exitOption(input)
       exit if input.casecmp(QUIT_ANSWER) == 0
+    end
+
+    # Internal: Co
+    def directionsMessage
+      @DIRECTIONS_MSG = @possible_directions.map { |k, v| "<%= color('#{k}', :verbose_direction) %> for #{v}" }
+      @DIRECTIONS_MSG = "Enter #{@DIRECTIONS_MSG.join(", ")}"
+      @DIRECTIONS_MSG << " or <%= color('#{QUIT_ANSWER}', :verbose_direction) %> to quit"
     end
   end
 end
