@@ -314,7 +314,7 @@ module SyncSongs
     def showDifference
       @services.each do |_, s|
         if s.songs_to_add
-          @ui.message("#{s.songs_to_add.size} songs missing on "\
+          @ui.emMessage("#{s.songs_to_add.size} songs missing on "\
                       "#{s.user} #{s.name} #{s.type}:")
           s.songs_to_add.each do |song|
             @ui.message(song)
