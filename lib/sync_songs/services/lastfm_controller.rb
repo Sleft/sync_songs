@@ -31,7 +31,7 @@ module SyncSongs
     # Public: Wrapper for Last.fm loved songs.
     def loved
       @set.loved
-    rescue ArgumentError, Lastfm::ApiError, SocketError, Timeout::Error => e
+    rescue ArgumentError, EOFError, Lastfm::ApiError, SocketError, Timeout::Error => e
       @ui.fail("Failed to get #{type} from #{name} #{user}\n"\
                "#{e.message.strip}", 1, e)
     end

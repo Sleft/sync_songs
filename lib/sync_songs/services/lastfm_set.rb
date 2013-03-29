@@ -41,6 +41,7 @@ module SyncSongs
     #            @limit).
     #
     # Raises ArgumentError from xml-simple some reason.
+    # Raises EOFError when end of file is reached.
     # Raises Lastfm::ApiError if the username is invalid or there is a
     #   temporary error.
     # Raises SocketError if the connection fails.
