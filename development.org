@@ -2,7 +2,7 @@
 
 * Development
 
-sync_songs is designed to be used as standalone and also to provide a useful library for syncing sets of songs between different services. One goal is for sync_songs to handle any number of services. Another goal is for it to be easy to add support for new services.
+sync_songs is designed to be used as standalone and also to provide a useful library for syncing sets of songs between services. One goal is for sync_songs to handle any number of services. Another goal is for it to be easy to add support for new services.
 
 ** General guidelines
 
