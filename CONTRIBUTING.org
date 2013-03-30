@@ -4,7 +4,7 @@
 
 ** Issues
 
-If you have a question, found a bug or want to make a suggestion go ahead and [[https://github.com/Sleft/sync-songs/issues/new][post it as an issue]] but make sure it is not already reported. Please be as clear as possible and provide details.
+If you have a question, found a bug or want to make a suggestion please go ahead and [[https://github.com/Sleft/sync-songs/issues/new][post it as an issue]] but make sure it is not already reported. Please be as clear as possible and provide details. If the issue has to do with the program failing please include output from the program with the =--debug= and the =-v= options activated.
 
 ** Development
 
