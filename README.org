@@ -2,43 +2,56 @@
 
 * sync_songs
 
-With sync_songs you can sync sets of songs at different services. If you have one set of song at one service and another song set at another service you can use sync_songs to merge the song sets. sync_songs can also be used to backup song sets by the ability to spread them across several services.
+With sync_songs you can sync sets of songs between services. If you have one set of song at one service and another song set at another service you can use sync_songs to merge the song sets. sync_songs can also be used to backup song sets by the ability to spread them across several services. Additionaly sync_songs can be used to diff song sets.
 
-sync_songs can be used as standalone but also be integrated into other projects.
+Currently sync_songs supports the following services:
+- csv (on the form =name, artist, album, duration, id= where only the first two fields are required)
+- Grooveshark
+- Last.fm
+
+sync_songs can be used as standalone but also as a library.
 
 ** Installation
 
 To use sync_songs one has to have [[http://www.ruby-lang.org][Ruby]] installed. The easiest way to install Ruby is to use a package management system. If you are on a Debian-based distribution you can issue the following terminal command to install Ruby:
 #+BEGIN_EXAMPLE
-sudo apt-get install ruby
+sudo apt-get install ruby1.9.1
 #+END_EXAMPLE
 
-The following describes three ways of obtaining and installing.
+The following describes three ways of obtaining and installing. The first way is recommended for users and the second way is recommended for developers.
 
 *** Gem
 
 This is the best method to install for most purposes. It requires RubyGems which on Debian-based distributions can be installed via the following command:
 #+BEGIN_EXAMPLE
-sudo apt-get install rubygems
+sudo apt-get install rubygems1.9.1
 #+END_EXAMPLE
 
-Then you can install sync_songs via the following command:
+Then you can install sync_songs and its dependencies via the following command:
 #+BEGIN_EXAMPLE
 sudo gem install sync_songs
 #+END_EXAMPLE
 
 *** Git
 
-This method is good if you want to help develop sync_songs. It requires [[http://git-scm.com/][Git]] which on Debian-based distributions can be installed via the following command:
+This method is good if you want to help develop sync_songs. It requires Git which on Debian-based distributions can be installed via the following command:
 #+BEGIN_EXAMPLE
 sudo apt-get install git
 #+END_EXAMPLE
 
-=cd= to the directory you want to install in and do
+To get the dependencies for sync_songs one can use bundler which can be installed via RubyGems (see above for installation instructions) in the following way:
+#+BEGIN_EXAMPLE
+sudo gem install bundler
+#+END_EXAMPLE
+
+To install sync_songs =cd= to an empty directory and do
 #+BEGIN_EXAMPLE
 git clone https://github.com/Sleft/sync_songs.git .
 #+END_EXAMPLE
-to clone the git repository into that directory. You can use the same command when you want to update it.
+to clone the git repository into that directory. You can use the same command when you want to update it. To install the dependencies issue the following the same directory:
+#+BEGIN_EXAMPLE
+bundle
+#+END_EXAMPLE
 
 *** Archive
 
@@ -46,7 +59,7 @@ This method is not recommended but good if you for some reason cannot use RubyGe
 
 ** Usage
 
-If you want to use sync_songs simply to sync your songs at different services use it as standalone.
+If you want to use sync_songs simply to sync songs between different services you probably want to use it as standalone.
 
 *** Standalone
 
@@ -59,16 +72,22 @@ The most common way of using sync_songs is probably to sync between two services
 #+BEGIN_EXAMPLE
 ./sync_songs sync --color -vs user1:service1:favorites user2:service2:favorites
 #+END_EXAMPLE
-Note that fetching song data from services may take some time due to limitations of bandwidth and of particular services.
+The =--color= option is recommended as it contributes to legibility. The =-v= option is recommended as it explains what is being done. Note that fetching song data from services may take some time due to limitations of bandwidth and due to limitations of particular services.
 
-If one repeatedly syncs between two particular services one may reduce the time it takes somewhat by using a local buffer via a csv file:
+To sync between more than two services just add services as arguments to the =-s= option. For example, to also sync to a csv file one can add it an argument:
 #+BEGIN_EXAMPLE
 ./sync_songs sync --color -vs user1:service1:favorites user2:service2:favorites file_path:csv:library
+#+END_EXAMPLE
+Note that syncing to a csv is a way of backing up songs from services.
+
+To diff songs one can proceed as above but by replacing the =sync= command with =diff=, e.g.
+#+BEGIN_EXAMPLE
+./sync_songs diff --color -vs user1:service1:favorites user2:service2:favorites
 #+END_EXAMPLE
 
 *** Library
 
-If you want to integrate sync_songs in your project add the following line to your application's gemspec:
+If you want to integrate sync_songs in a project add the following line to the project's gemspec:
 #+BEGIN_EXAMPLE
 gem.add_runtime_dependency 'sync_songs'
 #+END_EXAMPLE
@@ -76,11 +95,7 @@ Alternatively add the following line to your Gemfile:
 #+BEGIN_EXAMPLE
 gem 'sync_songs'
 #+END_EXAMPLE
-You can then install dependencies via the following command (if you do not already have bundler installed do =sudo gem install bundler= first):
-#+BEGIN_EXAMPLE
-bundle
-#+END_EXAMPLE
-Then you should be able to =require sync_songs=.
+Now you should be able to =require sync_songs=.
 
 * License
 
