@@ -2,28 +2,52 @@
 
 * Development
 
-sync_songs is designed to be used as standalone and also to provide a useful library for syncing songs between different services. A goal is for sync_songs to handle any number of services and for it to be easy to add support for new services.
+sync_songs is designed to be used as standalone and also to provide a useful library for syncing sets of songs between different services. One goal is for sync_songs to handle any number of services. Another goal is for it to be easy to add support for new services.
 
 ** General guidelines
 
-- Document with [[http://tomdoc.org/][TomDoc]].
+- Document code with [[http://tomdoc.org/][TomDoc]].
 - If possible, include tests for every feature.
-- Follow [[https://github.com/bbatsov/ruby-style-guide][The Ruby Style Guide]]. This means that [[https://github.com/bbatsov/rubocop][rubocop]] can be used to check style (get it via =sudo gem install rubocop=).
+- Follow [[https://github.com/bbatsov/ruby-style-guide][The Ruby Style Guide]] as much as possible. This means that [[https://github.com/bbatsov/rubocop][rubocop]] can be used to check style (get it via =sudo gem install rubocop=).
 
-** TODO Project structure
+** Project structure
 
-Illustrate and describe file structure.
+*** File structure
 
-Relation between main controller, cli and entities and service controllers, clis and entities.
+The directory structure is as follows:
+- ./ :: Main project files, e.g. Rakefile, gem files and readme.
+  - bin :: Scripts meant to be executed by the user are placed here.
+  - lib :: Contains a file that loads the library.
+    - sync_songs :: The main code.
+      - services :: The code relating to particular services.
+  - test ::
+    - unit :: Tests of the =Test::Unit= framework. This directory should have a structure that corresponds to lib/sync_songs. Thus, this directory contains tests for the main code and also test suites.
+      - sample_data :: Sample data for tests of the parent directory.
+      - services :: Tests relating to particular services.
+        - sample_data :: Sample data for tests of the parent directory.
 
-** TODO Services
+*** Code structure
 
-How a service interacts with the rest of the project.
+The code is structured along MVC pattern. In lib/sync_songs there is a controller, controller.rb, which handles the main logic. The controller interacts with the user via a user interface, for example cli.rb -- a command line interface. Entity classes of the program are based on the classes =Song= and =SongSet=.
 
-*** Adding services
+In .lib/sync_songs/services the classes relating to particular services are found. Each service has a controller which the main controller communicates with. If a particular service needs to interact with the user it should have its own user interface which is called by its controller. Each service has an entity class for getting and setting songs.
 
-A service (set) should handle its exceptions.
+** How to add a service
+
+For a service to be meaningful it needs to be possible to get songs from it or set songs to it. Obviously it is best if both getting and setting is possible as it makes possible for sync in both directions. This mean that it needs to be possible to get and/or set songs to the service in question via Ruby.
+
+As described under the heading "Code structure" above each service should have a controller, a user interface (if it needs to interact with the user) and an entity class. When adding a service it is probably best to start by designing the entity class.
+
+The entity class for a particular service, which I will call a service set, should be a subclass of =SongSet= and named ServicenameSet. This provides it with the ability to store objects of the class =Song= via the methods =<<= and =add=. Every service set needs to have at least two methods. It needs to have a constructor that calls the constructor of its super class and does any setup that is necessary for the particular service. It also needs a method for getting or setting songs. The method for getting songs should be named after which kind of songs it gets, e.g. if it gets favorite songs it should be called =favorites= (if there is no given name for the type of song please call the method =library=), and it should get those songs from the service and add them to the =SongSet=. The method for setting songs should be named =addTo= followed by the type of songs it adds, e.g. =addToFavorites= if it adds favorites, and it should take a =SongSet= as a parameter and add those to the given type of songs of the service. When there is a method for setting songs there also needs to be a method for searching songs named =search= which takes a =SongSet= and an optional boolean value defaulting to true for whether to do strict search as arguments. The search method should search for the songs given as argument and return any matches. A service set is not responsible for handling exceptions but any exceptions thrown by any of its methods should be documented in TomDoc style. For an example of a simple service set see lib/sync_songs/services/csv_set.rb.
+
+The controller for a particular service should be a subclass of =ServiceController= and it should be named ServicenameController. The controller is responsible for all communication with the main controller and it should setup the service set via its constructor. It should also have wrappers for the getters, setters and search methods of the service set and if any of them throws an exception it should be handled. For an example of a controller for a service see lib/sync_songs/services/csv_controller.rb.
+
+A user interface for a particular service is only necessary if it needs to interact with the user. The service user interface should be named ServicenameInterfacetype and if possible it should use methods of the main user interface of the same type. Note that the service user interface should be called by the service controller only. For an example of a service user interface see lib/sync_songs/services/csv_cli.rb.
+
+** Adding a user interface
+
+As mentioned sync_songs is designed to have a replaceable user interface. If one wants to make a new user interface one needs to construct a main user interface and a user interface for every service that needs one. If the main controller needs to be changed to support other user interface that is a flaw in the main controller and fixes for such flaws are encouraged.
 
 ** Plan
 
-The plan is for sync_songs to work work as expected and have as few bugs as possible. Specific plans are documented in plan.org. Also see [[https://github.com/Sleft/sync-songs/issues][issues]].
+The plan is for sync_songs to work as expected, have as few bugs as possible and support more services. Specific plans are documented in plan.org. Also see [[https://github.com/Sleft/sync-songs/issues][issues]].
