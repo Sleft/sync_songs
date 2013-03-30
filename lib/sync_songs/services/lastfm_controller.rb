@@ -10,7 +10,7 @@ module SyncSongs
 
     # Public: Hash of types of services associated with what they
     # support.
-    SERVICES = {loved: :rw, favorites: :rw}
+    SERVICES = {loved: :rw}
 
     # Public: Creates a controller.
     #
@@ -36,8 +36,6 @@ module SyncSongs
                "#{e.message.strip}", 1, e)
     end
 
-    alias_method :favorites, :loved
-
     # Public: Wrapper for adding to Last.fm loved songs. Authorizes
     # the session before adding songs.
     #
@@ -61,8 +59,6 @@ module SyncSongs
         end
       end
     end
-
-    alias_method :addToFavorites, :addToLoved
 
     # Public: Wrapper for searching for the given song set at Last.fm.
     #

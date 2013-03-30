@@ -37,7 +37,7 @@ module SyncSongs
     # username - The username of the user to authenticate (default:
     #            @username).
     #
-    # limit    - The maximum number of favorites to get (default:
+    # limit    - The maximum number of loved tracks to get (default:
     #            @limit).
     #
     # Raises ArgumentError from xml-simple some reason.
@@ -72,8 +72,6 @@ module SyncSongs
       self
     end
 
-    alias_method :favorites, :loved
-
     # Public: Add the songs in the given set to the given user's loved
     # songs on Last.fm. This method requires an authorized session
     # which is gotten by getting the user to authorize via the url
@@ -98,8 +96,6 @@ module SyncSongs
 
       songsAdded
     end
-
-    alias_method :addToFavorites, :addToLoved
 
     # Public: Searches for the given song set at Last.fm. The reason
     # this takes ages to complete is that it first has to search
