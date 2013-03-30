@@ -83,7 +83,7 @@ If one has a user named mary at Grooveshark and a user named smith at Last.fm on
 sync_songs sync --color -vs mary:grooveshark:favorites smith:lastfm:loved
 #+END_EXAMPLE
 
-To sync between more than two services just add services as arguments to the =-s= option. For example, to also sync to a csv file one can add it an argument:
+To sync between more than two services just add additional services as arguments to the =-s= option. For example, to also sync to a csv file one can add it as an argument:
 #+BEGIN_EXAMPLE
 sync_songs sync --color -vs user1:service1:favorites user2:service2:favorites file_path:csv:library
 #+END_EXAMPLE
@@ -105,6 +105,8 @@ Alternatively add the following line to your Gemfile:
 gem 'sync_songs'
 #+END_EXAMPLE
 Now you should be able to =require sync_songs=.
+
+Note that you can use bundler to get dependencies for sync_songs, see installation via Git above.
 
 * License
 
