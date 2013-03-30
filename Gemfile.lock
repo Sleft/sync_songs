@@ -6,7 +6,7 @@ PATH
       highline (>= 1.6.16)
       lastfm (>= 1.17.0)
       launchy (>= 2.2.0)
-      thor (>= 0.18.0)
+      thor (>= 0.18.1)
 
 GEM
   remote: https://rubygems.org/
@@ -39,7 +39,7 @@ GEM
     rest-client (1.6.7)
       mime-types (>= 1.16)
     systemu (2.5.2)
-    thor (0.18.0)
+    thor (0.18.1)
     uuid (2.3.7)
       macaddr (~> 1.0)
     xml-simple (1.1.2)
