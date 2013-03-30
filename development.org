@@ -50,4 +50,4 @@ As mentioned sync_songs is designed to have a replaceable user interface. If one
 
 ** Plan
 
-The plan is for sync_songs to work as expected, have as few bugs as possible and support more services. Specific plans are documented in plan.org. Also see [[https://github.com/Sleft/sync-songs/issues][issues]].
+The plan is for sync_songs to work as expected, have as few bugs as possible and support more services. Specific plans are documented in plan.org. Also see [[https://github.com/Sleft/sync_songs/issues][issues]].
