@@ -6,9 +6,10 @@ sync_songs is designed to be used as standalone and also to provide a useful lib
 
 ** General guidelines
 
-- Document code with [[http://tomdoc.org/][TomDoc]].
+- Document code thoroughly with [[http://tomdoc.org/][TomDoc]], see e.g. lib/sync_songs/controller.rb for an example.
 - If possible, include tests for every feature.
 - Follow [[https://github.com/bbatsov/ruby-style-guide][The Ruby Style Guide]] as much as possible. This means that [[https://github.com/bbatsov/rubocop][rubocop]] can be used to check style (get it via =sudo gem install rubocop=).
+- Prefer Org-mode syntax for documentation files and manuals (this file is written with Org-mode syntax).
 
 ** Project structure
 
