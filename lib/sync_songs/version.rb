@@ -2,5 +2,5 @@
 
 # Public: Classes for syncing sets of songs.
 module SyncSongs
-  VERSION = '0.0.2'
+  VERSION = '0.0.3'
 end

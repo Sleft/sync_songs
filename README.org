@@ -8,6 +8,7 @@ Currently sync_songs supports the following services:
 - csv (on the form =name, artist, album, duration, id= where only the first two fields are required)
 - Grooveshark
 - Last.fm
+For details see services.org.
 
 sync_songs can be used as standalone but also as a library.
 
@@ -82,6 +83,7 @@ If one has a user named mary at Grooveshark and a user named smith at Last.fm on
 #+BEGIN_EXAMPLE
 sync_songs sync --color -vs mary:grooveshark:favorites smith:lastfm:loved
 #+END_EXAMPLE
+For usage notes on the supported services see services.org.
 
 To sync between more than two services just add additional services as arguments to the =-s= option. For example, to also sync to a csv file one can add it as an argument:
 #+BEGIN_EXAMPLE

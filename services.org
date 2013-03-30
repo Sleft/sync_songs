@@ -1,0 +1,17 @@
+# -*- mode:org; indent-tabs-mode:nil; tab-width:2 -*-
+
+* Services
+
+This document contains usage notes for the supported services. For a guide on how to add support for a service see development.org.
+
+** csv
+
+You need to provide the path to an existing csv file. To create a blank file one can use =touch=.
+
+** grooveshark
+
+To use this service you need an account at it.
+
+** lastfm
+
+To use this service you need a Last.fm API account, see http://www.lastfm.se/api.
