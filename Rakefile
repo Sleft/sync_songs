@@ -14,6 +14,6 @@ task default: :test
 
 # task test: :rubocop
 
-task :rubocop do
+task :style do
   sh 'rubocop'
 end
