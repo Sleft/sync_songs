@@ -9,7 +9,7 @@ Gem::Specification.new do |gem|
   gem.version       = SyncSongs::VERSION
   gem.authors       = ['Sleft']
   gem.email         = ['fte08eas@student.lu.se']
-  gem.description   = 'Sync sets of songs'
+  gem.description   = 'Sync sets of songs between services'
   gem.summary       = 'SyncSongs'
   gem.homepage      = 'https://github.com/Sleft/sync_songs'
 
