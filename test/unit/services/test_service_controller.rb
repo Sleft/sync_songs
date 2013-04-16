@@ -17,8 +17,8 @@ module SyncSongs
 
       eql_msg = 'Service controllers with the same user, name and '\
       'type are equal'
-      assert(ca[0].eql?(ca[1]))
-      assert(ca[1].eql?(ca[0]))
+      assert(ca[0].eql?(ca[1]), eql_msg)
+      assert(ca[1].eql?(ca[0]), eql_msg)
 
       cs = Set.new(ca)
 
