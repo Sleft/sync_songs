@@ -2,6 +2,7 @@
 #+title: Plan
 
 * TODO Plan
+- Add changelog
 - Use https://gist.github.com/fnichol/1912050
 - Remove =lov = [lov] unless lov.is_a?(Array)= from last_fm_set.rb if https://github.com/youpy/ruby-lastfm/issues/52 is fixed.
 - Go through all documentation and fix it.
