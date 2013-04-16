@@ -258,7 +258,7 @@ module SyncSongs
       ask(question) do |q|
         q.responses[:not_valid] = @DIRECTIONS_MSG
         q.default = '='
-        q.validate = lambda { |a| @possible_directions.key?(a.to_sym) || a == QUIT_ANSWER }
+        q.validate = ->(a) { @possible_directions.key?(a.to_sym) || a == QUIT_ANSWER }
       end
     end
 

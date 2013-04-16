@@ -415,7 +415,7 @@ module SyncSongs
       key = s.join.to_sym
 
       # Only initialize the service if it is not already initialized.
-      @services[key] = initializeService(s) if not @services[key]
+      @services[key] = initializeService(s) unless @services[key]
 
       key
     end
