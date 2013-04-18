@@ -38,7 +38,7 @@ module SyncSongs
       @verbose             = verbose
       @debug               = debug
       @possible_directions = possible_directions
-      HighLine::use_color  = color
+      HighLine.use_color   = color
 
       directionsMessage if @possible_directions
 

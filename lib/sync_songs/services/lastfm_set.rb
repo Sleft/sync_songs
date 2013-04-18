@@ -155,7 +155,7 @@ module SyncSongs
     # Raises SocketError if the network connection fails.
     def authorizeURL
       @token = @lastfm.auth.get_token
-      "http://www.last.fm/api/auth/?api_key=#@api_key&token=#@token"
+      "http://www.last.fm/api/auth/?api_key=#{@api_key}&token=#{@token}"
     end
 
 
